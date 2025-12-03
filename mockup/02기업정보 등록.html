@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기업 정보 등록</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066CC;
+            --success-green: #2EBD59;
+            --neutral-gray: #333333;
+            --light-gray: #F5F5F5;
+            --warm-orange: #FF8C42;
+            --alert-red: #E74C3C;
+            --calm-purple: #7B68EE;
+            --border-color: #E0E0E0;
+            --text-light: #666666;
+            --shadow: 0 1px 4px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--neutral-gray);
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .logo i {
+            margin-right: 8px;
+            font-size: 24px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Form Container */
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: var(--primary-blue);
+            font-size: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: var(--neutral-gray);
+            font-size: 13px;
+        }
+
+        .required {
+            color: var(--alert-red);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+        }
+        
+        select:disabled {
+            background-color: var(--light-gray);
+            cursor: not-allowed;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .input-group input {
+            flex: 1;
+        }
+
+        .input-prefix, .input-suffix {
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            background-color: var(--light-gray);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        /* File Upload */
+        .file-upload-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .file-upload-button {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-button:hover {
+            background-color: #0052A3;
+        }
+
+        .file-upload-button i {
+            font-size: 14px;
+        }
+
+        .file-list {
+            margin-top: 8px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .file-remove {
+            color: var(--alert-red);
+            cursor: pointer;
+        }
+
+        .file-additional {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* Help Text */
+        .help-text {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .error-text {
+            font-size: 12px;
+            color: var(--alert-red);
+            margin-top: 4px;
+        }
+
+        /* Buttons */
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0052A3;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-gray);
+            color: var(--neutral-gray);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #EEEEEE;
+        }
+        
+        .btn-danger {
+            background-color: var(--alert-red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #C0392B;
+        }
+
+        /* Dynamic Sections */
+        .dynamic-section {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #fafafa;
+        }
+        
+        .dynamic-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .dynamic-section-title {
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 14px;
+        }
+        
+        .btn-remove {
+            background-color: var(--alert-red);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        
+        .btn-add {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 15px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-container">
+                <div class="logo">
+                    <i class="fas fa-building"></i>
+                    전시(專時)
+                </div>
+                <div class="user-menu">
+                    <div class="user-profile">
+                        <img src="https://picsum.photos/seed/companyuser/32/32.jpg" alt="User Avatar" class="user-avatar">
+                        <span>김담당자 님</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Form Container -->
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2 class="form-title">기업 정보 등록</h2>
+                <p class="form-subtitle">정확한 정보를 입력해 주시면 전문가들에게 더 많은 기회를 제공할 수 있습니다.</p>
+            </div>
+
+            <form id="companyInfoForm">
+                <!-- 기본 정보 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-building"></i>
+                        기본 정보
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="companyName">회사명 <span class="required">*</span></label>
+                            <input type="text" id="companyName" name="companyName" required>
+                            <div class="help-text">사업자등록증 상의 정확한 상호를 입력해주세요.</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bizRegNo">사업자등록번호 <span class="required">*</span></label>
+                            <input type="text" id="bizRegNo" name="bizRegNo" placeholder="000-00-00000" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ceoName">대표자명 <span class="required">*</span></label>
+                            <input type="text" id="ceoName" name="ceoName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="establishDate">설립일 <span class="required">*</span></label>
+                            <input type="date" id="establishDate" name="establishDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="employees">직원 수 <span class="required">*</span></label>
+                            <select id="employees" name="employees" required>
+                                <option value="">선택해주세요</option>
+                                <option value="1-10">1-10명</option>
+                                <option value="11-30">11-30명</option>
+                                <option value="31-50">31-50명</option>
+                                <option value="51-100">51-100명</option>
+                                <option value="101-300">101-300명</option>
+                                <option value="301+">301명 이상</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="address">주소 <span class="required">*</span></label>
+                            <div class="input-group">
+                                <input type="text" id="postcode" name="postcode" placeholder="우편번호" readonly>
+                                <button type="button" class="btn btn-secondary" onclick="searchPostcode()">주소 찾기</button>
+                            </div>
+                            <input type="text" id="address" name="address" placeholder="기본 주소" style="margin-top: 8px;" required>
+                            <input type="text" id="detailAddress" name="detailAddress" placeholder="상세 주소" style="margin-top: 8px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 회사 소개 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-bullhorn"></i>
+                        회사 소개
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="companyIntro">회사 소개</label>
+                            <textarea id="companyIntro" name="companyIntro" placeholder="회사의 비전, 사업 모델, 주요 서비스 등을 자유롭게 소개해주세요."></textarea>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="serviceInfo">서비스/제품 소개</label>
+                            <textarea id="serviceInfo" name="serviceInfo" placeholder="제공하는 주요 서비스나 제품에 대해 설명해주세요."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="website">홈페이지</label>
+                            <input type="url" id="website" name="website" placeholder="https://example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="linkedin">링크드인</label>
+                            <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/company/example">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 담당자 정보 섹션 (다중 등록 가능) -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-users"></i>
+                        담당자 정보
+                    </h3>
+                    <div id="contactPersonsList">
+                        <!-- Initial contact person block will be added here by JavaScript on load -->
+                    </div>
+                    <button type="button" class="btn-add" onclick="addContactPerson()">
+                        <i class="fas fa-plus-circle"></i> 담당자 추가
+                    </button>
+                </div>
+
+                <!-- 산업분야 섹션 (콤보박스로 변경) -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-list-ul"></i>
+                        산업분야
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="majorCategory">대분류 <span class="required">*</span></label>
+                            <select id="majorCategory" name="majorCategory" required>
+                                <option value="">대분류를 선택하세요</option>
+                                <option value="IT">IT/개발</option>
+                                <option value="DS">디자인/크리에이티브</option>
+                                <option value="MK">마케팅/홍보</option>
+                                <option value="WR">글쓰기/번역</option>
+                                <option value="BZ">비즈니스/경영</option>
+                                <option value="HR">HR/인사</option>
+                                <option value="ED">교육/강의</option>
+                                <option value="BD">건축/설계</option>
+                                <option value="IN">인테리어/시공</option>
+                                <option value="FC">설비/수리</option>
+                                <option value="SP">스포츠/피트니스</option>
+                                <option value="BT">뷰티/패션</option>
+                                <option value="EV">행사/엔터테인먼트</option>
+                                <option value="LF">생활서비스</option>
+                                <option value="PS">전문서비스</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="minorCategory">중분류 <span class="required">*</span></label>
+                            <select id="minorCategory" name="minorCategory" required disabled>
+                                <option value="">먼저 대분류를 선택하세요</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="help-text">귀사의 주요 사업 분야를 정확하게 선택해주세요.</div>
+                </div>
+                
+                <!-- 대표 이미지/홍보 자료 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-images"></i>
+                        대표 이미지/홍보 자료
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <!-- 회사 로고 -->
+                        <div class="form-group full-width">
+                            <label>회사 로고 <span class="required">*</span></label>
+                            <div class="file-upload-container">
+                                <button type="button" class="file-upload-button" onclick="document.getElementById('logoFile').click()">
+                                    <i class="fas fa-file-upload"></i>
+                                    파일 선택
+                                </button>
+                                <input type="file" id="logoFile" name="logoFile" accept=".jpg,.png" style="display: none;" onchange="handleFileUpload(this, '회사 로고')">
+                            </div>
+                            <div class="file-additional">권장 사이즈: 200x200px, jpg, png 파일</div>
+                            <div id="logoFileList" class="file-list"></div>
+                        </div>
+
+                        <!-- 회사 홍보 자료 -->
+                        <div class="form-group full-width">
+                            <label>회사 홍보 자료</label>
+                            <div class="file-upload-container">
+                                <button type="button" class="file-upload-button" onclick="document.getElementById('promoFile').click()">
+                                    <i class="fas fa-file-upload"></i>
+                                    파일 선택
+                                </button>
+                                <input type="file" id="promoFile" name="promoFile" accept=".pdf,.jpg,.png,.pptx" multiple style="display: none;" onchange="handleFileUpload(this, '홍보 자료')">
+                            </div>
+                            <div class="file-additional">회사 소개서, 브로슈어 등을 등록해주세요. (여러 파일 선택 가능)</div>
+                            <div id="promoFileList" class="file-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back();">
+                        <i class="fas fa-arrow-left"></i> 취소
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 저장하기
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let contactPersonCount = 0;
+
+        // 산업분야 데이터 (대분류 코드: [중분류 코드, 중분류 이름])
+        const industryData = {
+            'IT': [
+                ['IT01', '웹 개발'], ['IT02', '앱 개발'], ['IT03', 'AI/머신러닝'], ['IT04', '데이터 분석'],
+                ['IT05', '보안/인증'], ['IT06', '클라우드/인프라'], ['IT07', '게임 개발'], ['IT08', '블록체인/Web3']
+            ],
+            'DS': [
+                ['DS01', '영상 편집'], ['DS02', '모션그래픽/3D'], ['DS03', '그래픽 디자인'], ['DS04', '일러스트/캐릭터'],
+                ['DS05', 'UI/UX 디자인'], ['DS06', '제품/산업 디자인'], ['DS07', '사진/촬영'], ['DS08', '음악/사운드']
+            ],
+            'MK': [
+                ['MK01', '퍼포먼스 마케팅'], ['MK02', 'SNS 마케팅'], ['MK03', '콘텐츠 마케팅'], ['MK04', '브랜딩/CI'],
+                ['MK05', 'PR/언론홍보'], ['MK06', '영업/세일즈']
+            ],
+            'WR': [
+                ['WR01', '카피라이팅'], ['WR02', '콘텐츠 글쓰기'], ['WR03', '번역/통역'], ['WR04', '출판/교정']
+            ],
+            'BZ': [
+                ['BZ01', '경영/전략 컨설팅'], ['BZ02', '창업/스타트업'], ['BZ03', '재무/회계'], ['BZ04', '세무/기장'],
+                ['BZ05', '법률/계약'], ['BZ06', '특허/지식재산']
+            ],
+            'HR': [
+                ['HR01', '채용/헤드헌팅'], ['HR02', '인사제도/조직'], ['HR03', '노무/급여'], ['HR04', '커리어 코칭']
+            ],
+            'ED': [
+                ['ED01', '기업교육/강의'], ['ED02', '외국어 교육'], ['ED03', '입시/학원'], ['ED04', '자격증/실무']
+            ],
+            'BD': [
+                ['BD01', '건축 설계'], ['BD02', '토목/조경'], ['BD03', '도시/부동산']
+            ],
+            'IN': [
+                ['IN01', '인테리어 디자인'], ['IN02', '도배/바닥'], ['IN03', '주방/욕실'], ['IN04', '목공/가구']
+            ],
+            'FC': [
+                ['FC01', '전기/조명'], ['FC02', '설비/배관'], ['FC03', '방수/단열'], ['FC04', '철거/청소']
+            ],
+            'SP': [
+                ['SP01', '골프/라켓'], ['SP02', '피트니스/PT'], ['SP03', '요가/필라테스'], ['SP04', '수영/아웃도어'], ['SP05', '댄스/무술']
+            ],
+            'BT': [
+                ['BT01', '메이크업/헤어'], ['BT02', '네일/속눈썹'], ['BT03', '패션/스타일링']
+            ],
+            'EV': [
+                ['EV01', '웨딩/돌잔치'], ['EV02', '행사/컨퍼런스'], ['EV03', 'MC/공연']
+            ],
+            'LF': [
+                ['LF01', '반려동물'], ['LF02', '청소/정리'], ['LF03', '이사/운송'], ['LF04', '수리/설치']
+            ],
+            'PS': [
+                ['PS01', '의료/헬스케어'], ['PS02', '공학/제조'], ['PS03', '물류/무역'], ['PS04', '농업/식품']
+            ]
+        };
+
+        // 대분류 선택 시 중분류 업데이트 함수
+        function updateMinorCategory() {
+            const majorSelect = document.getElementById('majorCategory');
+            const minorSelect = document.getElementById('minorCategory');
+            const selectedMajor = majorSelect.value;
+
+            // 중분류 콤보박스 초기화
+            minorSelect.innerHTML = '<option value="">중분류를 선택하세요</option>';
+            minorSelect.disabled = true;
+
+            if (selectedMajor && industryData[selectedMajor]) {
+                minorSelect.disabled = false;
+                industryData[selectedMajor].forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item[0]; // 중분류 코드 (e.g., 'IT01')
+                    option.textContent = item[1]; // 중분류 이름 (e.g., '웹 개발')
+                    minorSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Dynamic Contact Person Management
+        function addContactPerson() {
+            contactPersonCount++;
+            const list = document.getElementById('contactPersonsList');
+            const newSection = document.createElement('div');
+            newSection.className = 'dynamic-section';
+            newSection.innerHTML = `
+                <div class="dynamic-section-header">
+                    <div class="dynamic-section-title">담당자 ${contactPersonCount}</div>
+                    <button type="button" class="btn-remove" onclick="removeContactPerson(this)">
+                        <i class="fas fa-times"></i> 삭제
+                    </button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>직책</label>
+                        <input type="text" name="contactTitle[]" placeholder="예: 마케팅팀장">
+                    </div>
+                    <div class="form-group">
+                        <label>이름 <span class="required">*</span></label>
+                        <input type="text" name="contactName[]" placeholder="담당자 성함" required>
+                    </div>
+                    <div class="form-group">
+                        <label>이메일 <span class="required">*</span></label>
+                        <input type="email" name="contactEmail[]" placeholder="담당자 이메일" required>
+                    </div>
+                    <div class="form-group">
+                        <label>연락처 <span class="required">*</span></label>
+                        <input type="tel" name="contactPhone[]" placeholder="담당자 연락처" required>
+                    </div>
+                </div>
+            `;
+            list.appendChild(newSection);
+        }
+
+        function removeContactPerson(button) {
+            if (document.querySelectorAll('#contactPersonsList .dynamic-section').length > 1) {
+                button.closest('.dynamic-section').remove();
+            } else {
+                alert('최소 한 명 이상의 담당자가 필요합니다.');
+            }
+        }
+
+        // File upload handling
+        function handleFileUpload(input, description) {
+            const files = input.files;
+            const fileListId = input.id + 'List';
+            const fileList = document.getElementById(fileListId);
+            
+            fileList.innerHTML = ''; // Clear previous files for single-file inputs
+            
+            for (let file of files) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                const fileInfo = document.createElement('div');
+                fileInfo.className = 'file-info';
+                
+                let iconClass = 'fas fa-file';
+                if (file.type.includes('pdf')) {
+                    iconClass = 'fas fa-file-pdf';
+                } else if (file.type.includes('image')) {
+                    iconClass = 'fas fa-file-image';
+                } else if (file.name.endsWith('.pptx')) {
+                    iconClass = 'fas fa-file-powerpoint';
+                }
+                
+                const icon = document.createElement('i');
+                icon.className = iconClass;
+                icon.style.color = file.type.includes('pdf') ? '#E74C3C' : '#0066CC';
+                
+                const fileName = document.createElement('span');
+                fileName.textContent = file.name;
+                
+                const fileSize = document.createElement('span');
+                fileSize.textContent = ' (' + formatFileSize(file.size) + ')';
+                fileSize.style.color = 'var(--text-light)';
+                
+                fileInfo.appendChild(icon);
+                fileInfo.appendChild(fileName);
+                fileInfo.appendChild(fileSize);
+                
+                const removeBtn = document.createElement('i');
+                removeBtn.className = 'fas fa-times file-remove';
+                removeBtn.onclick = function() {
+                    fileItem.remove();
+                    input.value = ''; // Clear input to allow re-selection
+                };
+                
+                fileItem.appendChild(fileInfo);
+                fileItem.appendChild(removeBtn);
+                fileList.appendChild(fileItem);
+            }
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Postcode search (Daum API simulation)
+        function searchPostcode() {
+            alert('우편번호 검색 기능은 실제 서비스에서 Daum API를 연동해야 합니다.');
+        }
+        
+        // Form validation
+        document.getElementById('companyInfoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Required fields validation
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = 'var(--alert-red)';
+                    
+                    const errorText = document.createElement('div');
+                    errorText.className = 'error-text';
+                    errorText.textContent = '이 필드는 필수입니다.';
+                    
+                    if (!field.parentNode.querySelector('.error-text')) {
+                        field.parentNode.appendChild(errorText);
+                    }
+                } else {
+                    field.style.borderColor = 'var(--border-color)';
+                    const errorText = field.parentNode.querySelector('.error-text');
+                    if (errorText) {
+                        errorText.remove();
+                    }
+                }
+            });
+            
+            if (isValid) {
+                // Show success message
+                alert('기업 정보가 성공적으로 등록되었습니다!');
+                // In real application, submit form to server
+                // this.submit();
+            } else {
+                alert('필수 항목을 모두 입력해주세요.');
+                // Scroll to first error
+                const firstError = this.querySelector('.error-text');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+        
+        // Initialize with one contact person on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            addContactPerson();
+
+            // 대분류 콤보박스에 change 이벤트 리스너 추가
+            const majorCategorySelect = document.getElementById('majorCategory');
+            if (majorCategorySelect) {
+                majorCategorySelect.addEventListener('change', updateMinorCategory);
+            }
+        });
+    </script>
+</body>
+</html>

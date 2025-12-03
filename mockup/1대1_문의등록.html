@@ -1,0 +1,1290 @@
+mockup/1대1_문의등록.html<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>전시 - 1:1 문의</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Header --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .header-icon:hover {
+            color: var(--primary-color);
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding: 20px;
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        /* --- Container --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- Page Header --- */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title i {
+            font-size: 1.5rem;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* --- Form Section --- */
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .form-section-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section-title i {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        /* --- Card --- */
+        .card {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            color: var(--text-color);
+        }
+
+        /* --- Form Styles --- */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--card-background);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 150px;
+            font-family: inherit;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* --- File Upload --- */
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, var(--light-color) 0%, #e9ecef 100%);
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(0,123,255,0.05) 0%, rgba(0,123,255,0.1) 100%);
+        }
+
+        .file-upload-label i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .file-upload-text {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .file-upload-hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Checkbox --- */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--light-color) 0%, #e9ecef 100%);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .checkbox-wrapper:hover {
+            background: linear-gradient(135deg, rgba(0,123,255,0.05) 0%, rgba(0,123,255,0.1) 100%);
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            margin-top: 3px;
+            transform: scale(1.2);
+        }
+
+        .checkbox-label {
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .checkbox-label strong {
+            color: var(--primary-color);
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn i {
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--light-color) 0%, #e9ecef 100%);
+            color: var(--dark-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        /* --- Filters --- */
+        .filters-container {
+            background: linear-gradient(135deg, var(--card-background) 0%, var(--light-color) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group .form-control {
+            padding: 12px 15px;
+        }
+
+        /* --- Inquiry List --- */
+        .inquiry-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .inquiry-item {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
+            border-left: 5px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .inquiry-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .inquiry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .inquiry-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .inquiry-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .inquiry-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .inquiry-meta i {
+            color: var(--primary-color);
+        }
+
+        .inquiry-content {
+            margin-bottom: 20px;
+            line-height: 1.7;
+            color: var(--text-color);
+            display: none;
+        }
+
+        .inquiry-response {
+            background: linear-gradient(135deg, rgba(0,123,255,0.05) 0%, rgba(0,123,255,0.1) 100%);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid var(--info-color);
+            display: none;
+        }
+
+        .response-header {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--info-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .response-header i {
+            color: var(--info-color);
+        }
+
+        /* --- Status Badge --- */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.2) 100%);
+            color: var(--success-color);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.2) 100%);
+            color: var(--warning-color);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, rgba(0, 123, 255, 0.2) 100%);
+            color: var(--primary-color);
+            border: 1px solid rgba(0, 123, 255, 0.3);
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, var(--card-background) 0%, var(--light-color) 100%);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--border-color);
+            opacity: 0.6;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        /* --- Animations --- */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .app-content {
+                padding: 15px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-col {
+                min-width: auto;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .inquiry-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .inquiry-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .filters-row {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">1:1 문의</div>
+        <div class="header-icons">
+            <div class="header-icon" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Content -->
+    <div class="app-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-comments"></i>
+                        1:1 문의
+                    </h1>
+                    <p class="page-subtitle">궁금한 점이 있다면 언제든지 문의해주세요. 24시간 내에 답변드리겠습니다.</p>
+                </div>
+            </div>
+
+            <!-- 새 문의 작성 -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="fas fa-edit"></i>
+                    새 문의 작성
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-paper-plane"></i>
+                            문의하기
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="inquiryForm">
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fas fa-tag"></i>
+                                            문의 유형 <span style="color: var(--danger-color);">*</span>
+                                        </label>
+                                        <select class="form-control" id="inquiryType" required>
+                                            <option value="">문의 유형을 선택하세요</option>
+                                            <option value="service">서비스 관련</option>
+                                            <option value="payment">결제 관련</option>
+                                            <option value="account">계정 관련</option>
+                                            <option value="technical">기술 지원</option>
+                                            <option value="partnership">제휴 문의</option>
+                                            <option value="other">기타</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fas fa-heading"></i>
+                                            제목 <span style="color: var(--danger-color);">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="inquiryTitle"
+                                               placeholder="문의 제목을 입력하세요" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-comment-dots"></i>
+                                    문의 내용 <span style="color: var(--danger-color);">*</span>
+                                </label>
+                                <textarea class="form-control" id="inquiryContent" rows="8"
+                                          placeholder="궁금한 점을 자세히 설명해주세요&#10;문의하신 내용은 24시간 내에 답변드립니다." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-paperclip"></i>
+                                    첨부 파일 (선택)
+                                </label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" id="inquiryFile" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                                    <label for="inquiryFile" class="file-upload-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <div class="file-upload-text">파일을 선택하거나 여기에 드래그하세요</div>
+                                        <div class="file-upload-hint">
+                                            최대 5개 파일, 각 파일 10MB까지 업로드 가능합니다<br>
+                                            지원 형식: JPG, PNG, PDF, DOC, DOCX
+                                        </div>
+                                    </label>
+                                </div>
+                                <div id="fileList" style="margin-top: 10px; display: none;">
+                                    <small style="color: var(--success-color);">
+                                        <i class="fas fa-check-circle"></i> <span id="fileCount">0</span>개 파일 선택됨
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fas fa-envelope"></i>
+                                            이메일 주소 <span style="color: var(--danger-color);">*</span>
+                                        </label>
+                                        <input type="email" class="form-control" id="inquiryEmail"
+                                               placeholder="답변 받을 이메일 주소" required>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fas fa-phone"></i>
+                                            연락처
+                                        </label>
+                                        <input type="tel" class="form-control" id="inquiryPhone"
+                                               placeholder="답변 받을 연락처 (선택)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-wrapper">
+                                    <input type="checkbox" id="agreeTerms" required>
+                                    <div class="checkbox-label">
+                                        <strong>개인정보 수집 및 이용에 동의합니다</strong><br>
+                                        <small>
+                                            전시는 문의 답변을 위해 최소한의 개인정보를 수집하며,
+                                            동의하지 않을 경우 문의 서비스 이용이 제한될 수 있습니다.
+                                            수집된 정보는 문의 처리 외의 목적으로 사용되지 않습니다.
+                                        </small>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-secondary" onclick="resetInquiryForm()">
+                                    <i class="fas fa-undo"></i> 초기화
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i> 문의하기
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 문의 내역 -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="fas fa-history"></i>
+                    문의 내역
+                </div>
+
+                <!-- 필터 -->
+                <div class="filters-container">
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <label class="form-label">상태</label>
+                            <select class="form-control" id="statusFilter">
+                                <option value="all">전체</option>
+                                <option value="pending">답변 대기</option>
+                                <option value="answered">답변 완료</option>
+                                <option value="processing">처리 중</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">문의 유형</label>
+                            <select class="form-control" id="typeFilter">
+                                <option value="all">전체 유형</option>
+                                <option value="service">서비스 관련</option>
+                                <option value="payment">결제 관련</option>
+                                <option value="account">계정 관련</option>
+                                <option value="technical">기술 지원</option>
+                                <option value="partnership">제휴 문의</option>
+                                <option value="other">기타</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn btn-primary btn-sm" onclick="filterInquiries()">
+                                <i class="fas fa-search"></i> 검색
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 문의 리스트 -->
+                <div class="inquiry-list" id="inquiryList">
+                    <!-- 답변 완료된 문의 -->
+                    <div class="inquiry-item slide-in" data-status="answered" data-type="service">
+                        <div class="inquiry-header">
+                            <div style="flex: 1;">
+                                <div class="inquiry-title">서비스 이용 요금에 대해 문의드립니다</div>
+                                <div class="inquiry-meta">
+                                    <span><i class="fas fa-tag"></i> 서비스 관련</span>
+                                    <span><i class="fas fa-calendar"></i> 2024-11-25</span>
+                                    <span class="status-badge status-completed">
+                                        <i class="fas fa-check-circle"></i> 답변 완료
+                                    </span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="toggleInquiryDetail(this)">
+                                <i class="fas fa-chevron-down"></i> 상세보기
+                            </button>
+                        </div>
+
+                        <div class="inquiry-content">
+                            <p>안녕하세요. 기업 플랜 요금에 대해 문의드립니다.</p>
+                            <p>현재 베이직 플랜을 이용하고 있는데, 기업 플랜으로 업그레이드 시 어떤 혜택을 받을 수 있는지 알고 싶습니다. 특히 저장 공간, API 호출 제한, 협업자 수 등 구체적인 차이점을 알려주세요.</p>
+                            <p>또한 연간 결제 시 할인 정책이 있는지도 함께 문의드립니다.</p>
+                        </div>
+
+                        <div class="inquiry-response">
+                            <div class="response-header">
+                                <i class="fas fa-reply"></i> 전시 고객센터의 답변 (2024-11-25)
+                            </div>
+                            <p>안녕하세요. 전시를 이용해주셔서 감사합니다.</p>
+                            <p>기업 플랜에 대해 문의주셨네요. 기업 플랜은 다음과 같은 혜택을 제공합니다:</p>
+                            <ul style="margin: 15px 0; padding-left: 20px;">
+                                <li>저장 공간: 무제한</li>
+                                <li>API 호출: 월 100만 건</li>
+                                <li>협업자 수: 50명까지 확장 가능</li>
+                                <li>우선 기술 지원 (24시간 내 응답 보장)</li>
+                                <li>맞춤형 기능 개발 지원</li>
+                            </ul>
+                            <p>연간 결제 시 20% 할인 혜택을 제공하고 있습니다. 더 자세한 상담을 원하시면 고객센터로 연락 부탁드립니다.</p>
+                            <p style="margin-top: 15px;">감사합니다.<br><strong>전시 고객센터 드림</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- 답변 대기 중인 문의 -->
+                    <div class="inquiry-item slide-in" data-status="pending" data-type="technical">
+                        <div class="inquiry-header">
+                            <div style="flex: 1;">
+                                <div class="inquiry-title">API 연동 관련 기술 문의</div>
+                                <div class="inquiry-meta">
+                                    <span><i class="fas fa-tag"></i> 기술 지원</span>
+                                    <span><i class="fas fa-calendar"></i> 2024-11-28</span>
+                                    <span class="status-badge status-pending">
+                                        <i class="fas fa-clock"></i> 답변 대기
+                                    </span>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="toggleInquiryDetail(this)">
+                                <i class="fas fa-chevron-down"></i> 상세보기
+                            </button>
+                        </div>
+
+                        <div class="inquiry-content">
+                            <p>REST API 연동 중 인증 관련 문제가 발생했습니다.</p>
+                            <p>OAuth 2.0 설정을 가이드에 따라 진행했는데, access_token 발급 시 401 Unauthorized 에러가 발생합니다. client_id와 client_secret은 여러 번 확인했는데 정확하게 입력했습니다.</p>
+                            <p>혹시 API 키 발급 시 대기 시간이 필요한지, 혹은 다른 설정이 필요한지 알려주시면 감사하겠습니다.</p>
+                            <p>관련 코드와 에러 로그를 첨부 파일로 보내드립니다.</p>
+                        </div>
+
+                        <div class="inquiry-response">
+                            <div class="response-header">
+                                <i class="fas fa-clock"></i> 답변 대기 중
+                            </div>
+                            <p>고객님의 문의는 현재 담당자가 검토 중입니다. 빠른 시간 내 답변 드리겠습니다.</p>
+                            <p>예상 응답 시간: 24시간 내</p>
+                        </div>
+                    </div>
+
+                    <!-- 처리 중인 문의 -->
+                    <div class="inquiry-item slide-in" data-status="processing" data-type="payment">
+                        <div class="inquiry-header">
+                            <div style="flex: 1;">
+                                <div class="inquiry-title">월간 결제 취소 및 환불 문의</div>
+                                <div class="inquiry-meta">
+                                    <span><i class="fas fa-tag"></i> 결제 관련</span>
+                                    <span><i class="fas fa-calendar"></i> 2024-11-29</span>
+                                    <span class="status-badge status-active">
+                                        <i class="fas fa-spinner"></i> 처리 중
+                                    </span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="toggleInquiryDetail(this)">
+                                <i class="fas fa-chevron-down"></i> 상세보기
+                            </button>
+                        </div>
+
+                        <div class="inquiry-content">
+                            <p>11월 1일에 결제한 월간 플랜을 취소하고 환불받고 싶습니다.</p>
+                            <p>서비스가 저희 회사의 요구사항과 맞지 않아 다른 솔루션으로 전환하기로 결정했습니다. 한 달 이용권을 구매한 지 28일이 지났지만, 실제 서비스 이용은 3일 정도만 했습니다.</p>
+                            <p>환불 정책을 확인하고 정산 절차를 안내해주시면 감사하겠습니다.</p>
+                        </div>
+
+                        <div class="inquiry-response">
+                            <div class="response-header">
+                                <i class="fas fa-reply"></i> 전시 고객센터의 답변 (2024-11-29)
+                            </div>
+                            <p>안녕하세요. 결제 취소 문의에 대해 답변드립니다.</p>
+                            <p>고객님의 사유를 잘 이해했습니다. 현재 결제팀에서 환불 가능 여부를 검토 중입니다. 이용 기간이 남아있어 부분 환불 정책을 적용할 수 있는지 확인 중입니다.</p>
+                            <p><strong>예상 처리 시간: 영업일 기준 2-3일 내 연락 드리겠습니다.</strong></p>
+                            <p style="margin-top: 15px;">감사합니다.<br><strong>전시 결제팀 드림</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 문의 폼 제출
+        document.getElementById('inquiryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 폼 유효성 검사
+            const inquiryType = document.getElementById('inquiryType').value;
+            const inquiryTitle = document.getElementById('inquiryTitle').value.trim();
+            const inquiryContent = document.getElementById('inquiryContent').value.trim();
+            const inquiryEmail = document.getElementById('inquiryEmail').value.trim();
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+
+            if (!inquiryType) {
+                alert('문의 유형을 선택해주세요.');
+                return;
+            }
+
+            if (!inquiryTitle) {
+                alert('문의 제목을 입력해주세요.');
+                return;
+            }
+
+            if (!inquiryContent) {
+                alert('문의 내용을 입력해주세요.');
+                return;
+            }
+
+            if (!inquiryEmail) {
+                alert('이메일 주소를 입력해주세요.');
+                return;
+            }
+
+            if (!agreeTerms) {
+                alert('개인정보 수집 및 이용에 동의해주세요.');
+                return;
+            }
+
+            // 문의 제출 시뮬레이션
+            if (confirm('문의를 접수하시겠습니까? 24시간 내에 답변드리겠습니다.')) {
+                // 문의 내역에 새 항목 추가 (시뮬레이션)
+                addNewInquiryToHistory(inquiryType, inquiryTitle, inquiryContent, inquiryEmail);
+
+                // 성공 메시지
+                alert('문의가 성공적으로 접수되었습니다. 24시간 내에 답변드리겠습니다.');
+
+                // 폼 초기화
+                resetInquiryForm();
+
+                // 문의 내역으로 스크롤
+                document.getElementById('inquiryList').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+
+        // 문의 폼 초기화
+        function resetInquiryForm() {
+            document.getElementById('inquiryForm').reset();
+            document.getElementById('fileList').style.display = 'none';
+        }
+
+        // 파일 업로드
+        document.getElementById('inquiryFile').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            const fileList = document.getElementById('fileList');
+            const fileCount = document.getElementById('fileCount');
+
+            if (files.length > 0) {
+                fileList.style.display = 'block';
+                fileCount.textContent = files.length;
+            } else {
+                fileList.style.display = 'none';
+                return;
+            }
+
+            if (files.length > 5) {
+                alert('최대 5개 파일까지 업로드 가능합니다.');
+                e.target.value = '';
+                fileList.style.display = 'none';
+                return;
+            }
+
+            for (let file of files) {
+                if (file.size > maxSize) {
+                    alert(`${file.name} 파일 크기가 10MB를 초과했습니다.`);
+                    e.target.value = '';
+                    fileList.style.display = 'none';
+                    return;
+                }
+
+                if (!allowedTypes.includes(file.type)) {
+                    alert(`${file.name} 파일 형식을 지원하지 않습니다.\n지원 형식: JPG, PNG, PDF, DOC, DOCX`);
+                    e.target.value = '';
+                    fileList.style.display = 'none';
+                    return;
+                }
+            }
+
+            console.log('선택된 파일:', files.map(f => f.name).join(', '));
+        });
+
+        // 이메일 형식 검증
+        document.getElementById('inquiryEmail').addEventListener('blur', function() {
+            const email = this.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (email && !emailRegex.test(email)) {
+                this.style.borderColor = 'var(--danger-color)';
+                this.style.boxShadow = '0 0 0 4px rgba(220, 53, 69, 0.1)';
+                alert('올바른 이메일 주소를 입력해주세요.');
+            } else {
+                this.style.borderColor = '';
+                this.style.boxShadow = '';
+            }
+        });
+
+        // 전화번호 형식 자동 변환
+        document.getElementById('inquiryPhone').addEventListener('input', function() {
+            let value = this.value.replace(/[^0-9]/g, '');
+
+            if (value.length <= 3) {
+                value = value;
+            } else if (value.length <= 7) {
+                value = value.slice(0, 3) + '-' + value.slice(3);
+            } else if (value.length <= 11) {
+                value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7);
+            }
+
+            this.value = value;
+        });
+
+        // 문의 상세보기 토글
+        function toggleInquiryDetail(button) {
+            const inquiryItem = button.closest('.inquiry-item');
+            const content = inquiryItem.querySelector('.inquiry-content');
+            const response = inquiryItem.querySelector('.inquiry-response');
+            const icon = button.querySelector('i');
+
+            if (content.style.display === 'none' || !content.style.display) {
+                // 상세보기 펼치기
+                content.style.display = 'block';
+                if (response) {
+                    response.style.display = 'block';
+                }
+                icon.className = 'fas fa-chevron-up';
+                button.className = 'btn btn-primary btn-sm';
+                button.innerHTML = '<i class="fas fa-chevron-up"></i> 접기';
+            } else {
+                // 상세보기 접기
+                content.style.display = 'none';
+                if (response) {
+                    response.style.display = 'none';
+                }
+                icon.className = 'fas fa-chevron-down';
+                button.className = 'btn btn-secondary btn-sm';
+                button.innerHTML = '<i class="fas fa-chevron-down"></i> 상세보기';
+            }
+        }
+
+        // 새 문의 내역 추가 (시뮬레이션)
+        function addNewInquiryToHistory(type, title, content, email) {
+            const inquiryList = document.getElementById('inquiryList');
+            const today = new Date().toISOString().split('T')[0];
+
+            // 유형에 따른 텍스트 변환
+            const typeText = {
+                'service': '서비스 관련',
+                'payment': '결제 관련',
+                'account': '계정 관련',
+                'technical': '기술 지원',
+                'partnership': '제휴 문의',
+                'other': '기타'
+            }[type] || '기타';
+
+            const newInquiry = document.createElement('div');
+            newInquiry.className = 'inquiry-item slide-in';
+            newInquiry.setAttribute('data-status', 'pending');
+            newInquiry.setAttribute('data-type', type);
+            newInquiry.innerHTML = `
+                <div class="inquiry-header">
+                    <div style="flex: 1;">
+                        <div class="inquiry-title">${title}</div>
+                        <div class="inquiry-meta">
+                            <span><i class="fas fa-tag"></i> ${typeText}</span>
+                            <span><i class="fas fa-calendar"></i> ${today}</span>
+                            <span class="status-badge status-pending">
+                                <i class="fas fa-clock"></i> 답변 대기
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="toggleInquiryDetail(this)">
+                        <i class="fas fa-chevron-down"></i> 상세보기
+                    </button>
+                </div>
+
+                <div class="inquiry-content" style="display: none;">
+                    ${content.replace(/\n/g, '<br>')}
+                </div>
+
+                <div class="inquiry-response" style="display: none;">
+                    <div class="response-header">
+                        <i class="fas fa-clock"></i> 답변 대기 중
+                    </div>
+                    <p>고객님의 문의는 현재 담당자가 검토 중입니다. 빠른 시간 내 답변 드리겠습니다.</p>
+                    <p>예상 응답 시간: 24시간 내</p>
+                </div>
+            `;
+
+            // 새 문의를 리스트 맨 위에 추가
+            inquiryList.insertBefore(newInquiry, inquiryList.firstChild);
+
+            // 애니메이션 효과
+            newInquiry.style.opacity = '0';
+            newInquiry.style.transform = 'translateY(-20px)';
+
+            setTimeout(() => {
+                newInquiry.style.opacity = '1';
+                newInquiry.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        // 필터 기능
+        function filterInquiries() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const inquiryItems = document.querySelectorAll('.inquiry-item');
+            let visibleCount = 0;
+
+            inquiryItems.forEach(item => {
+                const status = item.getAttribute('data-status');
+                const type = item.getAttribute('data-type');
+
+                const statusMatch = statusFilter === 'all' || status === statusFilter;
+                const typeMatch = typeFilter === 'all' || type === typeFilter;
+
+                if (statusMatch && typeMatch) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // 결과가 없을 경우 메시지 표시
+            const inquiryList = document.getElementById('inquiryList');
+            let emptyMessage = document.getElementById('emptyMessage');
+
+            if (visibleCount === 0) {
+                if (!emptyMessage) {
+                    emptyMessage = document.createElement('div');
+                    emptyMessage.id = 'emptyMessage';
+                    emptyMessage.className = 'empty-state';
+                    emptyMessage.innerHTML = `
+                        <i class="fas fa-search"></i>
+                        <h3>검색 결과가 없습니다</h3>
+                        <p>선택하신 필터 조건에 해당하는 문의 내역이 없습니다.<br>다른 조건으로 검색해보세요.</p>
+                    `;
+                    inquiryList.appendChild(emptyMessage);
+                }
+            } else if (emptyMessage) {
+                emptyMessage.remove();
+            }
+        }
+
+        // 초기 로드 시 문의 내역의 상세보기는 접어두기
+        document.addEventListener('DOMContentLoaded', function() {
+            const inquiryItems = document.querySelectorAll('.inquiry-item');
+            inquiryItems.forEach(item => {
+                const content = item.querySelector('.inquiry-content');
+                const response = item.querySelector('.inquiry-response');
+                if (content) {
+                    content.style.display = 'none';
+                }
+                if (response) {
+                    response.style.display = 'none';
+                }
+
+                // 기존 아이콘 확인 및 변경
+                const button = item.querySelector('.inquiry-header button');
+                if (button) {
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        icon.className = 'fas fa-chevron-down';
+                    }
+                }
+            });
+
+            // 필터 이벤트 리스너 추가
+            document.getElementById('statusFilter').addEventListener('change', filterInquiries);
+            document.getElementById('typeFilter').addEventListener('change', filterInquiries);
+        });
+
+        // 드래그 앤 드롭 파일 업로드
+        const fileUploadLabel = document.querySelector('.file-upload-label');
+        const fileInput = document.getElementById('inquiryFile');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileUploadLabel.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileUploadLabel.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileUploadLabel.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            fileUploadLabel.style.borderColor = 'var(--primary-color)';
+            fileUploadLabel.style.background = 'linear-gradient(135deg, rgba(0,123,255,0.1) 0%, rgba(0,123,255,0.15) 100%)';
+        }
+
+        function unhighlight(e) {
+            fileUploadLabel.style.borderColor = 'var(--border-color)';
+            fileUploadLabel.style.background = 'linear-gradient(135deg, var(--light-color) 0%, #e9ecef 100%)';
+        }
+
+        fileUploadLabel.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            fileInput.files = files;
+
+            // 파일 선택 이벤트 트리거
+            const event = new Event('change', { bubbles: true });
+            fileInput.dispatchEvent(event);
+        }
+    </script>
+</body>
+</html>

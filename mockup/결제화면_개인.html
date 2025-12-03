@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>결제하기 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding: 20px 15px 100px; /* Add padding for fixed button */
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- Section Styling --- */
+        .section {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* --- Order Summary --- */
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--light-color);
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .order-item-name {
+            font-weight: 500;
+        }
+        .order-item-price {
+            color: var(--text-muted);
+        }
+        .price-breakdown {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .price-row.total {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+        .price-row.discount {
+            color: var(--success-color);
+        }
+
+        /* --- Payment Method --- */
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+        .payment-option:hover {
+            border-color: var(--primary-color);
+        }
+        .payment-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        .payment-option input[type="radio"] {
+            margin-right: 12px;
+        }
+        .payment-option-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+        .payment-option-details {
+            flex-grow: 1;
+        }
+        .payment-option-title {
+            font-weight: 500;
+        }
+        .payment-option-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .payment-form {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: none; /* Hidden by default */
+        }
+        .payment-form.active {
+            display: block;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex-grow: 1;
+        }
+        .form-group.full-width {
+            width: 100%;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* --- Billing Info --- */
+        .billing-info p {
+            margin-bottom: 8px;
+        }
+        .billing-info strong {
+            color: var(--dark-color);
+        }
+
+        /* --- Terms --- */
+        .terms-agreement {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .terms-agreement input[type="checkbox"] {
+            margin-top: 4px;
+        }
+        .terms-agreement label {
+            font-size: 0.9rem;
+        }
+        .terms-agreement a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* --- Payment Button --- */
+        .payment-button-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-background);
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .payment-button {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: not-allowed;
+            transition: background-color 0.2s;
+        }
+        .payment-button.active {
+            background-color: var(--primary-color);
+            cursor: pointer;
+        }
+        .payment-button.active:hover {
+            background-color: #0056b3;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="header-icon" id="backButton">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="app-title">결제하기</div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <main class="app-content">
+        <!-- Order Summary Section -->
+        <section class="section">
+            <h2 class="section-title">주문 정보</h2>
+            <div id="orderItemsContainer">
+                <!-- Order items will be dynamically added here -->
+            </div>
+            <div class="price-breakdown">
+                <div class="price-row">
+                    <span>총 상품 금액</span>
+                    <span id="subtotal">0원</span>
+                </div>
+                <div class="price-row discount" id="promoDiscountRow" style="display: none;">
+                    <span>프로모션 할인</span>
+                    <span id="promoDiscount">-0원</span>
+                </div>
+                <div class="price-row discount" id="pointsDiscountRow" style="display: none;">
+                    <span>포인트 사용</span>
+                    <span id="pointsDiscount">-0원</span>
+                </div>
+                <div class="price-row total">
+                    <span>최종 결제 금액</span>
+                    <span id="totalAmount">0원</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment Method Section -->
+        <section class="section">
+            <h2 class="section-title">결제 수단</h2>
+            <div class="payment-options">
+                <label class="payment-option selected">
+                    <input type="radio" name="paymentMethod" value="card" checked>
+                    <i class="fas fa-credit-card payment-option-icon"></i>
+                    <div class="payment-option-details">
+                        <div class="payment-option-title">신용카드</div>
+                        <div class="payment-option-desc">VISA, Mastercard, AMEX 등</div>
+                    </div>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="paymentMethod" value="transfer">
+                    <i class="fas fa-university payment-option-icon"></i>
+                    <div class="payment-option-details">
+                        <div class="payment-option-title">계좌이체</div>
+                        <div class="payment-option-desc">결제 확인 후 자동 이체됩니다</div>
+                    </div>
+                </label>
+            </div>
+            
+            <!-- Credit Card Form -->
+            <div class="payment-form active" id="cardPaymentForm">
+                <div class="form-group full-width">
+                    <label for="cardNumber" class="form-label">카드 번호</label>
+                    <input type="text" id="cardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="expiryDate" class="form-label">유효기간 (MM/YY)</label>
+                        <input type="text" id="expiryDate" class="form-input" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="cvc" class="form-label">CVC</label>
+                        <input type="text" id="cvc" class="form-input" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Transfer Info -->
+            <div class="payment-form" id="transferPaymentInfo">
+                <p>계좌이체를 선택하셨습니다. 결제하기 버튼을 누르면 인증 결제 페이지로 이동합니다.</p>
+                <p>이후, 본인 명의의 계좌에서 아래 정보로 입금해주시면 확인 후 결제가 완료됩니다.</p>
+                <p><strong>입금은행:</strong> 국민은행</p>
+                <p><strong>계좌번호:</strong> 123-456-7890</p>
+                <p><strong>예금주:</strong> (주)전시</p>
+            </div>
+        </section>
+
+        <!-- Billing Information Section -->
+        <section class="section billing-info-section">
+            <h2 class="section-title">결제자 정보</h2>
+            <div class="billing-info">
+                <p><strong>이름:</strong> <span id="userName">홍길동</span></p>
+                <p><strong>이메일:</strong> <span id="userEmail">gildong@example.com</span></p>
+                <p><strong>연락처:</strong> <span id="userPhone">010-1234-5678</span></p>
+            </div>
+        </section>
+
+        <!-- Terms Agreement Section -->
+        <section class="section terms-section">
+            <div class="terms-agreement">
+                <input type="checkbox" id="termsAgree">
+                <label for="termsAgree">
+                    <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다. (필수)
+                </label>
+            </div>
+        </section>
+    </main>
+
+    <!-- Fixed Payment Button -->
+    <div class="payment-button-container">
+        <button class="payment-button" id="paymentButton" disabled>
+            <span id="paymentButtonText">약관에 동의해주세요</span>
+        </button>
+    </div>
+
+    <script>
+        // --- Mock Data from Cart ---
+        // In a real app, this data would be passed from the previous page (e.g., via URL params, sessionStorage)
+        const orderData = {
+            items: [
+                { id: 1, title: "마케팅 전략 기획 워크숍", price: 150000 },
+                { id: 3, title: "스타트업 재무 관리 실무", price: 180000 }
+            ],
+            subtotal: 330000,
+            promoDiscount: 33000, // 10% off
+            pointsDiscount: 5000,
+            totalAmount: 292000,
+            appliedPromoName: '신규가입 감사 쿠폰',
+            pointsUsed: 5000
+        };
+
+        const userData = {
+            name: '홍길동',
+            email: 'gildong@example.com',
+            phone: '010-1234-5678'
+        };
+
+        // --- DOM Elements ---
+        const backButton = document.getElementById('backButton');
+        const orderItemsContainer = document.getElementById('orderItemsContainer');
+        const subtotalElement = document.getElementById('subtotal');
+        const promoDiscountRow = document.getElementById('promoDiscountRow');
+        const promoDiscountElement = document.getElementById('promoDiscount');
+        const pointsDiscountRow = document.getElementById('pointsDiscountRow');
+        const pointsDiscountElement = document.getElementById('pointsDiscount');
+        const totalAmountElement = document.getElementById('totalAmount');
+        const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
+        const cardPaymentForm = document.getElementById('cardPaymentForm');
+        const transferPaymentInfo = document.getElementById('transferPaymentInfo');
+        const termsAgreeCheckbox = document.getElementById('termsAgree');
+        const paymentButton = document.getElementById('paymentButton');
+        const paymentButtonText = document.getElementById('paymentButtonText');
+        
+        // User info elements
+        document.getElementById('userName').textContent = userData.name;
+        document.getElementById('userEmail').textContent = userData.email;
+        document.getElementById('userPhone').textContent = userData.phone;
+
+        // --- Functions ---
+        function populateOrderSummary() {
+            // Populate order items
+            orderItemsContainer.innerHTML = '';
+            orderData.items.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'order-item';
+                itemElement.innerHTML = `
+                    <span class="order-item-name">${item.title}</span>
+                    <span class="order-item-price">${formatPrice(item.price)}</span>
+                `;
+                orderItemsContainer.appendChild(itemElement);
+            });
+
+            // Populate price breakdown
+            subtotalElement.textContent = formatPrice(orderData.subtotal);
+            if (orderData.promoDiscount > 0) {
+                promoDiscountRow.style.display = 'flex';
+                promoDiscountElement.textContent = `-${formatPrice(orderData.promoDiscount)}`;
+            }
+            if (orderData.pointsDiscount > 0) {
+                pointsDiscountRow.style.display = 'flex';
+                pointsDiscountElement.textContent = `-${formatPrice(orderData.pointsDiscount)}`;
+            }
+            totalAmountElement.textContent = formatPrice(orderData.totalAmount);
+        }
+        
+        function handlePaymentMethodChange() {
+            const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            
+            if (selectedMethod === 'card') {
+                cardPaymentForm.classList.add('active');
+                transferPaymentInfo.classList.remove('active');
+            } else {
+                cardPaymentForm.classList.remove('active');
+                transferPaymentInfo.classList.add('active');
+            }
+        }
+
+        function handleTermsChange() {
+            if (termsAgreeCheckbox.checked) {
+                paymentButton.disabled = false;
+                paymentButton.classList.add('active');
+                paymentButtonText.textContent = `${formatPrice(orderData.totalAmount)} 결제하기`;
+            } else {
+                paymentButton.disabled = true;
+                paymentButton.classList.remove('active');
+                paymentButtonText.textContent = '약관에 동의해주세요';
+            }
+        }
+
+        function processPayment() {
+            // Basic validation for card payment
+            const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            if (selectedMethod === 'card') {
+                const cardNumber = document.getElementById('cardNumber').value;
+                const expiryDate = document.getElementById('expiryDate').value;
+                const cvc = document.getElementById('cvc').value;
+
+                if (!cardNumber || !expiryDate || !cvc) {
+                    alert('카드 정보를 모두 입력해주세요.');
+                    return;
+                }
+            }
+
+            // Show loading state
+            paymentButton.disabled = true;
+            paymentButtonText.textContent = '결제 처리 중...';
+
+            // Simulate payment processing
+            setTimeout(() => {
+                alert('결제가 성공적으로 완료되었습니다!\n마이페이지에서 결제 내역을 확인할 수 있습니다.');
+                // Redirect to a success page or my page
+                // window.location.href = '/결제완료.html';
+            }, 2000);
+        }
+        
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ko-KR', {
+                style: 'currency',
+                currency: 'KRW',
+                maximumFractionDigits: 0
+            }).format(price);
+        }
+
+        // --- Event Listeners ---
+        backButton.addEventListener('click', () => window.history.back());
+        paymentOptions.forEach(option => {
+            option.addEventListener('change', handlePaymentMethodChange);
+        });
+        termsAgreeCheckbox.addEventListener('change', handleTermsChange);
+        paymentButton.addEventListener('click', processPayment);
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            populateOrderSummary();
+            handleTermsChange(); // Initial check
+        });
+
+    </script>
+</body>
+</html>

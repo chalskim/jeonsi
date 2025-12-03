@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 교육 광고 상품 선택</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* App Header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f0f2f5;
+            color: #4a6cf7;
+            cursor: pointer;
+        }
+        
+        .app-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a6cf7;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* App Content */
+        .app-content {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        /* Section Styles */
+        .section {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #4a6cf7;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #4a6cf7 0%, #3a5bd9 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .hero-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .hero-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        /* Stats Box */
+        .stats-box {
+            background-color: #f8f9fc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Plan Cards */
+        .plan-card {
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .plan-card:hover {
+            border-color: #4a6cf7;
+            box-shadow: 0 4px 15px rgba(74, 108, 247, 0.15);
+        }
+        
+        .plan-card.selected {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.05);
+        }
+        
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .plan-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .plan-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a6cf7;
+        }
+        
+        .plan-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background-color: #ff4757;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .plan-features {
+            margin: 15px 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .feature-item i {
+            color: #4caf50;
+            margin-right: 8px;
+            margin-top: 2px;
+        }
+        
+        .plan-discount {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #856404;
+        }
+        
+        .plan-discount i {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+        
+        .plan-target {
+            font-size: 13px;
+            color: #777;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        
+        .plan-button {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #4a6cf7;
+            background-color: white;
+            color: #4a6cf7;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .plan-card.selected .plan-button {
+            background-color: #4a6cf7;
+            color: white;
+        }
+        
+        /* Addon Options */
+        .addon-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .addon-option:hover {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.05);
+        }
+        
+        .addon-option.selected {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.1);
+        }
+        
+        .addon-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .addon-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+        
+        .addon-details h4 {
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+        
+        .addon-details p {
+            font-size: 13px;
+            color: #777;
+        }
+        
+        .addon-price {
+            font-weight: 600;
+            color: #4a6cf7;
+        }
+        
+        /* Design Services */
+        .design-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .design-option:hover {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.05);
+        }
+        
+        .design-option.selected {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.1);
+        }
+        
+        .design-radio {
+            margin-right: 12px;
+        }
+        
+        /* Duration Selection */
+        .duration-options {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .duration-option {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .duration-option:hover {
+            border-color: #4a6cf7;
+        }
+        
+        .duration-option.selected {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.1);
+            color: #4a6cf7;
+            font-weight: 600;
+        }
+        
+        .duration-discount {
+            font-size: 12px;
+            color: #ff4757;
+            margin-top: 3px;
+        }
+        
+        /* Summary */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .summary-item.total {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #e0e6ed;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .summary-discount {
+            color: #4caf50;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: block;
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background-color: #4a6cf7;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5bd9;
+        }
+        
+        /* Targeting Settings */
+        .targeting-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .targeting-item:hover {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.05);
+        }
+        
+        .targeting-item i {
+            color: #4a6cf7;
+            margin-right: 10px;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #777;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item.active {
+            color: #4a6cf7;
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app-content {
+                padding: 15px;
+            }
+            
+            .duration-options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">교육 광고 상품 선택</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="hero-title">🎓 교육기관을 위한 광고 솔루션</h1>
+            <p class="hero-subtitle">월 평균 15,000명의 심사원 지망생이<br>CertMatch에서 교육 과정을 찾습니다</p>
+        </div>
+        
+        <!-- Expected Effects -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line"></i>
+                우리 기관 예상 효과
+            </h2>
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span>• 월 예상 노출수:</span>
+                    <strong>50,000회</strong>
+                </div>
+                <div class="stat-item">
+                    <span>• 월 예상 클릭수:</span>
+                    <strong>1,500회</strong>
+                </div>
+                <div class="stat-item">
+                    <span>• 월 예상 수강 문의:</span>
+                    <strong>80건</strong>
+                </div>
+                <div class="stat-item">
+                    <span>• 예상 수강생 유치:</span>
+                    <strong>15~25명</strong>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recommended Plans -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-lightbulb"></i>
+                추천 플랜
+            </h2>
+            
+            <!-- Intro Plan -->
+            <div class="plan-card" data-plan="intro">
+                <div class="plan-header">
+                    <div class="plan-name">🌱 Intro</div>
+                    <div class="plan-price">₩200,000 / 월</div>
+                </div>
+                <div class="plan-features">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>교육 탭 상단 노출 (월 30회)</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>"인기" 또는 "신규" 뱃지</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>수강 후기 우선 표시</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>월간 성과 리포트</span>
+                    </div>
+                </div>
+                <div class="plan-target">추천 대상: 소규모 교육기관</div>
+                <button class="plan-button">선택하기</button>
+            </div>
+            
+            <!-- Growth Plan -->
+            <div class="plan-card selected" data-plan="growth">
+                <div class="plan-badge">⭐ 인기</div>
+                <div class="plan-header">
+                    <div class="plan-name">🚀 Growth</div>
+                    <div class="plan-price">₩500,000 / 월</div>
+                </div>
+                <div class="plan-features">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Intro 혜택 전체</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>홈 배너 교육 프로모션 (월 1회)</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>채용공고 무료 게시</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>수강생 이력 자동 반영</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>전담 매니저 배정</span>
+                    </div>
+                </div>
+                <div class="plan-discount">
+                    <i class="fas fa-tag"></i>
+                    3개월 계약 시 15% 할인 (월 ₩425,000)
+                </div>
+                <div class="plan-target">추천 대상: 중견 교육기관</div>
+                <button class="plan-button">선택하기 ← 현재 선택됨</button>
+            </div>
+            
+            <!-- Enterprise Plan -->
+            <div class="plan-card" data-plan="enterprise">
+                <div class="plan-header">
+                    <div class="plan-name">👑 Enterprise</div>
+                    <div class="plan-price">₩1,000,000 / 월</div>
+                </div>
+                <div class="plan-features">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Growth 혜택 전체</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>정부 지원 교육 자동 안내 연동</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>전용 랜딩 페이지 + 브랜딩</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>오프라인 행사 플랫폼 내 홍보</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>주간 성과 미팅</span>
+                    </div>
+                </div>
+                <div class="plan-discount">
+                    <i class="fas fa-gift"></i>
+                    수강생 유치 보장 (월 10명)
+                </div>
+                <div class="plan-target">추천 대상: 대형 교육기관</div>
+                <button class="plan-button">선택하기</button>
+            </div>
+        </div>
+        
+        <!-- Additional Banner Options -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-plus-square"></i>
+                배너 광고 추가 옵션
+            </h2>
+            
+            <div class="addon-option" data-addon="edu-tab">
+                <div class="addon-info">
+                    <input type="checkbox" class="addon-checkbox">
+                    <div class="addon-details">
+                        <h4>교육 탭 배너 (1주일)</h4>
+                        <p>교육 목록 상단에 노출되는 배너 광고</p>
+                    </div>
+                </div>
+                <div class="addon-price">+ ₩800,000 / 주</div>
+            </div>
+            
+            <div class="addon-option" data-addon="main-hero">
+                <div class="addon-info">
+                    <input type="checkbox" class="addon-checkbox">
+                    <div class="addon-details">
+                        <h4>메인 히어로 배너 (1주일)</h4>
+                        <p>메인 화면 최상단에 노출되는 대형 배너</p>
+                    </div>
+                </div>
+                <div class="addon-price">+ ₩2,000,000 / 주</div>
+            </div>
+            
+            <div class="addon-option selected" data-addon="native-ad">
+                <div class="addon-info">
+                    <input type="checkbox" class="addon-checkbox" checked>
+                    <div class="addon-details">
+                        <h4>네이티브 광고 (1주일)</h4>
+                        <p>콘텐츠 형태로 자연스럽게 노출되는 광고</p>
+                    </div>
+                </div>
+                <div class="addon-price">+ ₩1,200,000 / 주</div>
+            </div>
+        </div>
+        
+        <!-- Design Services -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-palette"></i>
+                디자인 제작 서비스
+            </h2>
+            
+            <div class="design-option" data-design="basic">
+                <input type="radio" name="design" class="design-radio" checked>
+                <span>기본 디자인</span>
+                <span style="margin-left: auto; font-weight: 600;">무료 포함</span>
+            </div>
+            
+            <div class="design-option selected" data-design="premium">
+                <input type="radio" name="design" class="design-radio">
+                <span>프리미엄 디자인</span>
+                <span style="margin-left: auto; font-weight: 600; color: #4a6cf7;">+ ₩500,000</span>
+            </div>
+            
+            <div class="design-option" data-design="video">
+                <input type="radio" name="design" class="design-radio">
+                <span>동영상 배너</span>
+                <span style="margin-left: auto; font-weight: 600; color: #4a6cf7;">+ ₩1,000,000</span>
+            </div>
+        </div>
+        
+        <!-- Duration Selection -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                광고 게재 기간 선택
+            </h2>
+            
+            <div class="duration-options">
+                <div class="duration-option" data-duration="1">
+                    <div>1개월</div>
+                </div>
+                <div class="duration-option selected" data-duration="3">
+                    <div>3개월</div>
+                    <div class="duration-discount">15%↓</div>
+                </div>
+                <div class="duration-option" data-duration="6">
+                    <div>6개월</div>
+                    <div class="duration-discount">20%↓</div>
+                </div>
+                <div class="duration-option" data-duration="12">
+                    <div>12개월</div>
+                    <div class="duration-discount">30%↓</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 10px; color: #4a6cf7; font-weight: 600;">
+                선택된 기간: 3개월
+            </div>
+        </div>
+        
+        <!-- Targeting Settings -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-bullseye"></i>
+                타겟팅 설정 (선택사항)
+            </h2>
+            
+            <div class="targeting-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>지역 타겟팅 설정</span>
+                <i class="fas fa-chevron-right" style="margin-left: auto;"></i>
+            </div>
+            
+            <div class="targeting-item">
+                <i class="fas fa-certificate"></i>
+                <span>관심 인증 유형 설정</span>
+                <i class="fas fa-chevron-right" style="margin-left: auto;"></i>
+            </div>
+            
+            <div class="targeting-item">
+                <i class="fas fa-chart-line"></i>
+                <span>사용자 행동 패턴 설정</span>
+                <i class="fas fa-chevron-right" style="margin-left: auto;"></i>
+            </div>
+        </div>
+        
+        <!-- Quote Summary -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-file-invoice"></i>
+                견적 요약
+            </h2>
+            
+            <div class="summary-item">
+                <span>• Growth 플랜</span>
+                <span>₩500,000 × 3</span>
+            </div>
+            <div class="summary-item">
+                <span>• 네이티브 광고</span>
+                <span>₩1,200,000 × 1</span>
+            </div>
+            <div class="summary-item">
+                <span>• 프리미엄 디자인</span>
+                <span>₩500,000</span>
+            </div>
+            <div class="summary-item">
+                <span>──────────────────</span>
+            </div>
+            <div class="summary-item">
+                <span>• 소계</span>
+                <span>₩3,200,000</span>
+            </div>
+            <div class="summary-item summary-discount">
+                <span>• 3개월 할인 (15%)</span>
+                <span>-₩225,000</span>
+            </div>
+            <div class="summary-item summary-discount">
+                <span>• 신규 광고주 할인</span>
+                <span>-₩320,000</span>
+            </div>
+            <div class="summary-item">
+                <span>──────────────────</span>
+            </div>
+            <div class="summary-item total">
+                <span>• 최종 금액</span>
+                <span>₩2,655,000</span>
+            </div>
+            <div style="text-align: center; margin-top: 10px; color: #4a6cf7;">
+                <strong>💡 월 ₩885,000 (VAT 별도)</strong>
+            </div>
+        </div>
+        
+        <!-- Next Button -->
+        <button class="btn btn-primary" id="nextBtn">
+            다음: 결제 정보 입력
+        </button>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>홈</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-graduation-cap"></i>
+            <span>교육</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-bullhorn"></i>
+            <span>광고</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-chart-bar"></i>
+            <span>분석</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>MY</span>
+        </a>
+    </nav>
+    
+    <script>
+        // Plan selection
+        const planCards = document.querySelectorAll('.plan-card');
+        planCards.forEach(card => {
+            card.addEventListener('click', function() {
+                planCards.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                updateSummary();
+            });
+        });
+        
+        // Addon selection
+        const addonOptions = document.querySelectorAll('.addon-option');
+        addonOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                if (e.target.classList.contains('addon-checkbox')) {
+                    this.classList.toggle('selected');
+                    updateSummary();
+                }
+            });
+        });
+        
+        // Design selection
+        const designOptions = document.querySelectorAll('.design-option');
+        designOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                designOptions.forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                updateSummary();
+            });
+        });
+        
+        // Duration selection
+        const durationOptions = document.querySelectorAll('.duration-option');
+        durationOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                durationOptions.forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                updateSummary();
+            });
+        });
+        
+        // Update summary function
+        function updateSummary() {
+            // This would update the summary based on selections
+            // Implementation would go here
+        }
+        
+        // Next button
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            window.location.href = 'payment-info.html';
+        });
+        
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.history.back();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>지원자 관리 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .header-back {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 80px;
+        }
+
+        /* --- Job Info Section --- */
+        .job-info-section {
+            background-color: var(--card-background);
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .job-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .job-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .job-meta-item i {
+            color: var(--primary-color);
+        }
+
+        .job-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .job-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .job-stat-number {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .job-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Tab Navigation --- */
+        .tab-nav {
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: var(--header-height);
+            z-index: 100;
+        }
+
+        .tab-container {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-button {
+            flex: 1;
+            min-width: 100px;
+            padding: 15px 10px;
+            background: none;
+            border: none;
+            font-size: 0.95rem;
+            cursor: pointer;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .tab-button.active {
+            font-weight: bold;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-count {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* --- Filter Section --- */
+        .filter-section {
+            background-color: var(--card-background);
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .search-bar {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 0.9rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .filter-button {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sort-dropdown {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .bulk-button {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .bulk-button:hover {
+            background-color: var(--light-color);
+        }
+
+        .bulk-button.primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .select-all {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* --- Tab Content --- */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- Applicant List --- */
+        .applicant-list {
+            padding: 15px;
+        }
+
+        .applicant-card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .applicant-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .applicant-checkbox {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .applicant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+
+        .applicant-info {
+            flex: 1;
+        }
+
+        .applicant-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .applicant-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .status-new {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+        }
+
+        .status-screening {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-passed {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-failed {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .applicant-contact {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .applicant-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .applicant-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            background-color: var(--light-color);
+            color: var(--text-color);
+        }
+
+        .applicant-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .action-button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
+        }
+
+        .action-button:hover {
+            background-color: #e9ecef;
+        }
+
+        .action-button.primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .action-button.success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .action-button.danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .applicant-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* --- Evaluation Section --- */
+        .evaluation-section {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+        }
+
+        .evaluation-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .evaluation-scores {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .score-stars {
+            color: var(--warning-color);
+        }
+
+        .score-value {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* --- Bulk Message Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            width: 90%;
+            max-width: 500px;
+            margin: 30px auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .selected-count {
+            background-color: var(--light-color);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .btn-send {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* --- Floating Action Button --- */
+        .fab {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 999;
+            transition: transform 0.2s;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .empty-description {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-back" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">채용 지원자 관리</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">5</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-download"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Job Info Section -->
+        <div class="job-info-section">
+            <div class="job-title">보안 컨설턴트 (정규직)</div>
+            <div class="job-meta">
+                <div class="job-meta-item">
+                    <i class="fas fa-building"></i>
+                    <span>정보보안팀</span>
+                </div>
+                <div class="job-meta-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>경기 성남시</span>
+                </div>
+                <div class="job-meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>2024.03.15 마감</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <div class="tab-container">
+                <button class="tab-button active" data-tab="all">
+                    전체
+                    <span class="tab-count">45</span>
+                </button>
+                <button class="tab-button" data-tab="screening">
+                    선별전
+                    <span class="tab-count">23</span>
+                </button>
+                <button class="tab-button" data-tab="passed">
+                    서류통과
+                    <span class="tab-count">12</span>
+                </button>
+                <button class="tab-button" data-tab="failed">
+                    탈락
+                    <span class="tab-count">10</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-controls">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="이름, 이메일, 경력 검색..." />
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <button class="filter-button">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <select class="sort-dropdown">
+                    <option value="recent">최신순</option>
+                    <option value="name">이름순</option>
+                    <option value="score">평점순</option>
+                    <option value="experience">경력순</option>
+                </select>
+            </div>
+            <div class="bulk-actions">
+                <div class="select-all">
+                    <input type="checkbox" class="checkbox" id="selectAll">
+                    <label for="selectAll">전체 선택</label>
+                </div>
+                <button class="bulk-button" id="bulkMessageBtn">
+                    <i class="fas fa-envelope"></i>
+                    <span>일괄 메시지</span>
+                </button>
+                <button class="bulk-button" id="bulkPassBtn">
+                    <i class="fas fa-check"></i>
+                    <span>일괄 통과</span>
+                </button>
+                <button class="bulk-button" id="bulkFailBtn">
+                    <i class="fas fa-times"></i>
+                    <span>일괄 탈락</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 전체 Tab Content -->
+        <div class="tab-content active" id="all">
+            <div class="applicant-list">
+                <!-- Applicant 1 - New -->
+                <div class="applicant-card" data-status="new">
+                    <input type="checkbox" class="applicant-checkbox">
+                    <div class="applicant-header">
+                        <div class="applicant-info">
+                            <div class="applicant-name">
+                                김철수
+                                <span class="applicant-status status-new">신규</span>
+                            </div>
+                            <div class="applicant-contact">
+                                <i class="fas fa-envelope"></i> chulsoo.kim@email.com • 
+                                <i class="fas fa-phone"></i> 010-1234-5678
+                            </div>
+                            <div class="applicant-tags">
+                                <span class="applicant-tag">5년 경력</span>
+                                <span class="applicant-tag">CISSP</span>
+                                <span class="applicant-tag">금융권 경험</span>
+                            </div>
+                        </div>
+                        <div class="applicant-actions">
+                            <button class="action-button">
+                                <i class="fas fa-message"></i> 메시지
+                            </button>
+                            <button class="action-button success">
+                                <i class="fas fa-check"></i> 서류 통과
+                            </button>
+                            <button class="action-button danger">
+                                <i class="fas fa-times"></i> 탈락
+                            </button>
+                        </div>
+                    </div>
+                    <div class="applicant-details">
+                        <div class="detail-item">
+                            <div class="detail-label">학력</div>
+                            <div class="detail-value">컴퓨터공학 석사</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">경력</div>
+                            <div class="detail-value">A은행 정보보안팀 5년</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">지원일</div>
+                            <div class="detail-value">2024.03.05 14:30</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">희망 연봉</div>
+                            <div class="detail-value">6,000만원</div>
+                        </div>
+                    </div>
+                    <div class="evaluation-section">
+                        <div class="evaluation-title">
+                            <i class="fas fa-star"></i>
+                            <span>AI 평가 점수</span>
+                        </div>
+                        <div class="evaluation-scores">
+                            <div class="score-item">
+                                <div class="score-stars">★★★★★☆☆</div>
+                                <div class="score-value">85점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★★★★☆☆</div>
+                                <div class="score-value">88점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★★☆☆☆</div>
+                                <div class="score-value">76점</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- More applicants... -->
+                <div class="applicant-card" data-status="new">
+                    <input type="checkbox" class="applicant-checkbox">
+                    <div class="applicant-header">
+                        <div class="applicant-info">
+                            <div class="applicant-name">
+                                이영희
+                                <span class="applicant-status status-new">신규</span>
+                            </div>
+                            <div class="applicant-contact">
+                                <i class="fas fa-envelope"></i> younghee.lee@email.com • 
+                                <i class="fas fa-phone"></i> 010-9876-5432
+                            </div>
+                            <div class="applicant-tags">
+                                <span class="applicant-tag">7년 경력</span>
+                                <span class="applicant-tag">CISA</span>
+                                <span class="applicant-tag">공공기관 경험</span>
+                            </div>
+                        </div>
+                        <div class="applicant-actions">
+                            <button class="action-button">
+                                <i class="fas fa-message"></i> 메시지
+                            </button>
+                            <button class="action-button success">
+                                <i class="fas fa-check"></i> 서류 통과
+                            </button>
+                            <button class="action-button danger">
+                                <i class="fas fa-times"></i> 탈락
+                            </button>
+                        </div>
+                    </div>
+                    <div class="applicant-details">
+                        <div class="detail-item">
+                            <div class="detail-label">학력</div>
+                            <div class="detail-value">정보보호학 박사</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">경력</div>
+                            <div class="detail-value">정부기관 정보보안 7년</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">지원일</div>
+                            <div class="detail-value">2024.03.03 09:15</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">희망 연봉</div>
+                            <div class="detail-value">7,000만원</div>
+                        </div>
+                    </div>
+                    <div class="evaluation-section">
+                        <div class="evaluation-title">
+                            <i class="fas fa-star"></i>
+                            <span>AI 평가 점수</span>
+                        </div>
+                        <div class="evaluation-scores">
+                            <div class="score-item">
+                                <div class="score-stars">★★★★★☆☆</div>
+                                <div class="score-value">88점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★★★★☆☆</div>
+                                <div class="score-value">91점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★★★☆☆☆</div>
+                                <div class="score-value">82점</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 선별전 Tab Content -->
+        <div class="tab-content" id="screening">
+            <div class="applicant-list">
+                <!-- Screening applicants -->
+                <div class="applicant-card" data-status="screening">
+                    <input type="checkbox" class="applicant-checkbox">
+                    <div class="applicant-header">
+                        <div class="applicant-info">
+                            <div class="applicant-name">
+                                박민준
+                                <span class="applicant-status status-screening">선별전</span>
+                            </div>
+                            <div class="applicant-contact">
+                                <i class="fas fa-envelope"></i> minjun.park@email.com • 
+                                <i class="fas fa-phone"></i> 010-5555-6666
+                            </div>
+                            <div class="applicant-tags">
+                                <span class="applicant-tag">10년 경력</span>
+                                <span class="applicant-tag">CISSP, CISA</span>
+                                <span class="applicant-tag">대기업 경험</span>
+                            </div>
+                        </div>
+                        <div class="applicant-actions">
+                            <button class="action-button">
+                                <i class="fas fa-message"></i> 메시지
+                            </button>
+                            <button class="action-button success">
+                                <i class="fas fa-check"></i> 서류 통과
+                            </button>
+                            <button class="action-button danger">
+                                <i class="fas fa-times"></i> 탈락
+                            </button>
+                        </div>
+                    </div>
+                    <div class="applicant-details">
+                        <div class="detail-item">
+                            <div class="detail-label">학력</div>
+                            <div class="detail-value">경영정보학 석사</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">경력</div>
+                            <div class="detail-value">삼성전자 정보보안팀 10년</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">지원일</div>
+                            <div class="detail-value">2024.03.01 11:20</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">희망 연봉</div>
+                            <div class="detail-value">8,000만원</div>
+                        </div>
+                    </div>
+                    <div class="evaluation-section">
+                        <div class="evaluation-title">
+                            <i class="fas fa-star"></i>
+                            <span>AI 평가 점수</span>
+                        </div>
+                        <div class="evaluation-scores">
+                            <div class="score-item">
+                                <div class="score-stars">★★★★★☆☆</div>
+                                <div class="score-value">92점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★★★★★☆</div>
+                                <div class="score-value">95점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★★★★☆☆</div>
+                                <div class="score-value">86점</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 서류통과 Tab Content -->
+        <div class="tab-content" id="passed">
+            <div class="applicant-list">
+                <!-- Passed applicants -->
+                <div class="applicant-card" data-status="passed">
+                    <input type="checkbox" class="applicant-checkbox">
+                    <div class="applicant-header">
+                        <div class="applicant-info">
+                            <div class="applicant-name">
+                                최지아
+                                <span class="applicant-status status-passed">서류 통과</span>
+                            </div>
+                            <div class="applicant-contact">
+                                <i class="fas fa-envelope"></i> jia.choi@email.com • 
+                                <i class="fas fa-phone"></i> 010-2222-3333
+                            </div>
+                            <div class="applicant-tags">
+                                <span class="applicant-tag">8년 경력</span>
+                                <span class="applicant-tag">CISSP</span>
+                                <span class="applicant-tag">외국계 경험</span>
+                            </div>
+                        </div>
+                        <div class="applicant-actions">
+                            <button class="action-button">
+                                <i class="fas fa-calendar"></i> 면접 예약
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-message"></i> 메시지
+                            </button>
+                        </div>
+                    </div>
+                    <div class="applicant-details">
+                        <div class="detail-item">
+                            <div class="detail-label">학력</div>
+                            <div class="detail-value">정보통신학사</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">경력</div>
+                            <div class="detail-value">LG유플 정보보안 8년</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">지원일</div>
+                            <div class="detail-value">2024.03.02 16:45</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">희망 연봉</div>
+                            <div class="detail-value">7,500만원</div>
+                        </div>
+                    </div>
+                    <div class="evaluation-section">
+                        <div class="evaluation-title">
+                            <i class="fas fa-star"></i>
+                            <span>AI 평가 점수</span>
+                        </div>
+                        <div class="evaluation-scores">
+                            <div class="score-item">
+                                <div class="score-stars">★★★★☆☆☆</div>
+                                <div class="score-value">78점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★★★☆☆☆</div>
+                                <div class="score-value">82점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★★☆☆☆☆</div>
+                                <div class="score-value">71점</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 탈락 Tab Content -->
+        <div class="tab-content" id="failed">
+            <div class="applicant-list">
+                <!-- Failed applicants -->
+                <div class="applicant-card" data-status="failed">
+                    <input type="checkbox" class="applicant-checkbox">
+                    <div class="applicant-header">
+                        <div class="applicant-info">
+                            <div class="applicant-name">
+                                정다운
+                                <span class="applicant-status status-failed">탈락</span>
+                            </div>
+                            <div class="applicant-contact">
+                                <i class="fas fa-envelope"></i> daun.jung@email.com • 
+                                <i class="fas fa-phone"></i> 010-7777-8888
+                            </div>
+                            <div class="applicant-tags">
+                                <span class="applicant-tag">2년 경력</span>
+                                <span class="applicant-tag">신입</span>
+                            </div>
+                        </div>
+                        <div class="applicant-actions">
+                            <button class="action-button">
+                                <i class="fas fa-message"></i> 피드백
+                            </button>
+                        </div>
+                    </div>
+                    <div class="applicant-details">
+                        <div class="detail-item">
+                            <div class="detail-label">학력</div>
+                            <div class="detail-value">컴퓨터공학 학사</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">경력</div>
+                            <div class="detail-value">스타트업 2년</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">지원일</div>
+                            <div class="detail-value">2024.03.07 16:45</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">희망 연봉</div>
+                            <div class="detail-value">4,500만원</div>
+                        </div>
+                    </div>
+                    <div class="evaluation-section">
+                        <div class="evaluation-title">
+                            <i class="fas fa-star"></i>
+                            <span>AI 평가 점수</span>
+                        </div>
+                        <div class="evaluation-scores">
+                            <div class="score-item">
+                                <div class="score-stars">★★☆☆☆☆☆</div>
+                                <div class="score-value">65점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★☆☆☆☆☆</div>
+                                <div class="score-value">72점</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-stars">★★☆☆☆☆☆</div>
+                                <div class="score-value">68점</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty State (hidden by default) -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="empty-title">지원자가 없습니다</div>
+            <div class="empty-description">
+                현재 이 채용 공고에 지원한 인원이 없습니다
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <!-- Bulk Message Modal -->
+    <div class="modal" id="bulkMessageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">일괄 메시지 보내기</h3>
+                <button class="modal-close" id="modalCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="selected-count" id="selectedCount">
+                    선택된 지원자: 0명
+                </div>
+                <div class="form-group">
+                    <label class="form-label">메시지 내용</label>
+                    <textarea class="form-textarea" id="bulkMessageText" placeholder="선택된 지원자들에게 보낼 메시지를 입력하세요..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancelBtn">취소</button>
+                <button class="btn-send" id="sendBtn">보내기</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab-button').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                this.classList.add('active');
+                const tabId = this.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Select all functionality
+        const selectAllCheckbox = document.getElementById('selectAll');
+        selectAllCheckbox.addEventListener('change', function() {
+            const activeTab = document.querySelector('.tab-content.active');
+            const checkboxes = activeTab.querySelectorAll('.applicant-checkbox');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            
+            updateSelectedCount();
+        });
+        
+        // Individual checkbox functionality
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('applicant-checkbox')) {
+                updateSelectedCount();
+                updateSelectAllCheckbox();
+            }
+        });
+        
+        // Update selected count
+        function updateSelectedCount() {
+            const activeTab = document.querySelector('.tab-content.active');
+            const checkedBoxes = activeTab.querySelectorAll('.applicant-checkbox:checked');
+            const countElement = document.getElementById('selectedCount');
+            
+            if (countElement) {
+                countElement.textContent = `선택된 지원자: ${checkedBoxes.length}명`;
+            }
+        }
+        
+        // Update select all checkbox
+        function updateSelectAllCheckbox() {
+            const activeTab = document.querySelector('.tab-content.active');
+            const checkboxes = activeTab.querySelectorAll('.applicant-checkbox');
+            const checkedBoxes = activeTab.querySelectorAll('.applicant-checkbox:checked');
+            
+            selectAllCheckbox.checked = checkboxes.length > 0 && checkboxes.length === checkedBoxes.length;
+        }
+        
+        // Bulk actions
+        document.getElementById('bulkMessageBtn').addEventListener('click', function() {
+            const activeTab = document.querySelector('.tab-content.active');
+            const checkedBoxes = activeTab.querySelectorAll('.applicant-checkbox:checked');
+            
+            if (checkedBoxes.length === 0) {
+                alert('메시지를 보낼 지원자를 선택해주세요.');
+                return;
+            }
+            
+            openBulkMessageModal();
+        });
+        
+        document.getElementById('bulkPassBtn').addEventListener('click', function() {
+            const activeTab = document.querySelector('.tab-content.active');
+            const checkedBoxes = activeTab.querySelectorAll('.applicant-checkbox:checked');
+            
+            if (checkedBoxes.length === 0) {
+                alert('서류 통과시킬 지원자를 선택해주세요.');
+                return;
+            }
+            
+            if (confirm(`선택된 ${checkedBoxes.length}명의 지원자를 서류 통과시키겠습니까?`)) {
+                // Update status for checked applicants
+                checkedBoxes.forEach(checkbox => {
+                    const card = checkbox.closest('.applicant-card');
+                    updateApplicantStatus(card, 'passed');
+                });
+                
+                alert('서류 통과 처리되었습니다.');
+                
+                // Move to passed tab
+                document.querySelector('[data-tab="passed"]').click();
+            }
+        });
+        
+        document.getElementById('bulkFailBtn').addEventListener('click', function() {
+            const activeTab = document.querySelector('.tab-content.active');
+            const checkedBoxes = activeTab.querySelectorAll('.applicant-checkbox:checked');
+            
+            if (checkedBoxes.length === 0) {
+                alert('서류 탈락시킬 지원자를 선택해주세요.');
+                return;
+            }
+            
+            if (confirm(`선택된 ${checkedBoxes.length}명의 지원자를 서류 탈락시키겠습니까?`)) {
+                // Update status for checked applicants
+                checkedBoxes.forEach(checkbox => {
+                    const card = checkbox.closest('.applicant-card');
+                    updateApplicantStatus(card, 'failed');
+                });
+                
+                alert('서류 탈락 처리되었습니다.');
+                
+                // Move to failed tab
+                document.querySelector('[data-tab="failed"]').click();
+            }
+        });
+        
+        // Bulk message modal
+        const bulkMessageModal = document.getElementById('bulkMessageModal');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        function openBulkMessageModal() {
+            bulkMessageModal.classList.add('active');
+        }
+        
+        modalCloseBtn.addEventListener('click', function() {
+            bulkMessageModal.classList.remove('active');
+        });
+        
+        cancelBtn.addEventListener('click', function() {
+            bulkMessageModal.classList.remove('active');
+        });
+        
+        sendBtn.addEventListener('click', function() {
+            const activeTab = document.querySelector('.tab-content.active');
+            const checkedBoxes = activeTab.querySelectorAll('.applicant-checkbox:checked');
+            const message = document.getElementById('bulkMessageText').value;
+            
+            if (checkedBoxes.length === 0) {
+                alert('메시지를 보낼 지원자를 선택해주세요.');
+                return;
+            }
+            
+            if (message.trim()) {
+                if (confirm(`선택된 ${checkedBoxes.length}명에게 메시지를 보내시겠습니까?`)) {
+                    alert(`${checkedBoxes.length}명에게 메시지가 전송되었습니다.`);
+                    bulkMessageModal.classList.remove('active');
+                    document.getElementById('bulkMessageText').value = '';
+                    
+                    // Uncheck all checkboxes
+                    checkedBoxes.forEach(checkbox => checkbox.checked = false);
+                    updateSelectedCount();
+                    selectAllCheckbox.checked = false;
+                }
+            } else {
+                alert('메시지를 입력해주세요.');
+            }
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === bulkMessageModal) {
+                bulkMessageModal.classList.remove('active');
+            }
+        });
+        
+        // Update applicant status
+        function updateApplicantStatus(card, status) {
+            const statusElement = card.querySelector('.applicant-status');
+            statusElement.className = 'applicant-status';
+            
+            switch(status) {
+                case 'passed':
+                    statusElement.classList.add('status-passed');
+                    statusElement.textContent = '서류 통과';
+                    break;
+                case 'failed':
+                    statusElement.classList.add('status-failed');
+                    statusElement.textContent = '탈락';
+                    break;
+                case 'screening':
+                    statusElement.classList.add('status-screening');
+                    statusElement.textContent = '선별전';
+                    break;
+            }
+            
+            card.dataset.status = status;
+        }
+        
+        // Action buttons
+        document.querySelectorAll('.action-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const action = this.textContent.trim();
+                const card = this.closest('.applicant-card');
+                const name = card.querySelector('.applicant-name').textContent.trim();
+                
+                switch(action) {
+                    case '메시지':
+                        alert(`${name}님에게 개별 메시지를 보냅니다.`);
+                        break;
+                    case '피드백':
+                        alert(`${name}님에게 피드백을 보냅니다.`);
+                        break;
+                    case '면접 예약':
+                        window.location.href = `/interview-schedule.html?id=${Date.now()}`;
+                        break;
+                    case '서류 통과':
+                        if (confirm(`${name}님의 서류를 통과시키겠습니까?`)) {
+                            updateApplicantStatus(card, 'passed');
+                            alert('서류 통과 처리되었습니다.');
+                            
+                            // Move to passed tab
+                            document.querySelector('[data-tab="passed"]').click();
+                        }
+                        break;
+                    case '탈락':
+                        if (confirm(`${name}님의 서류를 탈락시키겠습니까?`)) {
+                            updateApplicantStatus(card, 'failed');
+                            alert('서류 탈락 처리되었습니다.');
+                            
+                            // Move to failed tab
+                            document.querySelector('[data-tab="failed"]').click();
+                        }
+                        break;
+                }
+            });
+        });
+        
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const activeTab = document.querySelector('.tab-content.active');
+            const cards = activeTab.querySelectorAll('.applicant-card');
+            
+            cards.forEach(card => {
+                const name = card.querySelector('.applicant-name').textContent.toLowerCase();
+                const email = card.querySelector('.applicant-contact').textContent.toLowerCase();
+                const tags = Array.from(card.querySelectorAll('.applicant-tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+                
+                if (name.includes(searchTerm) || email.includes(searchTerm) || tags.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        
+        
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        // Sort dropdown
+        document.querySelector('.sort-dropdown').addEventListener('change', function() {
+            const sortValue = this.value;
+            sortApplicants(sortValue);
+        });
+        
+        // Sort function
+        function sortApplicants(sortBy) {
+            const activeTab = document.querySelector('.tab-content.active');
+            const list = activeTab.querySelector('.applicant-list');
+            const cards = Array.from(list.querySelectorAll('.applicant-card'));
+            
+            cards.sort((a, b) => {
+                switch(sortBy) {
+                    case 'recent':
+                        // Sort by application date (newest first)
+                        const dateA = a.querySelector('.detail-value:nth-child(3)').textContent;
+                        const dateB = b.querySelector('.detail-value:nth-child(3)').textContent;
+                        return new Date(dateB) - new Date(dateA);
+                    case 'name':
+                        // Sort alphabetically
+                        const nameA = a.querySelector('.applicant-name').textContent.trim();
+                        const nameB = b.querySelector('.applicant-name').textContent.trim();
+                        return nameA.localeCompare(nameB);
+                    case 'score':
+                        // Sort by AI score (highest first)
+                        const scoreA = parseInt(a.querySelector('.score-value').textContent);
+                        const scoreB = parseInt(b.querySelector('.score-value').textContent);
+                        return scoreB - scoreA;
+                    case 'experience':
+                        // Sort by experience (most first)
+                        const expA = parseInt(a.querySelector('.applicant-tag').textContent) || 0;
+                        const expB = parseInt(b.querySelector('.applicant-tag').textContent) || 0;
+                        return expB - expA;
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Re-append sorted cards
+            cards.forEach(card => list.appendChild(card));
+        }
+    </script>
+</body>
+</html>

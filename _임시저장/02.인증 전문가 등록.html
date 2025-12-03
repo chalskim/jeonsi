@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 인증 전문가 등록</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .form-container {
+            padding: 20px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+        
+        .form-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #4a6fdc;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            border-color: #4a6fdc;
+            outline: none;
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+            margin: 0 5px;
+        }
+        
+        .btn-primary {
+            background-color: #4a6fdc;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        .profile-photo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .profile-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+        }
+        
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-photo i {
+            font-size: 30px;
+            color: #aaa;
+        }
+        
+        .photo-upload-btn {
+            padding: 8px 15px;
+            background-color: #4a6fdc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .checkbox-group, .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .checkbox-item, .radio-item {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .checkbox-item input, .radio-item input {
+            margin-right: 5px;
+        }
+        
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tag i {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        
+        .file-upload {
+            border: 1px dashed #ddd;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .file-upload:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .file-upload i {
+            font-size: 24px;
+            color: #4a6fdc;
+            margin-bottom: 10px;
+        }
+        
+        .uploaded-files {
+            margin-top: 10px;
+        }
+        
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .uploaded-file-name {
+            display: flex;
+            align-items: center;
+        }
+        
+        .uploaded-file-name i {
+            margin-right: 8px;
+            color: #4a6fdc;
+        }
+        
+        .remove-file {
+            color: #e74c3c;
+            cursor: pointer;
+        }
+        
+        .rate-type-container {
+            display: none;
+            margin-top: 10px;
+        }
+        
+        .rate-type-container.active {
+            display: block;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            display: block;
+        }
+        
+        .add-item-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .add-item-container .form-control {
+            flex: 1;
+        }
+        
+        .add-btn {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="backButton">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">인증 전문가 등록</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-save" id="saveDraft"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <div class="form-container">
+            <!-- 개인 프로필 -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-user-circle"></i>
+                    <span>개인 프로필</span>
+                </div>
+                
+                <div class="profile-photo-container">
+                    <div class="profile-photo" id="profilePhotoPreview">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div>
+                        <button class="photo-upload-btn" id="photoUploadBtn">사진 업로드</button>
+                        <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;">
+                        <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG (최대 5MB)</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">이름 <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="expertName" placeholder="이름을 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">자기소개 <span class="required">*</span></label>
+                    <textarea class="form-control" id="introduction" rows="4" placeholder="전문 분야와 경력에 대한 자기소개를 입력하세요"></textarea>
+                </div>
+            </div>
+            
+            <!-- 전문 분야 선택 -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-certificate"></i>
+                    <span>전문 분야 선택</span>
+                </div>
+                
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="isms-p" name="expertise" value="isms-p">
+                        <label for="isms-p">ISMS-P</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="iso27001" name="expertise" value="iso27001">
+                        <label for="iso27001">ISO 27001</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="iso27701" name="expertise" value="iso27701">
+                        <label for="iso27701">ISO 27701</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gs" name="expertise" value="gs">
+                        <label for="gs">GS 인증</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cppg" name="expertise" value="cppg">
+                        <label for="cppg">CPPG</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cisp" name="expertise" value="cisp">
+                        <label for="cisp">CISP</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="cissp" name="expertise" value="cissp">
+                        <label for="cissp">CISSP</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="other" name="expertise" value="other">
+                        <label for="other">기타</label>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="otherExpertiseGroup" style="display:none; margin-top:10px;">
+                    <input type="text" class="form-control" id="otherExpertise" placeholder="기타 전문 분야를 입력하세요">
+                </div>
+            </div>
+            
+            <!-- 경력 정보 -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-briefcase"></i>
+                    <span>경력 정보</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">경력년수 <span class="required">*</span></label>
+                    <select class="form-control" id="experienceYears">
+                        <option value="">선택하세요</option>
+                        <option value="1-3">1~3년</option>
+                        <option value="3-5">3~5년</option>
+                        <option value="5-10">5~10년</option>
+                        <option value="10-15">10~15년</option>
+                        <option value="15+">15년 이상</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">이전 직장</label>
+                    <div class="add-item-container">
+                        <input type="text" class="form-control" id="previousWorkplace" placeholder="회사명을 입력하세요">
+                        <button class="add-btn" id="addWorkplaceBtn">추가</button>
+                    </div>
+                    <div class="tag-container" id="workplaceTags"></div>
+                </div>
+            </div>
+            
+            <!-- 자격증 업로드 -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-award"></i>
+                    <span>자격증 업로드</span>
+                </div>
+                
+                <div class="file-upload" id="certificationUpload">
+                    <i class="fas fa-file-upload"></i>
+                    <p>클릭하여 파일 업로드</p>
+                    <p style="font-size: 12px; color: #999;">PDF, JPG, PNG (최대 10MB)</p>
+                </div>
+                <input type="file" id="certificationInput" accept=".pdf,.jpg,.jpeg,.png" multiple style="display: none;">
+                <div class="uploaded-files" id="certificationList"></div>
+            </div>
+            
+            <!-- 포트폴리오/성공사례 -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-trophy"></i>
+                    <span>포트폴리오/성공사례</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">성공사례 설명</label>
+                    <textarea class="form-control" id="portfolioDesc" rows="4" placeholder="주요 성공사례나 포트폴리오에 대한 설명을 입력하세요"></textarea>
+                </div>
+                
+                <div class="file-upload" id="portfolioUpload">
+                    <i class="fas fa-file-upload"></i>
+                    <p>포트폴리오 파일 업로드</p>
+                    <p style="font-size: 12px; color: #999;">PDF, PPT, 이미지 파일 (최대 20MB)</p>
+                </div>
+                <input type="file" id="portfolioInput" accept=".pdf,.ppt,.pptx,.jpg,.jpeg,.png" multiple style="display: none;">
+                <div class="uploaded-files" id="portfolioList"></div>
+            </div>
+            
+            <!-- 요금 정보 -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-won-sign"></i>
+                    <span>요금 정보</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">요금 유형 <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="hourly" name="rateType" value="hourly">
+                            <label for="hourly">시간당</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="daily" name="rateType" value="daily">
+                            <label for="daily">일당</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="project" name="rateType" value="project">
+                            <label for="project">프로젝트당</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rate-type-container" id="hourlyRate">
+                    <input type="text" class="form-control" id="hourlyRateInput" placeholder="시간당 요금을 입력하세요 (예: 10만원)">
+                </div>
+                
+                <div class="rate-type-container" id="dailyRate">
+                    <input type="text" class="form-control" id="dailyRateInput" placeholder="일당 요금을 입력하세요 (예: 100만원)">
+                </div>
+                
+                <div class="rate-type-container" id="projectRate">
+                    <input type="text" class="form-control" id="projectRateInput" placeholder="프로젝트당 요금을 입력하세요 (예: 1,000만원)">
+                </div>
+            </div>
+            
+            <!-- 가능 지역 선택 -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>가능 지역 선택</span>
+                </div>
+                
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="seoul" name="region" value="seoul">
+                        <label for="seoul">서울</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gyeonggi" name="region" value="gyeonggi">
+                        <label for="gyeonggi">경기</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="incheon" name="region" value="incheon">
+                        <label for="incheon">인천</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="gwangju" name="region" value="gwangju">
+                        <label for="gwangju">광주</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="daegu" name="region" value="daegu">
+                        <label for="daegu">대구</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="daejeon" name="region" value="daejeon">
+                        <label for="daejeon">대전</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="busan" name="region" value="busan">
+                        <label for="busan">부산</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="online" name="region" value="online">
+                        <label for="online">온라인</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 가능 시간대 설정 -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-clock"></i>
+                    <span>가능 시간대 설정</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">요일</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="weekday" name="availability" value="weekday">
+                            <label for="weekday">평일</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="weekend" name="availability" value="weekend">
+                            <label for="weekend">주말</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">시간대</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="morning" name="timeSlot" value="morning">
+                            <label for="morning">오전 (09:00-12:00)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="afternoon" name="timeSlot" value="afternoon">
+                            <label for="afternoon">오후 (12:00-18:00)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="evening" name="timeSlot" value="evening">
+                            <label for="evening">저녁 (18:00-21:00)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 언어 능력 -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-language"></i>
+                    <span>언어 능력</span>
+                </div>
+                
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="korean" name="language" value="korean">
+                        <label for="korean">한국어</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="english" name="language" value="english">
+                        <label for="english">English</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="japanese" name="language" value="japanese">
+                        <label for="japanese">日本語</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="chinese" name="language" value="chinese">
+                        <label for="chinese">中文</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 제출 버튼 -->
+    <div class="btn-container">
+        <button class="btn btn-secondary" id="cancelBtn">취소</button>
+        <button class="btn btn-primary" id="submitBtn">등록하기</button>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // 뒤로가기 버튼
+        document.getElementById('backButton').addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        // 임시 저장 버튼
+        document.getElementById('saveDraft').addEventListener('click', function() {
+            showToast('임시 저장되었습니다.');
+        });
+        
+        // 프로필 사진 업로드
+        document.getElementById('photoUploadBtn').addEventListener('click', function() {
+            document.getElementById('profilePhotoInput').click();
+        });
+        
+        document.getElementById('profilePhotoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profilePhotoPreview').innerHTML = `<img src="${e.target.result}" alt="Profile">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // 기타 전문 분야 선택 시 입력 필드 표시
+        document.getElementById('other').addEventListener('change', function() {
+            const otherExpertiseGroup = document.getElementById('otherExpertiseGroup');
+            if (this.checked) {
+                otherExpertiseGroup.style.display = 'block';
+            } else {
+                otherExpertiseGroup.style.display = 'none';
+            }
+        });
+        
+        // 이전 직장 추가
+        document.getElementById('addWorkplaceBtn').addEventListener('click', function() {
+            const workplaceInput = document.getElementById('previousWorkplace');
+            const workplaceName = workplaceInput.value.trim();
+            
+            if (workplaceName) {
+                const workplaceTags = document.getElementById('workplaceTags');
+                const tagId = 'workplace_' + Date.now();
+                
+                workplaceTags.innerHTML += `
+                    <div class="tag" id="${tagId}">
+                        <span>${workplaceName}</span>
+                        <i class="fas fa-times" onclick="removeWorkplace('${tagId}')"></i>
+                    </div>
+                `;
+                
+                workplaceInput.value = '';
+            }
+        });
+        
+        function removeWorkplace(tagId) {
+            document.getElementById(tagId).remove();
+        }
+        
+        // 자격증 업로드
+        document.getElementById('certificationUpload').addEventListener('click', function() {
+            document.getElementById('certificationInput').click();
+        });
+        
+        document.getElementById('certificationInput').addEventListener('change', function(e) {
+            handleFileUpload(e.target.files, 'certificationList');
+        });
+        
+        // 포트폴리오 업로드
+        document.getElementById('portfolioUpload').addEventListener('click', function() {
+            document.getElementById('portfolioInput').click();
+        });
+        
+        document.getElementById('portfolioInput').addEventListener('change', function(e) {
+            handleFileUpload(e.target.files, 'portfolioList');
+        });
+        
+        function handleFileUpload(files, listId) {
+            const fileList = document.getElementById(listId);
+            
+            Array.from(files).forEach(file => {
+                const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const fileIcon = getFileIcon(file.name);
+                
+                fileList.innerHTML += `
+                    <div class="uploaded-file" id="${fileId}">
+                        <div class="uploaded-file-name">
+                            <i class="${fileIcon}"></i>
+                            <span>${file.name}</span>
+                        </div>
+                        <i class="fas fa-times remove-file" onclick="removeFile('${fileId}')"></i>
+                    </div>
+                `;
+            });
+        }
+        
+        function getFileIcon(filename) {
+            const extension = filename.split('.').pop().toLowerCase();
+            switch (extension) {
+                case 'pdf': return 'fas fa-file-pdf';
+                case 'jpg':
+                case 'jpeg':
+                case 'png': return 'fas fa-file-image';
+                case 'ppt':
+                case 'pptx': return 'fas fa-file-powerpoint';
+                default: return 'fas fa-file';
+            }
+        }
+        
+        function removeFile(fileId) {
+            document.getElementById(fileId).remove();
+        }
+        
+        // 요금 유형 선택 시 해당 입력 필드 표시
+        document.querySelectorAll('input[name="rateType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // 모든 요금 입력 필드 숨기기
+                document.querySelectorAll('.rate-type-container').forEach(container => {
+                    container.classList.remove('active');
+                });
+                
+                // 선택된 요금 유형의 입력 필드 표시
+                const rateType = this.value;
+                document.getElementById(rateType + 'Rate').classList.add('active');
+            });
+        });
+        
+        // 취소 버튼
+        document.getElementById('cancelBtn').addEventListener('click', function() {
+            if (confirm('작성 중인 내용이 저장되지 않습니다. 취소하시겠습니까?')) {
+                window.history.back();
+            }
+        });
+        
+        // 제출 버튼
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            // 필수 필드 검증
+            const requiredFields = [
+                'expertName', 'introduction', 'experienceYears'
+            ];
+            
+            let isValid = true;
+            let firstInvalidField = null;
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value) {
+                    isValid = false;
+                    field.style.borderColor = '#e74c3c';
+                    if (!firstInvalidField) {
+                        firstInvalidField = field;
+                    }
+                } else {
+                    field.style.borderColor = '#ddd';
+                }
+            });
+            
+            // 전문 분야 선택 검증
+            const expertiseSelected = document.querySelectorAll('input[name="expertise"]:checked').length > 0;
+            if (!expertiseSelected) {
+                isValid = false;
+                showToast('전문 분야를 하나 이상 선택해주세요.');
+                return;
+            }
+            
+            // 요금 유형 및 요금 정보 검증
+            const rateTypeSelected = document.querySelector('input[name="rateType"]:checked');
+            if (!rateTypeSelected) {
+                isValid = false;
+                showToast('요금 유형을 선택해주세요.');
+                return;
+            }
+            
+            const rateType = rateTypeSelected.value;
+            const rateInput = document.getElementById(rateType + 'RateInput');
+            if (!rateInput.value) {
+                isValid = false;
+                rateInput.style.borderColor = '#e74c3c';
+                showToast('요금 정보를 입력해주세요.');
+                return;
+            }
+            
+            if (!isValid) {
+                showToast('필수 항목을 모두 입력해주세요.');
+                if (firstInvalidField) {
+                    firstInvalidField.focus();
+                }
+                return;
+            }
+            
+            // 폼 데이터 수집
+            const formData = {
+                profile: {
+                    name: document.getElementById('expertName').value,
+                    photo: document.getElementById('profilePhotoPreview').querySelector('img')?.src || null,
+                    introduction: document.getElementById('introduction').value
+                },
+                expertise: Array.from(document.querySelectorAll('input[name="expertise"]:checked')).map(cb => cb.value),
+                career: {
+                    years: document.getElementById('experienceYears').value,
+                    workplaces: Array.from(document.querySelectorAll('#workplaceTags .tag span')).map(span => span.textContent)
+                },
+                portfolio: {
+                    description: document.getElementById('portfolioDesc').value,
+                    files: Array.from(document.querySelectorAll('#portfolioList .uploaded-file span')).map(span => span.textContent)
+                },
+                rate: {
+                    type: rateType,
+                    amount: rateInput.value
+                },
+                availability: {
+                    regions: Array.from(document.querySelectorAll('input[name="region"]:checked')).map(cb => cb.value),
+                    days: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value),
+                    timeSlots: Array.from(document.querySelectorAll('input[name="timeSlot"]:checked')).map(cb => cb.value)
+                },
+                languages: Array.from(document.querySelectorAll('input[name="language"]:checked')).map(cb => cb.value)
+            };
+            
+            // 실제로는 서버에 데이터 전송
+            console.log('Form Data:', formData);
+            
+            // 성공 메시지 표시
+            showToast('전문가 정보가 성공적으로 등록되었습니다.');
+            
+            // 잠시 후 목록 페이지로 이동
+            setTimeout(() => {
+                window.location.href = 'apphome.html';
+            }, 2000);
+        });
+        
+        // 토스트 메시지 표시 함수
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

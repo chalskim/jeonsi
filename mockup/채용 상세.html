@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>채용 상세 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .header-back {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 80px; /* Space for fixed bottom buttons */
+        }
+
+        /* --- Company Info Section --- */
+        .company-info-section {
+            background-color: var(--card-background);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+
+        .company-details {
+            flex-grow: 1;
+        }
+
+        .company-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .company-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .company-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .company-meta-item i {
+            font-size: 0.8rem;
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .bookmark-btn.active {
+            color: var(--warning-color);
+        }
+
+        /* --- Job Title Section --- */
+        .job-title-section {
+            background-color: var(--card-background);
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .job-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .job-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .job-tag {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .tag-employment {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .tag-location {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .tag-career {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .tag-deadline {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .job-highlights {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .job-highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .job-highlight-item i {
+            color: var(--primary-color);
+        }
+
+        .job-highlight-text {
+            font-weight: bold;
+        }
+
+        /* --- Job Classification Section --- */
+        .job-classification-section {
+            background-color: var(--card-background);
+            margin-top: 10px;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .classification-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .classification-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .classification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .classification-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .classification-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .classification-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .classification-details {
+            flex-grow: 1;
+        }
+
+        .classification-code {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .classification-name {
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .classification-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* --- Content Sections --- */
+        .content-section {
+            background-color: var(--card-background);
+            margin-top: 10px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .section-content {
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .requirement-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .requirement-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 10px;
+        }
+
+        .requirement-list li:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+        }
+
+        .process-step {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .step-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- Similar Jobs Section --- */
+        .similar-jobs-section {
+            margin-top: 10px;
+            padding: 20px;
+            background-color: var(--card-background);
+        }
+
+        .similar-jobs-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
+        }
+
+        .similar-job-card {
+            min-width: 250px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+        }
+
+        .similar-job-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .similar-job-company {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .similar-job-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .similar-job-tag {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background-color: var(--card-background);
+            color: var(--text-muted);
+        }
+
+        /* --- Fixed Bottom Buttons --- */
+        .bottom-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-background);
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            flex: 2;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* --- Company Detail Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            width: 90%;
+            max-width: 600px;
+            margin: 30px auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .company-detail-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+
+        .company-detail-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .company-detail-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .company-detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .company-detail-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+        }
+
+        .company-detail-description {
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .company-detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .company-detail-tag {
+            padding: 5px 10px;
+            border-radius: 15px;
+            background-color: var(--light-color);
+            font-size: 0.9rem;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-website {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-back" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">채용 상세</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-share-alt"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Company Info Section -->
+        <div class="company-info-section">
+            <div class="company-logo">
+                <i class="fas fa-building"></i>
+            </div>
+            <div class="company-details">
+                <div class="company-name">㈜테크솔루션</div>
+                <div class="company-meta">
+                    <div class="company-meta-item">
+                        <i class="fas fa-industry"></i>
+                        <span>IT 서비스</span>
+                    </div>
+                    <div class="company-meta-item">
+                        <i class="fas fa-users"></i>
+                        <span>50~100명</span>
+                    </div>
+                    <div class="company-meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>경기 성남시</span>
+                    </div>
+                </div>
+            </div>
+            <button class="bookmark-btn" id="bookmarkBtn">
+                <i class="far fa-bookmark"></i>
+            </button>
+        </div>
+        
+        <!-- Job Title Section -->
+        <div class="job-title-section">
+            <h1 class="job-title">보안 컨설턴트 (정규직)</h1>
+            <div class="job-tags">
+                <span class="job-tag tag-employment">정규직</span>
+                <span class="job-tag tag-location">경기 성남시</span>
+                <span class="job-tag tag-career">5년 이상</span>
+                <span class="job-tag tag-deadline">D-7</span>
+            </div>
+            <div class="job-highlights">
+                <div class="job-highlight-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span class="job-highlight-text">연봉 4,000~6,000만원</span>
+                </div>
+                <div class="job-highlight-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span class="job-highlight-text">학력 무관</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Job Classification Section -->
+        <div class="job-classification-section">
+            <div class="classification-header">
+                <i class="fas fa-tags" style="color: var(--primary-color);"></i>
+                <span class="classification-title">업무 분류</span>
+            </div>
+            <div class="classification-list">
+                <!-- Major Category -->
+                <div class="classification-item">
+                    <div class="classification-icon">🔒</div>
+                    <div class="classification-details">
+                        <div class="classification-code">SC02</div>
+                        <div class="classification-name">보안/인증</div>
+                    </div>
+                    <div class="classification-badge">대분류</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Job Description Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-briefcase"></i>
+                <span>담당 업무</span>
+            </h2>
+            <div class="section-content">
+                <ul class="requirement-list">
+                    <li>정보보호 컨설팅 서비스 기획 및 제공</li>
+                    <li>ISMS-P 인증 컨설팅 및 지원</li>
+                    <li>개인정보보호 컨설팅 및 정책 수립 지원</li>
+                    <li>보안 솔루션 도입 및 운영 컨설팅</li>
+                    <li>고객사 보안 수준 진단 및 개선 방안 제시</li>
+                    <li>보안 교육 프로그램 개발 및 운영</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Requirements Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-check"></i>
+                <span>자격 요건</span>
+            </h2>
+            <div class="section-content">
+                <ul class="requirement-list">
+                    <li>정보보호 관련 경력 5년 이상</li>
+                    <li>ISMS-P, 개인정보보호 컨설팅 경험</li>
+                    <li>정보보호 자격증 보유자 우대 (CISSP, CISA, CISM 등)</li>
+                    <li>보안 솔루션 기술 이해도</li>
+                    <li>프로젝트 관리 능력</li>
+                    <li>문서 작성 및 발표 능력</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Preferred Qualifications Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-star"></i>
+                <span>우대 사항</span>
+            </h2>
+            <div class="section-content">
+                <ul class="requirement-list">
+                    <li>금융권, 공공기관 컨설팅 경험</li>
+                    <li>해외 보안 자격증 보유자</li>
+                    <li>보안 관련 강의 및 발표 경험</li>
+                    <li>영어 업무 가능자</li>
+                    <li>보안 관련 논문 발표 및 저서 출판 경험</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Work Conditions Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-briefcase"></i>
+                <span>근무 조건</span>
+            </h2>
+            <div class="section-content">
+                <div class="requirement-list">
+                    <div class="requirement-list">
+                        <div class="requirement-list">
+                            <strong>고용 형태:</strong> 정규직 (수습 3개월)
+                        </div>
+                        <div class="requirement-list">
+                            <strong>급여:</strong> 연봉 4,000~6,000만원 (경력 및 능력에 따라 협의)
+                        </div>
+                        <div class="requirement-list">
+                            <strong>근무 시간:</strong> 월~금 09:00~18:00 (주 40시간)
+                        </div>
+                        <div class="requirement-list">
+                            <strong>근무지:</strong> 경기도 성남시 분당구 대왕판교로 645
+                        </div>
+                        <div class="requirement-list">
+                            <strong>복리후생:</strong> 4대 보험, 퇴직금, 연차, 야근수당, 장기근속상여, 도서구매비, 식대, 자기계발비, 경조사비, 단체상해보험, 건강검진, 체육비 지원, 하계/동계 휴가비
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Application Process Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-tasks"></i>
+                <span>전형 절차</span>
+            </h2>
+            <div class="section-content">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">서류 전형</div>
+                        <div class="step-desc">제출 서류 검토</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">1차 면접</div>
+                        <div class="step-desc">실무진 면접</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">2차 면접</div>
+                        <div class="step-desc">임원진 면접</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">최종 합격</div>
+                        <div class="step-desc">입사 통보 및 계약</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Application Documents Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-file-alt"></i>
+                <span>제출 서류</span>
+            </h2>
+            <div class="section-content">
+                <ul class="requirement-list">
+                    <li>이력서 (양식 자유)</li>
+                    <li>경력기술서 (양식 자유)</li>
+                    <li>포트폴리오 (보안 컨설팅 관련 프로젝트 경험)</li>
+                    <li>자격증 사본 (보유한 경우)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Application Period Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                <span>접수 기간</span>
+            </h2>
+            <div class="section-content">
+                <p>2024년 3월 1일 (금) ~ 2024년 3월 15일 (금)</p>
+                <p>※ 조기 마감될 수 있습니다.</p>
+            </div>
+        </div>
+        
+        <!-- Similar Jobs Section -->
+        <div class="similar-jobs-section">
+            <h2 class="section-title">
+                <i class="fas fa-th-list"></i>
+                <span>유사 채용 공고</span>
+            </h2>
+            <div class="similar-jobs-container">
+                <div class="similar-job-card">
+                    <div class="similar-job-title">정보보안 매니저</div>
+                    <div class="similar-job-company">㈜클라우드테크</div>
+                    <div class="similar-job-tags">
+                        <span class="similar-job-tag">정규직</span>
+                        <span class="similar-job-tag">3년 이상</span>
+                        <span class="similar-job-tag">서울</span>
+                    </div>
+                </div>
+                <div class="similar-job-card">
+                    <div class="similar-job-title">보안 솔루션 컨설턴트</div>
+                    <div class="similar-job-company">㈜디지털이노베이션</div>
+                    <div class="similar-job-tags">
+                        <span class="similar-job-tag">계약직</span>
+                        <span class="similar-job-tag">5년 이상</span>
+                        <span class="similar-job-tag">판교</span>
+                    </div>
+                </div>
+                <div class="similar-job-card">
+                    <div class="similar-job-title">CSO (최고보안책임자)</div>
+                    <div class="similar-job-company">㈜핀테크코리아</div>
+                    <div class="similar-job-tags">
+                        <span class="similar-job-tag">정규직</span>
+                        <span class="similar-job-tag">10년 이상</span>
+                        <span class="similar-job-tag">여의도</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fixed Bottom Buttons -->
+    <div class="bottom-buttons">
+        <button class="btn-secondary" id="bookmarkBottomBtn">
+            <i class="far fa-bookmark"></i>
+            <span>북마크</span>
+        </button>
+        <button class="btn-secondary" id="companyDetailBtn">
+            <i class="fas fa-building"></i>
+            <span>기업 정보</span>
+        </button>
+        <button class="btn-primary" id="applyBtn">
+            <i class="fas fa-paper-plane"></i>
+            <span>지원하기</span>
+        </button>
+    </div>
+    
+    <!-- Company Detail Modal -->
+    <div class="modal" id="companyDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">기업 정보</h3>
+                <button class="modal-close" id="modalCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="company-detail-logo">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="company-detail-info">
+                    <div class="company-detail-name">㈜테크솔루션</div>
+                    <div class="company-detail-meta">
+                        <div class="company-detail-meta-item">
+                            <i class="fas fa-industry"></i>
+                            <span>IT 서비스</span>
+                        </div>
+                        <div class="company-detail-meta-item">
+                            <i class="fas fa-users"></i>
+                            <span>50~100명</span>
+                        </div>
+                        <div class="company-detail-meta-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>2015년 설립</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="company-detail-description">
+                    <p>㈜테크솔루션은 기업의 디지털 전환을 지원하는 IT 서비스 기업입니다. 정보보호 컨설팅, 클라우드 서비스, 시스템 통합 등 다양한 분야에서 전문적인 서비스를 제공하고 있으며, 국내 유수의 기업들과 파트너십을 맺고 있습니다.</p>
+                </div>
+                <div class="company-detail-tags">
+                    <div class="company-detail-tag">정보보호</div>
+                    <div class="company-detail-tag">클라우드</div>
+                    <div class="company-detail-tag">시스템 통합</div>
+                    <div class="company-detail-tag">디지털 전환</div>
+                    <div class="company-detail-tag">IT 컨설팅</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-website">
+                    <i class="fas fa-globe"></i>
+                    <span>웹사이트 방문</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Back button functionality
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        function setBookmarked(active) {
+            const topBtn = document.getElementById('bookmarkBtn');
+            const topIcon = topBtn.querySelector('i');
+            const bottomBtn = document.getElementById('bookmarkBottomBtn');
+            const bottomIcon = bottomBtn ? bottomBtn.querySelector('i') : null;
+            const bottomLabel = bottomBtn ? bottomBtn.querySelector('span') : null;
+
+            if (active) {
+                topIcon.classList.remove('far');
+                topIcon.classList.add('fas');
+                topBtn.classList.add('active');
+                if (bottomBtn && bottomIcon && bottomLabel) {
+                    bottomIcon.classList.remove('far');
+                    bottomIcon.classList.add('fas');
+                    bottomLabel.textContent = '북마크됨';
+                }
+            } else {
+                topIcon.classList.remove('fas');
+                topIcon.classList.add('far');
+                topBtn.classList.remove('active');
+                if (bottomBtn && bottomIcon && bottomLabel) {
+                    bottomIcon.classList.remove('fas');
+                    bottomIcon.classList.add('far');
+                    bottomLabel.textContent = '북마크';
+                }
+            }
+        }
+
+        document.getElementById('bookmarkBtn').addEventListener('click', function() {
+            setBookmarked(!this.classList.contains('active'));
+        });
+
+        const bookmarkBottomBtn = document.getElementById('bookmarkBottomBtn');
+        if (bookmarkBottomBtn) {
+            bookmarkBottomBtn.addEventListener('click', function() {
+                const active = document.getElementById('bookmarkBtn').classList.contains('active');
+                setBookmarked(!active);
+            });
+        }
+        
+        // Company detail modal
+        const companyDetailModal = document.getElementById('companyDetailModal');
+        const companyDetailBtn = document.getElementById('companyDetailBtn');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        
+        companyDetailBtn.addEventListener('click', function() {
+            window.location.href = '02기업%20등록%20뷰어.html';
+        });
+        
+        modalCloseBtn.addEventListener('click', function() {
+            companyDetailModal.classList.remove('active');
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === companyDetailModal) {
+                companyDetailModal.classList.remove('active');
+            }
+        });
+        
+        // Apply button functionality
+        document.getElementById('applyBtn').addEventListener('click', function() {
+            // In a real app, this would navigate to application form
+            alert('지원서 작성 페이지로 이동합니다.');
+        });
+        
+        // Similar job cards click functionality
+        document.querySelectorAll('.similar-job-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // In a real app, this would navigate to job detail page
+                alert('해당 채용 공고 상세 페이지로 이동합니다.');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>뉴스 및 공지 | 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 70px;
+        }
+
+        /* --- Side Menu --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--card-background);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-type {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .side-menu-content {
+            padding: 10px 0;
+        }
+
+        .menu-category {
+            margin-bottom: 15px;
+        }
+
+        .menu-category-title {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .menu-category-title i {
+            margin-right: 10px;
+        }
+
+        .menu-items {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px 12px 35px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .menu-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 10px 0;
+        }
+
+        /* --- Overlay --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Page Header --- */
+        .page-header {
+            padding: 20px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- Search and Filter Section --- */
+        .search-filter-section {
+            padding: 15px;
+            background-color: var(--card-background);
+            margin-bottom: 15px;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 25px 0 0 25px;
+            font-size: 1rem;
+        }
+
+        .search-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 0 25px 25px 0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 5px 15px;
+            border-radius: 15px;
+            background-color: var(--light-color);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .filter-chip.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* --- News List --- */
+        .news-list {
+            padding: 0 15px;
+        }
+
+        .news-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .news-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .news-card.unread {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .news-card.featured {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .news-category {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .category-news {
+            background-color: rgba(23, 162, 184, 0.2);
+            color: var(--info-color);
+        }
+
+        .category-seminar {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+        }
+
+        .category-industry {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--warning-color);
+        }
+
+        .category-update {
+            background-color: rgba(111, 66, 193, 0.2);
+            color: #6f42c1;
+        }
+
+        .category-support {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
+        }
+
+        .news-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .news-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .news-preview {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .news-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .news-views {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .news-source {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .news-attachments {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* --- Featured Badge --- */
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        /* --- Government Support Badge --- */
+        .support-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        /* --- News Detail Modal --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1002;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background-color: var(--card-background);
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .modal-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .modal-info {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--dark-color);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-content-text {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-attachments {
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .attachment-list {
+            margin-top: 10px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: background-color 0.2s;
+        }
+
+        .attachment-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .attachment-icon {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .attachment-info {
+            flex: 1;
+        }
+
+        .attachment-name {
+            font-weight: 500;
+        }
+
+        .attachment-size {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* --- External Link --- */
+        .external-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 15px;
+            padding: 8px 15px;
+            border: 1px solid var(--primary-color);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .external-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* --- Pagination --- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+        }
+
+        .page-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--card-background);
+            color: var(--dark-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .page-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-background);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .empty-description {
+            margin-bottom: 20px;
+        }
+
+        /* --- Loading State --- */
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- Responsive --- */
+        @media (min-width: 768px) {
+            .modal-content {
+                border-radius: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="app-title">뉴스 및 공지</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <div class="user-info">
+                <div class="user-name">홍길동</div>
+                <div class="user-type">전문가</div>
+            </div>
+        </div>
+        <div class="side-menu-content">
+            <!-- 마이페이지 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-user"></i>
+                    <span>마이페이지</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-user-circle"></i>
+                        <span>내 프로필</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-history"></i>
+                        <span>서비스 내역</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-star"></i>
+                        <span>리뷰 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-bookmark"></i>
+                        <span>북마크</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 업무 관리 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-briefcase"></i>
+                    <span>업무 관리</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-clock"></i>
+                        <span>시간 패키지</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-handshake"></i>
+                        <span>의뢰 요청</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>일정 관리</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="menu-divider"></div>
+            
+            <!-- 기타 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-ellipsis-h"></i>
+                    <span>기타</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item active">
+                        <i class="fas fa-newspaper"></i>
+                        <span>뉴스 및 공지</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-bell"></i>
+                        <span>알림 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-question-circle"></i>
+                        <span>도움말</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>로그아웃</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay for Side Menu -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">뉴스 및 공지</h1>
+            <p class="page-subtitle">외부 뉴스, 무료 세미나, 정부지원, 산업 동향 등 다양한 정보를 확인하세요</p>
+        </div>
+        
+        <!-- Search and Filter Section -->
+        <div class="search-filter-section">
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="뉴스 및 공지 검색...">
+                <button class="search-button" id="searchButton">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="filter-chips">
+                <div class="filter-chip active" data-category="all">전체</div>
+                <div class="filter-chip" data-category="news">뉴스</div>
+                <div class="filter-chip" data-category="seminar">무료 세미나</div>
+                <div class="filter-chip" data-category="support">정부지원</div>
+                <div class="filter-chip" data-category="industry">산업 동향</div>
+                <div class="filter-chip" data-category="update">플랫폼 소식</div>
+            </div>
+        </div>
+        
+        <!-- News List -->
+        <div class="news-list" id="newsList">
+            <!-- Loading State (initially) -->
+            <div class="loading" id="loadingState">
+                <div class="spinner"></div>
+                <p>뉴스 및 공지를 불러오는 중...</p>
+            </div>
+            
+            <!-- News Cards (will be populated by JavaScript) -->
+        </div>
+        
+        <!-- Empty State (initially hidden) -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">
+                <i class="fas fa-newspaper"></i>
+            </div>
+            <h2 class="empty-title">뉴스 및 공지가 없습니다</h2>
+            <p class="empty-description">등록된 뉴스 및 공지가 없습니다.</p>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- Pagination buttons will be populated by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- News Detail Modal -->
+    <div class="modal" id="newsModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">뉴스 제목</h2>
+                <div class="modal-meta">
+                    <div class="modal-info">
+                        <span id="modalCategory">카테고리</span>
+                        <span id="modalDate">2023-03-15</span>
+                        <span id="modalSource">출처</span>
+                    </div>
+                    <div class="news-meta">
+                        <div class="news-views">
+                            <i class="fas fa-eye"></i>
+                            <span id="modalViews">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-content-text" id="modalContent">
+                    뉴스 내용이 여기에 표시됩니다.
+                </div>
+                <a href="#" class="external-link" id="externalLink" target="_blank" style="display: none;">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>원문 보기</span>
+                </a>
+                <div class="modal-attachments" id="modalAttachments" style="display: none;">
+                    <h3>첨부 파일</h3>
+                    <div class="attachment-list" id="attachmentList">
+                        <!-- Attachments will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <i class="fas fa-home nav-icon"></i>
+            <span>홈</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-briefcase nav-icon"></i>
+            <span>의뢰</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user-tie nav-icon"></i>
+            <span>전문가</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-graduation-cap nav-icon"></i>
+            <span>교육</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user nav-icon"></i>
+            <span>마이</span>
+        </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mock data for news and notices
+            const newsData = [
+                {
+                    id: 1,
+                    category: 'support',
+                    title: '[정부지원] 중소기업 디지털 전환 자금 지원 사업',
+                    preview: '중소벤처기업진흥공단에서 진행하는 디지털 전환 자금 지원 사업에 참여하세요. 최대 2억원까지 지원 가능!',
+                    content: `중소벤처기업진흥공단에서 진행하는 디지털 전환 자금 지원 사업에 참여하세요.
+
+🎯 사업 목적: 중소기업의 디지털 전환 가속화 및 경쟁력 강화
+
+💰 지원 내용:
+- 디지털 전환 자금: 최대 2억원 (업체당)
+- 기술개발비: 최대 1억원
+- 인건비: 최대 5천만원
+- 시설비/장비비: 최대 5천만원
+
+📅 신청 기간: 2023년 4월 1일 ~ 4월 30일
+🏢 신청 기관: 중소벤처기업진흥공단 홈페이지
+
+👥 지원 대상:
+- 설립 3년 이상 7년 미만 중소기업
+- 직원 수 5인 이상 50인 미만
+- 최근 3년간 매출액 10억원 이상
+- 디지털 전환 계획 보유 기업
+
+📋 제출 서류:
+- 사업계획서
+- 재무제표 (최근 3개년)
+- 사업자등록증
+- 법인등기부등본
+- 디지털 전환 계획서
+
+✨ 평가 기준:
+- 사업의 혁신성 (40%)
+- 기술력 및 실행 가능성 (30%)
+- 시장성 및 성장 가능성 (20%)
+- 기업의 재무 건전성 (10%)
+
+문의사항:
+- 중소벤처기업진흥공단: 1544-7447
+- 이메일: digital@kised.or.kr
+
+많은 관심과 참여 부탁드립니다!`,
+                    date: '2023-03-18',
+                    source: '중소벤처기업진흥공단',
+                    views: 4520,
+                    unread: true,
+                    featured: true,
+                    externalUrl: 'https://www.kised.or.kr/',
+                    attachments: [
+                        { name: '디지털전환_지원사업_안내.pdf', size: '2.4MB' },
+                        { name: '신청서_양식.hwp', size: '156KB' },
+                        { name: '사업계획서_작성가이드.pdf', size: '1.8MB' }
+                    ]
+                },
+                {
+                    id: 2,
+                    category: 'seminar',
+                    title: '[무료] 클라우드 보안 전문가 양성 과정 신청',
+                    preview: '정부 지원으로 진행되는 클라우드 보안 전문가 양성 과정에 참여하세요. 무료로 최신 기술을 배우고 자격증 취득 기회까지!',
+                    content: `정부 지원으로 진행되는 클라우드 보안 전문가 양성 과정에 참여하세요.
+
+📅 교육 일정: 2023년 4월 3일 ~ 4월 28일 (4주)
+⏰ 시간: 매주 월/수/금 19:00 ~ 22:00
+📍 장소: 온라인 (Zoom)
+
+🎯 교육 내용:
+- 클라우드 아키텍처 기초
+- AWS/Azure/GCP 보안 설정
+- 컨테이너 보안 (Docker, Kubernetes)
+- DevSecOps 실무
+- 클라우드 보안 자격증 대비
+
+✨ 혜택:
+- 전액 무료 교육 (정부 지원)
+- 교육 자료 제공
+- 수료증 발급
+- 취업 지원 프로그램 연계
+
+👥 모집 인원: 30명 (선착순)
+📝 신청 방법: 아래 링크를 통해 온라인 신청
+
+많은 관심과 참여 부탁드립니다!`,
+                    date: '2023-03-15',
+                    source: '한국정보보호진흥원',
+                    views: 3420,
+                    unread: true,
+                    featured: true,
+                    externalUrl: 'https://www.kisa.or.kr/',
+                    attachments: [
+                        { name: '교육_커리큘럼.pdf', size: '245KB' },
+                        { name: '신청서_양식.docx', size: '56KB' }
+                    ]
+                },
+                {
+                    id: 3,
+                    category: 'support',
+                    title: '[정부지원] 여성 기업인 창업 자금 지원',
+                    preview: '여성창업기업지원센터에서 여성 기업인 대상 창업 자금 지원 사업을 진행합니다. 최대 5천만원까지 무상 지원!',
+                    content: `여성창업기업지원센터에서 여성 기업인 대상 창업 자금 지원 사업을 진행합니다.
+
+🎯 사업 목적: 여성의 경제 활동 참여 확대 및 창업 활성화
+
+💰 지원 내용:
+- 창업 자금: 최대 5천만원 (무상)
+- 사업화 자금: 최대 3천만원
+- 마케팅 자금: 최대 2천만원
+
+📅 신청 기간: 2023년 4월 10일 ~ 5월 10일
+🏢 신청 기관: 여성창업기업지원센터
+
+👥 지원 대상:
+- 만 19세 이상 여성
+- 창업 3년 미만 기업가
+- 또는 창업을 준비하는 여성
+
+📋 제출 서류:
+- 창업계획서
+- 사업자등록증 (기존 사업자)
+- 주민등록등본
+- 본인서약서
+
+✨ 평가 기준:
+- 사업의 혁신성 (40%)
+- 시장성 및 성장 가능성 (30%)
+- 실행 가능성 (20%)
+- 창업자의 역량 (10%)
+
+문의사항:
+- 여성창업기업지원센터: 1577-2274
+- 이메일: support@womenbiz.or.kr
+
+여성 기업인분들의 많은 참여를 기다립니다!`,
+                    date: '2023-03-14',
+                    source: '여성창업기업지원센터',
+                    views: 3890,
+                    unread: true,
+                    featured: false,
+                    externalUrl: 'https://www.womenbiz.or.kr/',
+                    attachments: [
+                        { name: '창업자금_지원_안내.pdf', size: '1.2MB' },
+                        { name: '창업계획서_양식.hwp', size: '98KB' }
+                    ]
+                },
+                {
+                    id: 4,
+                    category: 'news',
+                    title: '프리랜서 시장, 2023년 1조원 규모 성장 전망',
+                    preview: '경제 불확실성 속에서도 기업들은 유연한 인력 운용을 선호하며 프리랜서 시장은 꾸준히 성장하고 있습니다.',
+                    content: `경제 불확실성 속에서도 기업들은 유연한 인력 운용을 선호하며 프리랜서 시장은 꾸준히 성장하고 있습니다.
+
+최근 시장조사기관에 따르면, 국내 프리랜서 시장은 2023년 약 1조원 규모에 이를 것으로 전망됩니다. 이는 전년 대비 15% 이상의 성장률입니다.
+
+주요 성장 요인:
+1. 기업의 비용 절감 압박
+2. 유연근무제 확산
+3. 디지털 전환 가속화
+4. Z세대의 일하는 방식 변화
+
+특히 IT/개발, 마케팅, 디자인 분야에서 프리랜서 수요가 급증하고 있으며, 고숙련 전문가일수록 시장 가치가 높아지는 추세입니다.
+
+업계 관계자는 "앞으로도 플랫폼 기반의 프리랜서 매칭 시장이 더욱 활성화될 것"이라고 전망했습니다.`,
+                    date: '2023-03-12',
+                    source: '경제일보',
+                    views: 2156,
+                    unread: true,
+                    featured: false,
+                    externalUrl: 'https://www.kyunghyang.com/',
+                    attachments: []
+                },
+                {
+                    id: 5,
+                    category: 'industry',
+                    title: 'ISO 27001 인증 기업, 계약 우선권 확대',
+                    preview: '정부가 공공기관 및 대기업의 정보보안 인증 의무화를 확대하면서 ISO 27001 인증 기업들의 계약 우선권이 커지고 있습니다.',
+                    content: `정부가 공공기관 및 대기업의 정보보안 인증 의무화를 확대하면서 ISO 27001 인증 기업들의 계약 우선권이 커지고 있습니다.
+
+방송통신위원회는 올해 하반기부터 정보보안 관리체계(ISMS) 인증 의무 대상을 현재 1,800여 개사에서 2,500여 개사로 확대할 예정입니다.
+
+주요 변경 내용:
+- 대상 기업 확대 (연간 매출 100억원 이상)
+- 인증 범위 확대 (클라우드 서비스 포함)
+- 정기 심사 주기 단축 (2년 → 1년)
+
+이로 인해 ISO 27001 인증을 보유한 기업들은 공공 조달 및 대기업 협력 시 우대를 받을 수 있게 됩니다.
+
+실제로 삼성SDS, LG CNS 등 대기업들은 협력사 선정 시 정보보안 인증을 필수 요건으로 적용하고 있습니다.
+
+전문가들은 "정보보안 인증은 이제 선택이 아닌 필수"라며 "관련 전문가 수요가 계속 증가할 것"이라고 말했습니다.`,
+                    date: '2023-03-10',
+                    source: 'IT동아',
+                    views: 1879,
+                    unread: false,
+                    featured: false,
+                    externalUrl: 'https://www.itdonga.com/',
+                    attachments: [
+                        { name: 'ISMS_인증_가이드라인.pdf', size: '1.2MB' }
+                    ]
+                },
+                {
+                    id: 6,
+                    category: 'support',
+                    title: '[정부지원] 청년 창업 사업화 자금 지원',
+                    preview: '고용노동부에서 청년 창업가 대상 사업화 자금 지원 사업을 진행합니다. 최대 1억원까지 지원되니 꼭 신청하세요!',
+                    content: `고용노동부에서 청년 창업가 대상 사업화 자금 지원 사업을 진행합니다.
+
+🎯 사업 목적: 청년 창업 활성화 및 양질의 일자리 창출
+
+💰 지원 내용:
+- 사업화 자금: 최대 1억원
+- 인건비: 최대 5천만원
+- 개발비: 최대 3천만원
+
+📅 신청 기간: 2023년 4월 5일 ~ 4월 25일
+🏢 신청 기관: 고용노동부 청년창업포털
+
+👥 지원 대상:
+- 만 19세 ~ 34세 청년
+- 창업 1년 미만 기업가
+- 4인 이하 기업
+
+📋 제출 서류:
+- 사업계획서
+- 재무제표
+- 사업자등록증
+- 신분증 사본
+
+✨ 평가 기준:
+- 사업의 혁신성 (40%)
+- 고용 창출 효과 (30%)
+- 성장 가능성 (20%)
+- 청년의 역량 (10%)
+
+문의사항:
+- 고용노동부 청년창업지원센터: 1644-2044
+- 이메일: youth@moel.go.kr
+
+청년 창업가분들의 적극적인 참여를 바랍니다!`,
+                    date: '2023-03-08',
+                    source: '고용노동부',
+                    views: 5670,
+                    unread: false,
+                    featured: true,
+                    externalUrl: 'https://www.moel.go.kr/',
+                    attachments: [
+                        { name: '청년창업_지원_안내.pdf', size: '3.2MB' },
+                        { name: '신청서_작성_매뉴얼.pdf', size: '890KB' }
+                    ]
+                },
+                {
+                    id: 7,
+                    category: 'update',
+                    title: '전시 플랫폼, 전문가 커뮤니티 베타 버전 오픈',
+                    preview: '전문가들 간의 지식 공유와 네트워킹을 위한 커뮤니티 기능이 베타 버전으로 오픈되었습니다.',
+                    content: `전문가들 간의 지식 공유와 네트워킹을 위한 커뮤니티 기능이 베타 버전으로 오픈되었습니다.
+
+새롭게 오픈된 커뮤니티 기능:
+1. 전문가 그룹 채팅
+2. 기술 Q&A 게시판
+3. 사이드 프로젝트 팀원 모집
+4. 지식 공유 웨비나 예약
+
+베타 기간 동안의 특별 혜택:
+- 그룹 생성 무료 (월 5개)
+- 웨비나 예약 우선권
+- 프로필 프리미엄 기능 1개월 무료
+
+많은 참여와 피드백 부탁드립니다!
+
+📧 문의: community@jeonsi.com`,
+                    date: '2023-03-08',
+                    source: '전시 운영팀',
+                    views: 934,
+                    unread: false,
+                    featured: false,
+                    externalUrl: '',
+                    attachments: []
+                },
+                {
+                    id: 8,
+                    category: 'seminar',
+                    title: '[온라인] 스타트업 재무 전략 무료 웨비나',
+                    preview: '성공적인 스타트업 운영을 위한 재무 전략 웨비나를 무료로 개최합니다. 투자 유치부터 현금흐름 관리까지!',
+                    content: `성공적인 스타트업 운영을 위한 재무 전략 웨비나를 무료로 개최합니다.
+
+📅 일시: 2023년 3월 25일 (토) 14:00 ~ 16:00
+📍 장소: 온라인 (YouTube Live)
+
+🎯 주요 내용:
+- 스타트업 투자 유치 전략
+- IR 자료 작성 노하우
+- 현금흐름 관리 실전 팁
+- 재무 모델링 기초
+- 투자자와의 협상 전략
+
+👥 발표자:
+- 김투자 (벤처캐피탈 파트너)
+- 이재무 (스타트업 CFO)
+
+✨ 참여 혜택:
+- 무료 참여
+- 발표 자료 제공
+- Q&A 세션
+- 참여증 발급
+
+📝 신청: 아래 링크를 통해 사전 신청 (선착순 500명)
+
+스타트업 창업을 준비하시는 분들께 꼭 필요한 정보가 될 것입니다!`,
+                    date: '2023-03-05',
+                    source: '스타트업허브',
+                    views: 2765,
+                    unread: false,
+                    featured: true,
+                    externalUrl: 'https://www.startuphub.kr/',
+                    attachments: [
+                        { name: '웨비나_소개서.pdf', size: '890KB' }
+                    ]
+                }
+            ];
+            
+            // DOM elements
+            const menuToggle = document.getElementById('menuToggle');
+            const sideMenu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('overlay');
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+            const filterChips = document.querySelectorAll('.filter-chip');
+            const newsList = document.getElementById('newsList');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            const pagination = document.getElementById('pagination');
+            const newsModal = document.getElementById('newsModal');
+            const modalClose = document.getElementById('modalClose');
+            
+            // State
+            let currentCategory = 'all';
+            let currentPage = 1;
+            const itemsPerPage = 10;
+            let filteredNews = [...newsData];
+            
+            // Toggle side menu
+            menuToggle.addEventListener('click', function() {
+                sideMenu.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+            
+            // Close side menu when clicking overlay
+            overlay.addEventListener('click', function() {
+                sideMenu.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+            
+            // Close modal
+            modalClose.addEventListener('click', function() {
+                newsModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside
+            newsModal.addEventListener('click', function(e) {
+                if (e.target === newsModal) {
+                    newsModal.classList.remove('active');
+                }
+            });
+            
+            // Filter chip click event
+            filterChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    // Remove active class from all chips
+                    filterChips.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked chip
+                    this.classList.add('active');
+                    
+                    // Update current category
+                    currentCategory = this.getAttribute('data-category');
+                    
+                    // Reset to first page
+                    currentPage = 1;
+                    
+                    // Filter and render news
+                    filterNews();
+                });
+            });
+            
+            // Search functionality
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            function performSearch() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                if (searchTerm === '') {
+                    filteredNews = [...newsData];
+                } else {
+                    filteredNews = newsData.filter(news => 
+                        news.title.toLowerCase().includes(searchTerm) ||
+                        news.preview.toLowerCase().includes(searchTerm) ||
+                        news.content.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                // Apply category filter
+                if (currentCategory !== 'all') {
+                    filteredNews = filteredNews.filter(news => 
+                        news.category === currentCategory
+                    );
+                }
+                
+                // Reset to first page
+                currentPage = 1;
+                
+                // Render news
+                renderNews();
+            }
+            
+            // Filter news by category
+            function filterNews() {
+                if (currentCategory === 'all') {
+                    filteredNews = [...newsData];
+                } else {
+                    filteredNews = newsData.filter(news => 
+                        news.category === currentCategory
+                    );
+                }
+                
+                renderNews();
+            }
+            
+            // Render news
+            function renderNews() {
+                // Show loading state
+                loadingState.style.display = 'block';
+                newsList.innerHTML = '';
+                emptyState.style.display = 'none';
+                
+                // Simulate loading delay
+                setTimeout(() => {
+                    // Hide loading state
+                    loadingState.style.display = 'none';
+                    
+                    // Calculate pagination
+                    const startIndex = (currentPage - 1) * itemsPerPage;
+                    const endIndex = startIndex + itemsPerPage;
+                    const paginatedNews = filteredNews.slice(startIndex, endIndex);
+                    
+                    if (paginatedNews.length === 0) {
+                        // Show empty state
+                        emptyState.style.display = 'block';
+                    } else {
+                        // Create news cards
+                        paginatedNews.forEach(news => {
+                            const newsCard = createNewsCard(news);
+                            newsList.appendChild(newsCard);
+                        });
+                    }
+                    
+                    // Render pagination
+                    renderPagination();
+                }, 300);
+            }
+            
+            // Create news card element
+            function createNewsCard(news) {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                
+                // Add unread and featured classes
+                if (news.unread) {
+                    card.classList.add('unread');
+                }
+                if (news.featured) {
+                    card.classList.add('featured');
+                }
+                
+                // Category class and text
+                let categoryClass = '';
+                let categoryText = '';
+                
+                switch (news.category) {
+                    case 'news':
+                        categoryClass = 'category-news';
+                        categoryText = '뉴스';
+                        break;
+                    case 'seminar':
+                        categoryClass = 'category-seminar';
+                        categoryText = '무료 세미나';
+                        break;
+                    case 'support':
+                        categoryClass = 'category-support';
+                        categoryText = '정부지원';
+                        break;
+                    case 'industry':
+                        categoryClass = 'category-industry';
+                        categoryText = '산업 동향';
+                        break;
+                    case 'update':
+                        categoryClass = 'category-update';
+                        categoryText = '플랫폼 소식';
+                        break;
+                }
+                
+                card.innerHTML = `
+                    ${news.featured ? '<div class="featured-badge">추천</div>' : ''}
+                    <div class="news-header">
+                        <div>
+                            <span class="news-category ${categoryClass}">${categoryText}</span>
+                        </div>
+                        <div class="news-date">${news.date}</div>
+                    </div>
+                    <h3 class="news-title">${news.title}</h3>
+                    <p class="news-preview">${news.preview}</p>
+                    <div class="news-footer">
+                        <div class="news-meta">
+                            <div class="news-source">
+                                <i class="fas fa-globe"></i>
+                                <span>${news.source}</span>
+                            </div>
+                            <div class="news-views">
+                                <i class="fas fa-eye"></i>
+                                <span>${news.views}</span>
+                            </div>
+                            ${news.attachments.length > 0 ? `
+                            <div class="news-attachments">
+                                <i class="fas fa-paperclip"></i>
+                                <span>${news.attachments.length}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                // Add click event to show detail
+                card.addEventListener('click', function() {
+                    showNewsDetail(news);
+                    
+                    // Mark as read
+                    if (news.unread) {
+                        news.unread = false;
+                        card.classList.remove('unread');
+                    }
+                });
+                
+                return card;
+            }
+            
+            // Show news detail in modal
+            function showNewsDetail(news) {
+                // Update modal content
+                document.getElementById('modalTitle').textContent = news.title;
+                document.getElementById('modalDate').textContent = news.date;
+                document.getElementById('modalSource').textContent = news.source;
+                document.getElementById('modalViews').textContent = news.views;
+                document.getElementById('modalContent').innerHTML = news.content.replace(/\n/g, '<br>');
+                
+                // Update category
+                let categoryText = '';
+                switch (news.category) {
+                    case 'news':
+                        categoryText = '뉴스';
+                        break;
+                    case 'seminar':
+                        categoryText = '무료 세미나';
+                        break;
+                    case 'support':
+                        categoryText = '정부지원';
+                        break;
+                    case 'industry':
+                        categoryText = '산업 동향';
+                        break;
+                    case 'update':
+                        categoryText = '플랫폼 소식';
+                        break;
+                }
+                document.getElementById('modalCategory').textContent = categoryText;
+                
+                // Update external link
+                const externalLink = document.getElementById('externalLink');
+                if (news.externalUrl) {
+                    externalLink.href = news.externalUrl;
+                    externalLink.style.display = 'inline-flex';
+                } else {
+                    externalLink.style.display = 'none';
+                }
+                
+                // Update attachments
+                const attachmentsSection = document.getElementById('modalAttachments');
+                const attachmentList = document.getElementById('attachmentList');
+                
+                if (news.attachments.length > 0) {
+                    attachmentsSection.style.display = 'block';
+                    attachmentList.innerHTML = '';
+                    
+                    news.attachments.forEach(attachment => {
+                        const attachmentItem = document.createElement('a');
+                        attachmentItem.className = 'attachment-item';
+                        attachmentItem.href = '#';
+                        attachmentItem.innerHTML = `
+                            <i class="fas fa-file-pdf attachment-icon"></i>
+                            <div class="attachment-info">
+                                <div class="attachment-name">${attachment.name}</div>
+                                <div class="attachment-size">${attachment.size}</div>
+                            </div>
+                        `;
+                        attachmentList.appendChild(attachmentItem);
+                    });
+                } else {
+                    attachmentsSection.style.display = 'none';
+                }
+                
+                // Show modal
+                newsModal.classList.add('active');
+                
+                // Increment view count
+                news.views++;
+            }
+            
+            // Render pagination
+            function renderPagination() {
+                const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
+                pagination.innerHTML = '';
+                
+                if (totalPages <= 1) return;
+                
+                // Previous button
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'page-btn';
+                prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener('click', function() {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderNews();
+                    }
+                });
+                pagination.appendChild(prevBtn);
+                
+                // Page numbers
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                
+                if (endPage - startPage < maxVisiblePages - 1) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = 'page-btn';
+                    if (i === currentPage) {
+                        pageBtn.classList.add('active');
+                    }
+                    pageBtn.textContent = i;
+                    pageBtn.addEventListener('click', function() {
+                        currentPage = i;
+                        renderNews();
+                    });
+                    pagination.appendChild(pageBtn);
+                }
+                
+                // Next button
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'page-btn';
+                nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.addEventListener('click', function() {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderNews();
+                    }
+                });
+                pagination.appendChild(nextBtn);
+            }
+            
+            // Initial load
+            filterNews();
+        });
+    </script>
+</body>
+</html>

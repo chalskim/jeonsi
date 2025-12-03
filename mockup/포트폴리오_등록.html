@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>포트폴리오 등록 - 전문가 시간 연결 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- App Header --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        /* --- Main Container --- */
+        .portfolio-registration-container {
+            max-width: 800px;
+            margin: 80px auto 40px;
+            padding: 0 20px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .form-card {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        /* --- Form Elements --- */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* --- Image Upload Area --- */
+        .image-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            background-color: var(--light-color);
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .image-upload-area.has-image {
+            padding: 0;
+            border: 2px solid var(--primary-color);
+            cursor: default;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .upload-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        #image-input {
+            display: none;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 6px;
+            display: none; /* Initially hidden */
+        }
+        
+        /* --- Tag Input --- */
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            min-height: 46px;
+            cursor: text;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .tag .remove-tag {
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tag-input-field {
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            padding: 4px;
+            min-width: 120px;
+        }
+
+        /* --- Buttons --- */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e6ea;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .portfolio-registration-container {
+                padding: 0 15px;
+            }
+            .form-card {
+                padding: 20px;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">포트폴리오 등록</div>
+        <div></div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="portfolio-registration-container">
+        <div class="form-header">
+            <h2>새 포트폴리오 등록</h2>
+            <p>대표적인 프로젝트나 작업물을 등록하여 전문성을 어필하세요.</p>
+        </div>
+
+        <form id="portfolio-form" class="form-card">
+            <!-- Image Upload -->
+            <div class="form-group">
+                <label class="form-label">대표 이미지</label>
+                <div class="image-upload-area" id="image-upload-area">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text">이미지를 끌어다 놓거나 클릭하여 업로드하세요.</p>
+                    <span class="upload-button">파일 선택</span>
+                    <img id="image-preview" class="image-preview" alt="이미지 미리보기">
+                </div>
+                <input type="file" id="image-input" accept="image/*">
+            </div>
+
+            <!-- Project Title -->
+            <div class="form-group">
+                <label class="form-label" for="project-title">프로젝트 제목</label>
+                <input type="text" id="project-title" class="form-input" placeholder="예: 스타트업 성장 전략 컨설팅" required>
+            </div>
+
+            <!-- Project Description -->
+            <div class="form-group">
+                <label class="form-label" for="project-description">프로젝트 설명</label>
+                <textarea id="project-description" class="form-textarea" placeholder="프로젝트의 목표, 수행한 역할, 사용된 기술, 그리고 성과에 대해 상세히 설명해주세요." required></textarea>
+            </div>
+
+            <!-- Tags -->
+            <div class="form-group">
+                <label class="form-label">관련 태그</label>
+                <div class="tag-input-container" id="tag-container">
+                    <!-- Tags will be dynamically added here -->
+                    <input type="text" class="tag-input-field" id="tag-input" placeholder="태그 입력 후 Enter">
+                </div>
+            </div>
+            
+            <!-- Project Link -->
+            <div class="form-group">
+                <label class="form-label" for="project-link">프로젝트 링크 (선택)</label>
+                <input type="url" id="project-link" class="form-input" placeholder="https://example.com">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary">임시 저장</button>
+                <button type="submit" class="btn btn-primary">등록하기</button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageUploadArea = document.getElementById('image-upload-area');
+            const imageInput = document.getElementById('image-input');
+            const imagePreview = document.getElementById('image-preview');
+            const tagContainer = document.getElementById('tag-container');
+            const tagInput = document.getElementById('tag-input');
+            const form = document.getElementById('portfolio-form');
+
+            // Image Upload Logic
+            imageUploadArea.addEventListener('click', () => {
+                imageInput.click();
+            });
+
+            imageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                        imageUploadArea.classList.add('has-image');
+                        // Hide upload prompt
+                        imageUploadArea.querySelector('.upload-icon').style.display = 'none';
+                        imageUploadArea.querySelector('.upload-text').style.display = 'none';
+                        imageUploadArea.querySelector('.upload-button').style.display = 'none';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Tag Input Logic
+            tagInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const tagText = this.value.trim();
+                    if (tagText) {
+                        addTag(tagText);
+                        this.value = '';
+                    }
+                }
+            });
+
+            function addTag(text) {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `${text} <span class="remove-tag">&times;</span>`;
+                tagContainer.insertBefore(tag, tagInput);
+                
+                tag.querySelector('.remove-tag').addEventListener('click', () => {
+                    tag.remove();
+                });
+            }
+
+            // Form Submission
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                alert('포트폴리오가 성공적으로 등록되었습니다! (이것은 목업입니다)');
+                // In a real application, you would handle form data submission here.
+            });
+        });
+    </script>
+</body>
+</html>

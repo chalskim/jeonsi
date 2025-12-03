@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 베너 관리</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-header {
+            background-color: #4a6bdf;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .admin-content {
+            padding: 15px;
+        }
+        
+        /* 캘린더 스타일 */
+        .calendar-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .calendar-nav button {
+            background: none;
+            border: none;
+            color: #4a6bdf;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 8px;
+            color: #666;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .calendar-day:hover {
+            background-color: #f0f2f5;
+        }
+        
+        .calendar-day.today {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            font-weight: bold;
+        }
+        
+        .calendar-day.has-banner {
+            background-color: #e8f5e8;
+            border: 1px solid #4caf50;
+        }
+        
+        .calendar-day.selected {
+            background-color: #4a6bdf;
+            color: white;
+        }
+        
+        .calendar-day.other-month {
+            color: #ccc;
+        }
+        
+        .banner-indicator {
+            position: absolute;
+            bottom: 2px;
+            width: 4px;
+            height: 4px;
+            background-color: #4caf50;
+            border-radius: 50%;
+        }
+        
+        .calendar-day.has-multiple-banners .banner-indicator::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            width: 4px;
+            height: 4px;
+            background-color: #ff9800;
+            border-radius: 50%;
+        }
+        
+        /* 베너 관리 섹션 */
+        .banner-management {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .date-info {
+            font-size: 14px;
+            color: #666;
+            background-color: #f5f7fa;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        
+        /* 베너 슬롯 */
+        .banner-slots {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .banner-slots {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .banner-slot {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            background-color: #fafafa;
+            position: relative;
+            min-height: 200px;
+        }
+        
+        .banner-slot.has-content {
+            border: 2px solid #4a6bdf;
+            background-color: white;
+        }
+        
+        .slot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .slot-number {
+            font-weight: bold;
+            color: #4a6bdf;
+        }
+        
+        .slot-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .slot-button {
+            background: none;
+            border: none;
+            color: #4a6bdf;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 3px;
+        }
+        
+        .slot-button.delete {
+            color: #e53935;
+        }
+        
+        .banner-preview {
+            width: 100%;
+            height: 120px;
+            background-color: #f0f2f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .banner-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .empty-banner {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .banner-info {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .banner-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .banner-period {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        /* 베너 추가/수정 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90%;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .image-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .image-upload:hover {
+            border-color: #4a6bdf;
+            background-color: #f8f9ff;
+        }
+        
+        .image-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: #4a6bdf;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #e0e6ed;
+            color: #333;
+        }
+        
+        /* 토스트 메시지 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1001;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        /* 베너 미리보기 섹션 */
+        .preview-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .preview-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .preview-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .preview-slide.active {
+            display: flex;
+        }
+        
+        .preview-slide img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+        
+        .preview-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .preview-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .preview-desc {
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .preview-button {
+            background-color: rgba(255,255,255,0.9);
+            color: #333;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .preview-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            z-index: 2;
+        }
+        
+        .preview-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+        
+        .preview-dot.active {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="header-icon" id="backButton">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="admin-title">베너 관리</div>
+        <div class="header-icon">
+            <i class="fas fa-user-circle"></i>
+        </div>
+    </header>
+    
+    <!-- Admin Content -->
+    <div class="admin-content">
+        <!-- 베너 미리보기 -->
+        <div class="preview-section">
+            <div class="section-header">
+                <div class="section-title">베너 미리보기</div>
+                <div class="date-info" id="previewDate">2025년 1월 15일</div>
+            </div>
+            <div class="preview-container">
+                <div class="preview-slide active" data-slide="0">
+                    <img src="https://picsum.photos/seed/banner1/800/400.jpg" alt="베너1">
+                    <div class="preview-content">
+                        <div class="preview-title">🎉 2025년 정부지원 인증 프로그램</div>
+                        <div class="preview-desc">최대 70% 지원금으로 인증 비용 절감 혜택을 받으세요</div>
+                        <button class="preview-button">자세히 보기</button>
+                    </div>
+                </div>
+                <div class="preview-slide" data-slide="1">
+                    <img src="https://picsum.photos/seed/banner2/800/400.jpg" alt="베너2">
+                    <div class="preview-content">
+                        <div class="preview-title">🏆 ISMS-P 전문가 양성 과정</div>
+                        <div class="preview-desc">실무 중심의 맞춤형 교육으로 전문가로 성장하세요</div>
+                        <button class="preview-button">과정 신청</button>
+                    </div>
+                </div>
+                <div class="preview-slide" data-slide="2">
+                    <div class="preview-content">
+                        <div class="preview-title">🔒 정보보호 컨설팅 바우처</div>
+                        <div class="preview-desc">기업 맞춤형 보안 솔루션 지원, 최대 50% 할인</div>
+                        <button class="preview-button">지원 신청</button>
+                    </div>
+                </div>
+                <div class="preview-slide" data-slide="3">
+                    <img src="https://picsum.photos/seed/banner4/800/400.jpg" alt="베너4">
+                    <div class="preview-content">
+                        <div class="preview-title">🌟 글로벌 인증 전문가</div>
+                        <div class="preview-desc">ISO 27001, GDPR 등 해외 인증 성공률 98%</div>
+                        <button class="preview-button">상담하기</button>
+                    </div>
+                </div>
+                <div class="preview-dots">
+                    <span class="preview-dot active" data-slide="0"></span>
+                    <span class="preview-dot" data-slide="1"></span>
+                    <span class="preview-dot" data-slide="2"></span>
+                    <span class="preview-dot" data-slide="3"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 캘린더 -->
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <div class="calendar-title" id="calendarTitle">2025년 1월</div>
+                <div class="calendar-nav">
+                    <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                    <button id="todayButton">오늘</button>
+                    <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- 캘린더가 JavaScript로 동적으로 생성됩니다 -->
+            </div>
+        </div>
+        
+        <!-- 베너 관리 -->
+        <div class="banner-management">
+            <div class="section-header">
+                <div class="section-title">베너 관리</div>
+                <div class="date-info" id="selectedDate">2025년 1월 15일</div>
+            </div>
+            
+            <div class="banner-slots" id="bannerSlots">
+                <div class="banner-slot" data-slot="1">
+                    <div class="slot-header">
+                        <span class="slot-number">베너 1</span>
+                        <div class="slot-actions">
+                            <button class="slot-button edit" data-slot="1"><i class="fas fa-edit"></i></button>
+                            <button class="slot-button delete" data-slot="1"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="banner-preview">
+                        <div class="empty-banner">
+                            <i class="fas fa-plus-circle" style="font-size: 24px; margin-bottom: 5px;"></i>
+                            <div>베너 추가</div>
+                        </div>
+                    </div>
+                    <div class="banner-info">
+                        <div class="banner-title">2025년 정부지원 인증 프로그램</div>
+                        <div class="banner-period">2025.01.15 - 2025.02.28</div>
+                    </div>
+                </div>
+                
+                <div class="banner-slot" data-slot="2">
+                    <div class="slot-header">
+                        <span class="slot-number">베너 2</span>
+                        <div class="slot-actions">
+                            <button class="slot-button edit" data-slot="2"><i class="fas fa-edit"></i></button>
+                            <button class="slot-button delete" data-slot="2"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="banner-preview">
+                        <img src="https://picsum.photos/seed/banner2/400/200.jpg" alt="베너2">
+                    </div>
+                    <div class="banner-info">
+                        <div class="banner-title">ISMS-P 전문가 양성 과정</div>
+                        <div class="banner-period">2025.01.10 - 2025.03.31</div>
+                    </div>
+                </div>
+                
+                <div class="banner-slot" data-slot="3">
+                    <div class="slot-header">
+                        <span class="slot-number">베너 3</span>
+                        <div class="slot-actions">
+                            <button class="slot-button edit" data-slot="3"><i class="fas fa-edit"></i></button>
+                            <button class="slot-button delete" data-slot="3"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="banner-preview">
+                        <div class="empty-banner">
+                            <i class="fas fa-plus-circle" style="font-size: 24px; margin-bottom: 5px;"></i>
+                            <div>베너 추가</div>
+                        </div>
+                    </div>
+                    <div class="banner-info">
+                        <div class="banner-title">정보보호 컨설팅 바우처</div>
+                        <div class="banner-period">2025.01.20 - 2025.04.30</div>
+                    </div>
+                </div>
+                
+                <div class="banner-slot" data-slot="4">
+                    <div class="slot-header">
+                        <span class="slot-number">베너 4</span>
+                        <div class="slot-actions">
+                            <button class="slot-button edit" data-slot="4"><i class="fas fa-edit"></i></button>
+                            <button class="slot-button delete" data-slot="4"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="banner-preview">
+                        <img src="https://picsum.photos/seed/banner4/400/200.jpg" alt="베너4">
+                    </div>
+                    <div class="banner-info">
+                        <div class="banner-title">글로벌 인증 전문가</div>
+                        <div class="banner-period">2025.01.25 - 2025.05.31</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 베너 추가/수정 모달 -->
+    <div class="modal" id="bannerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">베너 추가</div>
+                <button class="close-button" id="closeModal">&times;</button>
+            </div>
+            
+            <form id="bannerForm">
+                <div class="form-group">
+                    <label class="form-label">베너 제목</label>
+                    <input type="text" class="form-input" id="bannerTitle" placeholder="베너 제목을 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">베너 설명</label>
+                    <textarea class="form-textarea" id="bannerDescription" placeholder="베너에 대한 상세 설명을 입력하세요"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">버튼 텍스트</label>
+                    <input type="text" class="form-input" id="buttonText" placeholder="버튼에 표시할 텍스트 (예: 자세히 보기)">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">연결 링크</label>
+                    <input type="text" class="form-input" id="bannerLink" placeholder="클릭 시 이동할 링크 주소">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">베너 이미지</label>
+                    <div class="image-upload" id="imageUpload">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 24px; margin-bottom: 5px;"></i>
+                        <div>이미지 업로드 또는 URL 입력</div>
+                        <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                    </div>
+                    <input type="text" class="form-input" id="imageUrl" placeholder="또는 이미지 URL을 입력하세요" style="margin-top: 10px;">
+                    <img class="image-preview" id="imagePreview" style="display: none;">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">게시 기간</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="date" class="form-input" id="startDate" style="flex: 1;">
+                        <span style="align-self: center;">~</span>
+                        <input type="date" class="form-input" id="endDate" style="flex: 1;">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">슬롯 선택</label>
+                    <select class="form-select" id="slotSelect">
+                        <option value="1">슬롯 1</option>
+                        <option value="2">슬롯 2</option>
+                        <option value="3">슬롯 3</option>
+                        <option value="4">슬롯 4</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelButton">취소</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 토스트 메시지 -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // 캘린더 관련 변수
+        let currentDate = new Date();
+        let selectedDate = new Date();
+        let currentSlide = 0;
+        
+        // 베너 데이터 (실제로는 서버에서 가져와야 함)
+        const bannerData = {
+            '2025-01-15': [
+                {
+                    slot: 1,
+                    title: '2025년 정부지원 인증 프로그램',
+                    description: '최대 70% 지원금으로 인증 비용 절감 혜택을 받으세요',
+                    buttonText: '자세히 보기',
+                    image: 'https://picsum.photos/seed/banner1/800/400.jpg',
+                    startDate: '2025-01-15',
+                    endDate: '2025-02-28'
+                },
+                {
+                    slot: 2,
+                    title: 'ISMS-P 전문가 양성 과정',
+                    description: '실무 중심의 맞춤형 교육으로 전문가로 성장하세요',
+                    buttonText: '과정 신청',
+                    image: 'https://picsum.photos/seed/banner2/800/400.jpg',
+                    startDate: '2025-01-10',
+                    endDate: '2025-03-31'
+                },
+                {
+                    slot: 3,
+                    title: '정보보호 컨설팅 바우처',
+                    description: '기업 맞춤형 보안 솔루션 지원, 최대 50% 할인',
+                    buttonText: '지원 신청',
+                    image: null,
+                    startDate: '2025-01-20',
+                    endDate: '2025-04-30'
+                },
+                {
+                    slot: 4,
+                    title: '글로벌 인증 전문가',
+                    description: 'ISO 27001, GDPR 등 해외 인증 성공률 98%',
+                    buttonText: '상담하기',
+                    image: 'https://picsum.photos/seed/banner4/800/400.jpg',
+                    startDate: '2025-01-25',
+                    endDate: '2025-05-31'
+                }
+            ]
+        };
+        
+        // 캘린더 생성
+        function generateCalendar(year, month) {
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const prevLastDay = new Date(year, month, 0);
+            const firstDayOfWeek = firstDay.getDay();
+            const lastDateOfMonth = lastDay.getDate();
+            const prevLastDate = prevLastDay.getDate();
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            // 요일 헤더
+            const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+            weekDays.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day-header';
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+            
+            // 이전 달 날짜
+            for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+                const dayElement = createDayElement(prevLastDate - i, true, false, false);
+                calendarGrid.appendChild(dayElement);
+            }
+            
+            // 현재 달 날짜
+            for (let date = 1; date <= lastDateOfMonth; date++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                const hasBanner = bannerData[dateStr] && bannerData[dateStr].length > 0;
+                const isToday = isDateToday(year, month, date);
+                const isSelected = isDateSelected(year, month, date);
+                
+                const dayElement = createDayElement(date, false, hasBanner, isToday, isSelected);
+                dayElement.dataset.date = dateStr;
+                calendarGrid.appendChild(dayElement);
+            }
+            
+            // 다음 달 날짜
+            const remainingDays = 42 - (firstDayOfWeek + lastDateOfMonth);
+            for (let date = 1; date <= remainingDays; date++) {
+                const dayElement = createDayElement(date, true, false, false);
+                calendarGrid.appendChild(dayElement);
+            }
+            
+            // 캘린더 제목 업데이트
+            document.getElementById('calendarTitle').textContent = `${year}년 ${month + 1}월`;
+        }
+        
+        function createDayElement(date, isOtherMonth, hasBanner, isToday, isSelected) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = date;
+            
+            if (isOtherMonth) dayElement.classList.add('other-month');
+            if (hasBanner) dayElement.classList.add('has-banner');
+            if (isToday) dayElement.classList.add('today');
+            if (isSelected) dayElement.classList.add('selected');
+            
+            if (hasBanner) {
+                const indicator = document.createElement('div');
+                indicator.className = 'banner-indicator';
+                dayElement.appendChild(indicator);
+            }
+            
+            dayElement.addEventListener('click', function() {
+                if (!isOtherMonth) {
+                    selectDate(this.dataset.date);
+                }
+            });
+            
+            return dayElement;
+        }
+        
+        function isDateToday(year, month, date) {
+            const today = new Date();
+            return year === today.getFullYear() && 
+                   month === today.getMonth() && 
+                   date === today.getDate();
+        }
+        
+        function isDateSelected(year, month, date) {
+            return year === selectedDate.getFullYear() && 
+                   month === selectedDate.getMonth() && 
+                   date === selectedDate.getDate();
+        }
+        
+        // 날짜 선택
+        function selectDate(dateStr) {
+            selectedDate = new Date(dateStr);
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+            updateBannerSlots(dateStr);
+            updateDateInfo(dateStr);
+            updatePreview(dateStr);
+        }
+        
+        // 날짜 정보 업데이트
+        function updateDateInfo(dateStr) {
+            const date = new Date(dateStr);
+            const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+            document.getElementById('selectedDate').textContent = formattedDate;
+            document.getElementById('previewDate').textContent = formattedDate;
+        }
+        
+        // 베너 슬롯 업데이트
+        function updateBannerSlots(dateStr) {
+            const banners = bannerData[dateStr] || [];
+            const slots = document.querySelectorAll('.banner-slot');
+            
+            slots.forEach(slot => {
+                const slotNumber = parseInt(slot.dataset.slot);
+                const banner = banners.find(b => b.slot === slotNumber);
+                
+                if (banner) {
+                    slot.classList.add('has-content');
+                    const preview = slot.querySelector('.banner-preview');
+                    const info = slot.querySelector('.banner-info');
+                    
+                    if (banner.image) {
+                        preview.innerHTML = `<img src="${banner.image}" alt="베너${slotNumber}">`;
+                    } else {
+                        preview.innerHTML = `
+                            <div class="empty-banner">
+                                <i class="fas fa-image" style="font-size: 24px; margin-bottom: 5px;"></i>
+                                <div>이미지 없음</div>
+                            </div>
+                        `;
+                    }
+                    
+                    info.innerHTML = `
+                        <div class="banner-title">${banner.title}</div>
+                        <div class="banner-period">${banner.startDate} - ${banner.endDate}</div>
+                    `;
+                } else {
+                    slot.classList.remove('has-content');
+                    const preview = slot.querySelector('.banner-preview');
+                    const info = slot.querySelector('.banner-info');
+                    
+                    preview.innerHTML = `
+                        <div class="empty-banner">
+                            <i class="fas fa-plus-circle" style="font-size: 24px; margin-bottom: 5px;"></i>
+                            <div>베너 추가</div>
+                        </div>
+                    `;
+                    
+                    info.innerHTML = `
+                        <div class="banner-title">베너 없음</div>
+                        <div class="banner-period">-</div>
+                    `;
+                }
+            });
+        }
+        
+        // 미리보기 업데이트
+        function updatePreview(dateStr) {
+            const banners = bannerData[dateStr] || [];
+            const slides = document.querySelectorAll('.preview-slide');
+            const dots = document.querySelectorAll('.preview-dot');
+            
+            slides.forEach((slide, index) => {
+                const banner = banners[index];
+                if (banner) {
+                    slide.style.display = 'flex';
+                    const content = slide.querySelector('.preview-content');
+                    content.innerHTML = `
+                        <div class="preview-title">${banner.title}</div>
+                        <div class="preview-desc">${banner.description}</div>
+                        <button class="preview-button">${banner.buttonText}</button>
+                    `;
+                    
+                    const img = slide.querySelector('img');
+                    if (banner.image) {
+                        img.src = banner.image;
+                        img.style.display = 'block';
+                    } else {
+                        img.style.display = 'none';
+                    }
+                } else {
+                    slide.style.display = 'none';
+                }
+            });
+            
+            // 첫 번째 활성 슬라이드 설정
+            currentSlide = 0;
+            updateSlideVisibility();
+        }
+        
+        function updateSlideVisibility() {
+            const slides = document.querySelectorAll('.preview-slide');
+            const dots = document.querySelectorAll('.preview-dot');
+            
+            slides.forEach((slide, index) => {
+                if (slide.style.display !== 'none') {
+                    slide.classList.toggle('active', index === currentSlide);
+                }
+            });
+            
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+        
+        // 모달 관리
+        const modal = document.getElementById('bannerModal');
+        const form = document.getElementById('bannerForm');
+        let currentSlot = null;
+        
+        // 베너 추가/수정 버튼
+        document.querySelectorAll('.slot-button.edit').forEach(button => {
+            button.addEventListener('click', function() {
+                currentSlot = this.dataset.slot;
+                document.getElementById('slotSelect').value = currentSlot;
+                document.querySelector('#bannerModal .modal-title').textContent = '베너 수정';
+                modal.style.display = 'flex';
+            });
+        });
+        
+        // 빈 베너 슬롯 클릭
+        document.querySelectorAll('.banner-slot').forEach(slot => {
+            slot.addEventListener('click', function(e) {
+                if (e.target.closest('.slot-actions')) return;
+                
+                const preview = this.querySelector('.banner-preview');
+                if (preview.querySelector('.empty-banner')) {
+                    currentSlot = this.dataset.slot;
+                    document.getElementById('slotSelect').value = currentSlot;
+                    document.querySelector('#bannerModal .modal-title').textContent = '베너 추가';
+                    modal.style.display = 'flex';
+                }
+            });
+        });
+        
+        // 이미지 업로드
+        document.getElementById('imageUpload').addEventListener('click', function() {
+            document.getElementById('imageFile').click();
+        });
+        
+        document.getElementById('imageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.getElementById('imageUrl').value = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        document.getElementById('imageUrl').addEventListener('input', function() {
+            const url = this.value;
+            if (url) {
+                const preview = document.getElementById('imagePreview');
+                preview.src = url;
+                preview.style.display = 'block';
+            }
+        });
+        
+        // 폼 제출
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            const slot = parseInt(document.getElementById('slotSelect').value);
+            
+            if (!bannerData[dateStr]) {
+                bannerData[dateStr] = [];
+            }
+            
+            const banner = {
+                slot: slot,
+                title: document.getElementById('bannerTitle').value,
+                description: document.getElementById('bannerDescription').value,
+                buttonText: document.getElementById('buttonText').value,
+                image: document.getElementById('imagePreview').src || null,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value
+            };
+            
+            // 기존 베너 찾아서 업데이트 또는 추가
+            const existingIndex = bannerData[dateStr].findIndex(b => b.slot === slot);
+            if (existingIndex >= 0) {
+                bannerData[dateStr][existingIndex] = banner;
+            } else {
+                bannerData[dateStr].push(banner);
+            }
+            
+            // 슬롯 순서대로 정렬
+            bannerData[dateStr].sort((a, b) => a.slot - b.slot);
+            
+            modal.style.display = 'none';
+            form.reset();
+            document.getElementById('imagePreview').style.display = 'none';
+            
+            updateBannerSlots(dateStr);
+            updatePreview(dateStr);
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+            
+            showToast('베너가 저장되었습니다.');
+        });
+        
+        // 모달 닫기
+        document.getElementById('closeModal').addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        document.getElementById('cancelButton').addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // 삭제 버튼
+        document.querySelectorAll('.slot-button.delete').forEach(button => {
+            button.addEventListener('click', function() {
+                const slot = parseInt(this.dataset.slot);
+                const dateStr = selectedDate.toISOString().split('T')[0];
+                
+                if (confirm('베너를 삭제하시겠습니까?')) {
+                    if (bannerData[dateStr]) {
+                        bannerData[dateStr] = bannerData[dateStr].filter(b => b.slot !== slot);
+                        if (bannerData[dateStr].length === 0) {
+                            delete bannerData[dateStr];
+                        }
+                    }
+                    
+                    updateBannerSlots(dateStr);
+                    updatePreview(dateStr);
+                    generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+                    
+                    showToast('베너가 삭제되었습니다.');
+                }
+            });
+        });
+        
+        // 캘린더 네비게이션
+        document.getElementById('prevMonth').addEventListener('click', function() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        });
+        
+        document.getElementById('nextMonth').addEventListener('click', function() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        });
+        
+        document.getElementById('todayButton').addEventListener('click', function() {
+            currentDate = new Date();
+            selectedDate = new Date();
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+            updateBannerSlots(dateStr);
+            updateDateInfo(dateStr);
+            updatePreview(dateStr);
+        });
+        
+        // 미리보기 슬라이드
+        document.querySelectorAll('.preview-dot').forEach(dot => {
+            dot.addEventListener('click', function() {
+                currentSlide = parseInt(this.dataset.slide);
+                updateSlideVisibility();
+            });
+        });
+        
+        // 자동 슬라이드
+        setInterval(() => {
+            const slides = Array.from(document.querySelectorAll('.preview-slide'));
+            const activeSlides = slides.filter(slide => slide.style.display !== 'none');
+            
+            if (activeSlides.length > 1) {
+                currentSlide = (currentSlide + 1) % activeSlides.length;
+                updateSlideVisibility();
+            }
+        }, 5000);
+        
+        // 토스트 메시지 함수
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 뒤로가기 버튼
+        document.getElementById('backButton').addEventListener('click', function() {
+            showToast('이전 페이지로 이동합니다.');
+        });
+        
+        // 초기화
+        generateCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        const todayStr = new Date().toISOString().split('T')[0];
+        updateBannerSlots(todayStr);
+        updateDateInfo(todayStr);
+        updatePreview(todayStr);
+    </script>
+</body>
+</html>

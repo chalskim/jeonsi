@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 교육 관리</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .app-content {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        /* View Containers */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* Course List View */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .add-course-btn {
+            background-color: #4a6fdc;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Sales Summary */
+        .sales-summary-card {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        .sales-summary-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        .sales-amount {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .sales-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Course Card */
+        .course-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .course-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .course-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .course-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-recruiting { background-color: #cce5ff; color: #004085; }
+        .status-ongoing { background-color: #fff3cd; color: #856404; }
+        .status-ended { background-color: #e2e3e5; color: #383d41; }
+
+        .course-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .course-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .course-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .manage-btn {
+            background-color: #4a6fdc;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Course Detail View */
+        .sub-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #4a6fdc;
+            cursor: pointer;
+        }
+        .sub-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Tabs */
+        .tab-nav {
+            display: flex;
+            background-color: white;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+        .tab-button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+        .tab-button.active {
+            background-color: #4a6fdc;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Student List */
+        .student-list {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .student-item:last-child {
+            border-bottom: none;
+        }
+        .student-info h4 {
+            margin: 0 0 3px 0;
+            font-size: 16px;
+        }
+        .student-info p {
+            margin: 0;
+            font-size: 13px;
+            color: #666;
+        }
+        .student-actions button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* Generic List Item */
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .list-item-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+        }
+        .list-item-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .list-item-action {
+            color: #4a6fdc;
+            cursor: pointer;
+        }
+
+        /* Review Card */
+        .review-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .reviewer-info {
+            font-weight: 500;
+        }
+        .review-rating {
+            color: #ffc107;
+        }
+        .review-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="app-title">교육 관리</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- View 1: 과정 목록 -->
+        <div id="courseListView" class="view active">
+            <div class="page-header">
+                <h1 class="page-title">등록한 교육과정</h1>
+                <button class="add-course-btn" onclick="alert('새 과정 등록 페이지로 이동')">
+                    <i class="fas fa-plus"></i> 새 과정 등록
+                </button>
+            </div>
+
+            <div class="sales-summary-card">
+                <h3>총 매출 현황</h3>
+                <div class="sales-amount">₩ 125,500,000</div>
+                <div class="sales-subtitle">2024년 1월 기준</div>
+            </div>
+
+            <div class="course-card" onclick="showCourseDetail('course1')">
+                <div class="course-card-header">
+                    <div class="course-title">ISMS-P 심사원 기본과정 (2월)</div>
+                    <div class="course-status status-ongoing">진행중</div>
+                </div>
+                <div class="course-meta">
+                    <span><i class="fas fa-users"></i> 25/30명</span>
+                    <span><i class="fas fa-calendar"></i> 2024.02.05 시작</span>
+                    <span><i class="fas fa-won-sign"></i> 350만원</span>
+                </div>
+                <div class="course-actions">
+                    <button class="manage-btn">관리하기</button>
+                </div>
+            </div>
+
+            <div class="course-card" onclick="showCourseDetail('course2')">
+                <div class="course-card-header">
+                    <div class="course-title">ISO 27001 Lead Auditor 과정</div>
+                    <div class="course-status status-recruiting">모집중</div>
+                </div>
+                <div class="course-meta">
+                    <span><i class="fas fa-users"></i> 12/20명</span>
+                    <span><i class="fas fa-calendar"></i> 2024.03.10 시작</span>
+                    <span><i class="fas fa-won-sign"></i> 480만원</span>
+                </div>
+                <div class="course-actions">
+                    <button class="manage-btn">관리하기</button>
+                </div>
+            </div>
+
+            <div class="course-card" onclick="showCourseDetail('course3')">
+                <div class="course-card-header">
+                    <div class="course-title">정보보호 실무자 양성과정 (1월)</div>
+                    <div class="course-status status-ended">종료</div>
+                </div>
+                <div class="course-meta">
+                    <span><i class="fas fa-users"></i> 30/30명</span>
+                    <span><i class="fas fa-calendar-check"></i> 2024.01.25 종료</span>
+                    <span><i class="fas fa-won-sign"></i> 250만원</span>
+                </div>
+                <div class="course-actions">
+                    <button class="manage-btn">결과 보기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 2: 과정 상세 관리 -->
+        <div id="courseDetailView" class="view">
+            <div class="sub-header">
+                <button class="back-btn" onclick="showView('courseListView')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="sub-title" id="courseDetailTitle">ISMS-P 심사원 기본과정 (2월)</h2>
+            </div>
+
+            <div class="tab-nav">
+                <button class="tab-button active" onclick="showTab('students')">수강생 관리</button>
+                <button class="tab-button" onclick="showTab('attendance')">출석 관리</button>
+                <button class="tab-button" onclick="showTab('evaluation')">평가/시험</button>
+                <button class="tab-button" onclick="showTab('reviews')">교육 평가</button>
+                <button class="tab-button" onclick="showTab('sales')">매출 현황</button>
+            </div>
+
+            <!-- Tab Content: Students -->
+            <div id="students" class="tab-content active">
+                <div class="student-list">
+                    <div class="student-item">
+                        <div class="student-info">
+                            <h4>홍길동</h4>
+                            <p>hong@email.com</p>
+                        </div>
+                        <div class="student-actions">
+                            <button onclick="alert('수료증 발급 완료')">수료증 발급</button>
+                        </div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-info">
+                            <h4>김철수</h4>
+                            <p>kim@email.com</p>
+                        </div>
+                        <div class="student-actions">
+                            <button onclick="alert('수료증 발급 완료')">수료증 발급</button>
+                        </div>
+                    </div>
+                    <div class="student-item">
+                        <div class="student-info">
+                            <h4>이영희</h4>
+                            <p>lee@email.com</p>
+                        </div>
+                        <div class="student-actions">
+                            <button onclick="alert('이수 조건 미충족')">이수 조건 미충족</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Attendance -->
+            <div id="attendance" class="tab-content">
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <h4>1차시 (2024.02.05)</h4>
+                        <p>출석률: 96% (24/25명)</p>
+                    </div>
+                    <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <h4>2차시 (2024.02.07)</h4>
+                        <p>출석률: 100% (25/25명)</p>
+                    </div>
+                    <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <h4>3차시 (2024.02.12)</h4>
+                        <p>출석률: 92% (23/25명)</p>
+                    </div>
+                    <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Evaluation -->
+            <div id="evaluation" class="tab-content">
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <h4>중간 평가</h4>
+                        <p>응시율: 100% (25/25명) | 평균: 85점</p>
+                    </div>
+                    <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <h4>최종 프로젝트</h4>
+                        <p>제출율: 96% (24/25명) | 평균: 88점</p>
+                    </div>
+                    <div class="list-item-action"><i class="fas fa-chevron-right"></i></div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Reviews -->
+            <div id="reviews" class="tab-content">
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-info">홍길동</span>
+                        <span class="review-rating">★★★★★</span>
+                    </div>
+                    <p class="review-text">
+                        실무에 바로 적용할 수 있는 유익한 내용이었습니다. 강사님의 설명도 명쾌해서 만족도가 매우 높았습니다.
+                    </p>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="reviewer-info">김철수</span>
+                        <span class="review-rating">★★★★☆</span>
+                    </div>
+                    <p class="review-text">
+                        전반적으로 좋았지만, 교육 자료가 조금 더 보강되면 더 좋을 것 같습니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tab Content: Sales -->
+            <div id="sales" class="tab-content">
+                <div class="sales-summary-card">
+                    <h3>ISMS-P 심사원 기본과정 (2월) 매출</h3>
+                    <div class="sales-amount">₩ 8,750,000</div>
+                    <div class="sales-subtitle">총 25명 수강 (단가: 350만원)</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <h4>온라인 결제</h4>
+                        <p>20명 | ₩ 7,000,000</p>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <h4>계좌 이체</h4>
+                        <p>5명 | ₩ 1,750,000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>홈</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user-plus"></i>
+            <span>전문가 등록</span>
+        </a>        
+        <a href="#" class="nav-item">
+            <i class="fas fa-clipboard-check"></i>
+            <span>심사 지원</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>일정관리</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>성공사례</span>
+        </a>
+    </nav>
+
+    <script>
+        // View Management
+        const views = {
+            courseList: document.getElementById('courseListView'),
+            courseDetail: document.getElementById('courseDetailView')
+        };
+
+        function showView(viewName) {
+            Object.values(views).forEach(view => view.classList.remove('active'));
+            views[viewName].classList.add('active');
+        }
+
+        // Show Course Detail
+        function showCourseDetail(courseId) {
+            const courseTitle = document.querySelector(`[onclick="showCourseDetail('${courseId}')"] .course-title`).textContent;
+            document.getElementById('courseDetailTitle').textContent = courseTitle;
+            showView('courseDetail');
+        }
+
+        // Tab Management
+        function showTab(tabName) {
+            // Deactivate all tabs and contents
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Activate the clicked tab and its content
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Side Menu Toggle (from original code)
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu'); // Assuming sideMenu exists
+        const overlay = document.getElementById('overlay');   // Assuming overlay exists
+
+        if (menuToggle && sideMenu && overlay) {
+            menuToggle.addEventListener('click', function() {
+                sideMenu.classList.add('active');
+                overlay.classList.add('active');
+            });
+            overlay.addEventListener('click', function() {
+                sideMenu.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+    </script>
+</body>
+</html>

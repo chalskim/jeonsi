@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>기업 연혁 관리 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .header-icon:hover {
+            color: var(--primary-color);
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 20px;
+        }
+
+        /* --- Side Menu --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--card-background);
+            box-shadow: var(--shadow-md);
+            transition: left 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .user-avatar i {
+            font-size: 2rem;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-type {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .side-menu-content {
+            padding: 10px 0;
+        }
+
+        .menu-category {
+            margin-bottom: 15px;
+        }
+
+        .menu-category-title {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-category-title i {
+            margin-right: 10px;
+        }
+
+        .menu-items {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px 12px 35px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .menu-item.active {
+            background-color: rgba(0,123,255,0.1);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 10px 0;
+        }
+
+        /* --- Overlay --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Main Container --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Page Header --- */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e6ea;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* --- Filter Section --- */
+        .filter-section {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-bar {
+            display: flex;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            overflow: hidden;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            border: none;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
+
+        .search-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 0.9rem;
+            background-color: var(--card-background);
+            cursor: pointer;
+        }
+
+        /* --- Timeline Container --- */
+        .timeline-container {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-btn {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-background);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* --- Timeline --- */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -25px;
+            top: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            border: 3px solid var(--card-background);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .timeline-marker:hover {
+            transform: scale(1.2);
+        }
+
+        .timeline-content {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .timeline-content:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 20px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid var(--light-color);
+        }
+
+        .timeline-date {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .timeline-description {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .timeline-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .timeline-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .tag.secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .tag.success {
+            background-color: var(--success-color);
+        }
+
+        .tag.warning {
+            background-color: var(--warning-color);
+        }
+
+        /* --- Grid View --- */
+        .grid-view {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-view.active {
+            display: grid;
+        }
+
+        .timeline.hidden {
+            display: none;
+        }
+
+        .history-card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .history-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-date {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .card-description {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* --- Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* --- Form Styles --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--border-color);
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-bar {
+                max-width: 100%;
+            }
+
+            .timeline {
+                padding-left: 20px;
+            }
+
+            .timeline-marker {
+                left: -15px;
+            }
+
+            .grid-view {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="app-title">전시(專時)</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="user-name">㈜테크솔루션</div>
+                <div class="user-type">프리미엄 기업</div>
+            </div>
+        </div>
+        <div class="side-menu-content">
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-building"></i>
+                    <span>기업 정보</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span>기업 정보 관리</span>
+                    </a>
+                    <a href="#" class="menu-item active">
+                        <i class="fas fa-history"></i>
+                        <span>기업 연혁 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-briefcase"></i>
+                        <span>포트폴리오 관리</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-handshake"></i>
+                    <span>서비스 관리</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>서비스 내역</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-star"></i>
+                        <span>리뷰 관리</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-credit-card"></i>
+                    <span>결제 관리</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-wallet"></i>
+                        <span>결제수단 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-receipt"></i>
+                        <span>결제 내역</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-comments"></i>
+                    <span>문의 관리</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-question-circle"></i>
+                        <span>1:1 문의</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay for Side Menu -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">기업 연혁 관리</h1>
+                    <p class="page-subtitle">회사의 주요 이정점을 시간순으로 관리하세요</p>
+                </div>
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="addHistoryBtn">
+                        <i class="fas fa-plus"></i> 연혁 추가
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <h3 class="filter-title">검색 및 필터</h3>
+                </div>
+                <div class="filter-controls">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="연혁 내용 검색...">
+                        <button class="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <select class="filter-select">
+                        <option>전체 기간</option>
+                        <option>최근 1년</option>
+                        <option>최근 3년</option>
+                        <option>최근 5년</option>
+                        <option>10년 이상</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>전체 카테고리</option>
+                        <option>투자</option>
+                        <option>제품 출시</option>
+                        <option>수상</option>
+                        <option>인증</option>
+                        <option>기타</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Timeline Container -->
+            <div class="timeline-container">
+                <div class="timeline-header">
+                    <h3 class="timeline-title">회사 연혁</h3>
+                    <div class="view-toggle">
+                        <button class="view-btn active" id="timelineView">
+                            <i class="fas fa-stream"></i> 타임라인
+                        </button>
+                        <button class="view-btn" id="gridView">
+                            <i class="fas fa-th"></i> 그리드
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Timeline View -->
+                <div class="timeline" id="timelineViewContent">
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2023년 1월</div>
+                            <div class="timeline-title">AI 기반 데이터 분석 플랫폼 출시</div>
+                            <div class="timeline-tags">
+                                <span class="tag">제품 출시</span>
+                                <span class="tag success">AI</span>
+                                <span class="tag warning">데이터 분석</span>
+                            </div>
+                            <div class="timeline-description">
+                                기업 데이터를 실시간으로 분석하고 인사이트를 제공하는 AI 플랫폼을 출시하여 시장의 좋은 반응을 얻었습니다. 머신러닝 알고리즘을 활용하여 데이터 패턴을 분석하고 예측 모델을 제공합니다. 출시 3개월 만에 100개 기업이 도입했습니다.
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> 미리보기
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2022년 6월</div>
+                            <div class="timeline-title">시리즈 B 투자 유치 성공</div>
+                            <div class="timeline-tags">
+                                <span class="tag">투자</span>
+                                <span class="tag secondary">시리즈 B</span>
+                            </div>
+                            <div class="timeline-description">
+                                총 100억 규모의 시리즈 B 투자를 유치하여 사업 확장에 필요한 자금을 확보했습니다. 글로벌 VC와 국내 유수 엔젤투자자가 참여했으며, 이번 투자를 통해 해외 시장 진출을 가속화할 계획입니다.
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> 미리보기
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2021년 3월</div>
+                            <div class="timeline-title">클라우드 ERP 시스템 출시</div>
+                            <div class="timeline-tags">
+                                <span class="tag">제품 출시</span>
+                                <span class="tag success">클라우드</span>
+                                <span class="tag">ERP</span>
+                            </div>
+                            <div class="timeline-description">
+                                중소기업을 위한 클라우드 기반 ERP 시스템을 출시하여 500개 이상의 기업 고객을 확보했습니다. 웹 기반으로 언제 어디서든 접속 가능하며, 재무, 인사, 영업 등 전반적인 기업 운영을 지원합니다.
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> 미리보기
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2020년 1월</div>
+                            <div class="timeline-title">시리즈 A 투자 유치</div>
+                            <div class="timeline-tags">
+                                <span class="tag">투자</span>
+                                <span class="tag secondary">시리즈 A</span>
+                            </div>
+                            <div class="timeline-description">
+                                총 50억 규모의 시리즈 A 투자를 유치하여 R&D 및 인력 확장에 투자했습니다. 국내 유수 엔젤투자자들이 참여했으며, 이번 투자를 통해 기술 개발과 인재 확보에 집중할 예정입니다.
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> 미리보기
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2019년 5월</div>
+                            <div class="timeline-title">스마트 팩토리 솔루션 개발 완료</div>
+                            <div class="timeline-tags">
+                                <span class="tag">제품 출시</span>
+                                <span class="tag warning">스마트 팩토리</span>
+                                <span class="tag">IoT</span>
+                            </div>
+                            <div class="timeline-description">
+                                제조업의 디지털 전환을 위한 스마트 팩토리 솔루션 개발을 완료하고 3개의 대기업과 계약했습니다. IoT 센서를 활용한 실시간 모니터링과 AI 기반 예지보전 기능을 제공합니다.
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> 미리보기
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2018년 10월</div>
+                            <div class="timeline-title">엔젤투자자 투자 유치</div>
+                            <div class="timeline-tags">
+                                <span class="tag">투자</span>
+                                <span class="tag secondary">엔젤투자</span>
+                            </div>
+                            <div class="timeline-description">
+                                국내 유수 엔젤투자자로부터 20억 규모의 투자를 유치했습니다. 이번 투자를 통해 기술 고도화와 시장 확장을 가속화할 계획입니다.
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> 미리보기
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2017년 7월</div>
+                            <div class="timeline-title">기술 특허 10건 획득</div>
+                            <div class="timeline-tags">
+                                <span class="tag">인증</span>
+                                <span class="tag success">특허</span>
+                            </div>
+                            <div class="timeline-description">
+                                AI 및 데이터 분석 관련 기술 특허 10건을 획득하여 기술 경쟁력을 강화했습니다. 주요 특허로는 실시간 데이터 처리 알고리즘, 예측 분석 모델 등이 있습니다.
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> 미리보기
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2016년 3월</div>
+                            <div class="timeline-title">초기 투자 유치</div>
+                            <div class="timeline-tags">
+                                <span class="tag">투자</span>
+                                <span class="tag secondary">시드 투자</span>
+                            </div>
+                            <div class="timeline-description">
+                                초기 엔젤투자자로부터 10억 규모의 투자를 유치했습니다. 이번 투자를 통해 제품 개발과 초기 시장 진출을 위한 자금을 확보했습니다.
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> 미리보기
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">2015년 3월</div>
+                            <div class="timeline-title">㈜테크솔루션 설립</div>
+                            <div class="timeline-tags">
+                                <span class="tag">기타</span>
+                                <span class="tag success">설립</span>
+                            </div>
+                            <div class="timeline-description">
+                                AI 기반 소프트웨어 솔루션 개발을 목표로㈜테크솔루션을 설립했습니다. 설립 당시 5명의 개발팀으로 시작하여 현재는 50명 규모로 성장했습니다.
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i> 미리보기
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Grid View -->
+                <div class="grid-view" id="gridViewContent">
+                    <!-- Grid items will be dynamically generated from timeline items -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add/Edit History Modal -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">연혁 추가</h2>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="historyForm">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">날짜 *</label>
+                                <input type="month" class="form-control" id="historyDate" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">카테고리 *</label>
+                                <select class="form-control" id="historyCategory" required>
+                                    <option value="">선택하세요</option>
+                                    <option value="투자">투자</option>
+                                    <option value="제품 출시">제품 출시</option>
+                                    <option value="수상">수상</option>
+                                    <option value="인증">인증</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">제목 *</label>
+                        <input type="text" class="form-control" id="historyTitle" placeholder="연혁 제목을 입력하세요" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">내용 *</label>
+                        <textarea class="form-control" id="historyDescription" placeholder="연혁 내용을 상세히 입력하세요" rows="5" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">태그</label>
+                        <input type="text" class="form-control" id="historyTags" placeholder="쉼표(,)로 구분하여 입력하세요 (예: AI, 데이터 분석)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">이미지 첨부</label>
+                        <input type="file" class="form-control" id="historyImage" accept="image/*">
+                        <small style="color: var(--text-muted); margin-top: 5px; display: block;">
+                            JPG, PNG 형식의 이미지 파일 (최대 5MB)
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modalCancel">취소</button>
+                <button class="btn btn-primary" id="modalSave">저장</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Menu Toggle
+    document.getElementById('menuToggle').addEventListener('click', function() {
+        document.getElementById('sideMenu').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    });
+
+    // Overlay Click
+    document.getElementById('overlay').addEventListener('click', function() {
+        document.getElementById('sideMenu').classList.remove('active');
+        document.getElementById('overlay').classList.remove('active');
+    });
+
+    // View Toggle
+    const timelineView = document.getElementById('timelineView');
+    const gridView = document.getElementById('gridView');
+    const timelineViewContent = document.getElementById('timelineViewContent');
+    const gridViewContent = document.getElementById('gridViewContent');
+
+    timelineView.addEventListener('click', function() {
+        timelineView.classList.add('active');
+        gridView.classList.remove('active');
+        timelineViewContent.classList.remove('hidden');
+        gridViewContent.classList.remove('active');
+    });
+
+    gridView.addEventListener('click', function() {
+        gridView.classList.add('active');
+        timelineView.classList.remove('active');
+        timelineViewContent.classList.add('hidden');
+        gridViewContent.classList.add('active');
+        populateGridView();
+    });
+
+    // Populate Grid View
+    function populateGridView() {
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        gridViewContent.innerHTML = '';
+        
+        timelineItems.forEach(item => {
+            const date = item.querySelector('.timeline-date').textContent;
+            const title = item.querySelector('.timeline-title').textContent;
+            const tags = item.querySelector('.timeline-tags').innerHTML;
+            const description = item.querySelector('.timeline-description').textContent;
+            const actions = item.querySelector('.timeline-actions').innerHTML;
+            
+            const card = document.createElement('div');
+            card.className = 'history-card';
+            card.innerHTML = `
+                <div class="card-date">${date}</div>
+                <div class="card-title">${title}</div>
+                <div class="timeline-tags">${tags}</div>
+                <div class="card-description">${description.substring(0, 100)}...</div>
+                <div class="card-actions">${actions}</div>
+            `;
+            gridViewContent.appendChild(card);
+        });
+    }
+
+    // Modal Management
+    const modal = document.getElementById('historyModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const addHistoryBtn = document.getElementById('addHistoryBtn');
+    const modalClose = document.getElementById('modalClose');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalSave = document.getElementById('modalSave');
+
+    addHistoryBtn.addEventListener('click', function() {
+        modalTitle.textContent = '연혁 추가';
+        document.getElementById('historyForm').reset();
+        modal.classList.add('active');
+    });
+
+    modalClose.addEventListener('click', function() {
+        modal.classList.remove('active');
+    });
+
+    modalCancel.addEventListener('click', function() {
+        modal.classList.remove('active');
+    });
+
+    modalSave.addEventListener('click', function() {
+        // Form validation
+        const date = document.getElementById('historyDate').value;
+        const category = document.getElementById('historyCategory').value;
+        const title = document.getElementById('historyTitle').value;
+        const description = document.getElementById('historyDescription').value;
+
+        if (!date || !category || !title || !description) {
+            alert('필수 항목을 모두 입력해주세요.');
+            return;
+        }
+
+        // Save logic here
+        console.log('Saving history:', { date, category, title, description });
+        
+        // Close modal
+        modal.classList.remove('active');
+        
+        // Show success message
+        showNotification('연혁이 성공적으로 저장되었습니다.');
+    });
+
+    // Edit functionality
+    document.querySelectorAll('.btn-primary.btn-sm').forEach(btn => {
+        if (btn.innerHTML.includes('수정')) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const timelineItem = this.closest('.timeline-item');
+                const date = timelineItem.querySelector('.timeline-date').textContent;
+                const title = timelineItem.querySelector('.timeline-title').textContent;
+                const description = timelineItem.querySelector('.timeline-description').textContent;
+                
+                modalTitle.textContent = '연혁 수정';
+                document.getElementById('historyTitle').value = title;
+                document.getElementById('historyDescription').value = description;
+                modal.classList.add('active');
+            });
+        }
+    });
+
+    // Delete functionality
+    document.querySelectorAll('.btn-danger.btn-sm').forEach(btn => {
+        if (btn.innerHTML.includes('삭제')) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (confirm('정말로 삭제하시겠습니까?')) {
+                    const timelineItem = this.closest('.timeline-item');
+                    timelineItem.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => {
+                        timelineItem.remove();
+                        showNotification('연혁이 삭제되었습니다.');
+                    }, 300);
+                }
+            });
+        }
+    });
+
+    // Preview functionality
+    document.querySelectorAll('.btn-secondary.btn-sm').forEach(btn => {
+        if (btn.innerHTML.includes('미리보기')) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const timelineItem = this.closest('.timeline-item');
+                const title = timelineItem.querySelector('.timeline-title').textContent;
+                const description = timelineItem.querySelector('.timeline-description').textContent;
+                
+                alert(`미리보기\n\n제목: ${title}\n\n내용: ${description}`);
+            });
+        }
+    });
+
+    // Search functionality
+    document.querySelector('.search-input').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        
+        timelineItems.forEach(item => {
+            const title = item.querySelector('.timeline-title').textContent.toLowerCase();
+            const description = item.querySelector('.timeline-description').textContent.toLowerCase();
+            
+            if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+
+    // Filter functionality
+    document.querySelectorAll('.filter-select').forEach(select => {
+        select.addEventListener('change', function() {
+            // Filter logic here
+            console.log('Filter changed:', this.value);
+        });
+    });
+
+    // Notification function
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow-md);
+            z-index: 3000;
+            animation: slideInRight 0.3s ease;
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Export functionality
+    document.querySelector('.btn-outline').addEventListener('click', function(e) {
+        if (this.innerHTML.includes('내보내기')) {
+            e.preventDefault();
+            showNotification('연혁 데이터를 내보내는 중입니다...');
+            // Export logic here
+        }
+    });
+
+    // Import functionality
+    document.querySelectorAll('.btn-outline').forEach(btn => {
+        if (btn.innerHTML.includes('가져오기')) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showNotification('연혁 데이터를 가져오는 중입니다...');
+                // Import logic here
+            });
+        }
+    });
+</script>
+</body>
+</html>

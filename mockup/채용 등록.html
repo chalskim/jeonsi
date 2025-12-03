@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>채용 등록 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .header-back {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 100px; /* Space for fixed bottom buttons */
+        }
+
+        /* --- Form Container --- */
+        .form-container {
+            padding: 20px;
+        }
+
+        .form-section {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .required {
+            color: var(--danger-color);
+            margin-left: 3px;
+        }
+
+        /* --- Form Elements --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* --- Radio & Checkbox Groups --- */
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-item,
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-item input[type="radio"],
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .radio-item label,
+        .checkbox-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* --- Tag Input --- */
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            min-height: 50px;
+            cursor: text;
+        }
+
+        .tag-input-container:focus-within {
+            border-color: var(--primary-color);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tag-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+            padding: 5px;
+        }
+
+        /* --- Date Range --- */
+        .date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .date-input-group {
+            flex: 1;
+        }
+
+        /* --- Salary Range --- */
+        .salary-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .salary-input {
+            flex: 1;
+        }
+
+        /* --- File Upload --- */
+        .file-upload {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-color);
+        }
+
+        .file-upload-icon {
+            font-size: 2rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-text {
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-button {
+            padding: 8px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .uploaded-files {
+            margin-top: 15px;
+        }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-remove {
+            color: var(--danger-color);
+            cursor: pointer;
+        }
+
+        /* --- Process Steps --- */
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .process-step {
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-inputs {
+            flex: 1;
+        }
+
+        .step-title-input {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .step-desc-input {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .step-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .step-remove {
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .step-remove:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .step-move {
+            color: var(--secondary-color);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .step-move:hover {
+            background-color: rgba(108, 117, 125, 0.1);
+        }
+
+        /* --- Add Button --- */
+        .add-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background-color: var(--light-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .add-button:hover {
+            background-color: #e9ecef;
+        }
+
+        /* --- Fixed Bottom Buttons --- */
+        .bottom-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-background);
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            flex: 2;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- Classification Selection --- */
+        .classification-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .classification-level {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .classification-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .classification-option {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .classification-option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .classification-option.selected {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .classification-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .classification-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .classification-code {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .classification-option.selected .classification-code {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-back" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">채용 등록</div>
+        <div class="header-icon">
+            <i class="fas fa-question-circle"></i>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <div class="form-container">
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    <span>기본 정보</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">공고 제목<span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="예: 보안 컨설턴트 (정규직)" />
+                    <div class="form-hint">채용 포지션과 고용 형태를 명확히 기재해주세요.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">모집 부서<span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="예: 정보보안팀" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">고용 형태<span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="full-time" name="employment-type" value="full-time" checked>
+                            <label for="full-time">정규직</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="contract" name="employment-type" value="contract">
+                            <label for="contract">계약직</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="intern" name="employment-type" value="intern">
+                            <label for="intern">인턴</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="part-time" name="employment-type" value="part-time">
+                            <label for="part-time">파트타임</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Classification Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-tags"></i>
+                    <span>업무 분류<span class="required">*</span></span>
+                </h2>
+                
+                <div class="classification-selection">
+                    <div class="classification-level">
+                        <label class="form-label">대분류</label>
+                        <div class="classification-options">
+                            <div class="classification-option" data-code="IT01">
+                                <div class="classification-icon">💻</div>
+                                <div class="classification-name">IT/소프트웨어 개발</div>
+                                <div class="classification-code">IT01</div>
+                            </div>
+                            <div class="classification-option selected" data-code="SC02">
+                                <div class="classification-icon">🔒</div>
+                                <div class="classification-name">보안/인증</div>
+                                <div class="classification-code">SC02</div>
+                            </div>
+                            <div class="classification-option" data-code="DA03">
+                                <div class="classification-icon">📊</div>
+                                <div class="classification-name">데이터/AI</div>
+                                <div class="classification-code">DA03</div>
+                            </div>
+                            <div class="classification-option" data-code="IN04">
+                                <div class="classification-icon">☁️</div>
+                                <div class="classification-name">인프라/클라우드</div>
+                                <div class="classification-code">IN04</div>
+                            </div>
+                            <div class="classification-option" data-code="BM05">
+                                <div class="classification-icon">💼</div>
+                                <div class="classification-name">비즈니스 전략</div>
+                                <div class="classification-code">BM05</div>
+                            </div>
+                            <div class="classification-option" data-code="MK08">
+                                <div class="classification-icon">📱</div>
+                                <div class="classification-name">디지털 마케팅</div>
+                                <div class="classification-code">MK08</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="classification-level">
+                        <label class="form-label">중분류</label>
+                        <div class="classification-options">
+                            <div class="classification-option selected" data-code="SC02-01">
+                                <div class="classification-icon">🛡️</div>
+                                <div class="classification-name">정보보호 컨설팅</div>
+                                <div class="classification-code">SC02-01</div>
+                            </div>
+                            <div class="classification-option" data-code="SC02-02">
+                                <div class="classification-icon">🔍</div>
+                                <div class="classification-name">취약점 진단</div>
+                                <div class="classification-code">SC02-02</div>
+                            </div>
+                            <div class="classification-option" data-code="SC02-03">
+                                <div class="classification-icon">📋</div>
+                                <div class="classification-name">ISMS 인증</div>
+                                <div class="classification-code">SC02-03</div>
+                            </div>
+                            <div class="classification-option" data-code="SC02-04">
+                                <div class="classification-icon">🔐</div>
+                                <div class="classification-name">개인정보보호</div>
+                                <div class="classification-code">SC02-04</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Description Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-briefcase"></i>
+                    <span>담당 업무<span class="required">*</span></span>
+                </h2>
+                
+                <div class="form-group">
+                    <textarea class="form-textarea" placeholder="담당할 업무 내용을 상세히 기재해주세요.&#10;&#10;예시:&#10;- 정보보호 컨설팅 서비스 기획 및 제공&#10;- ISMS-P 인증 컨설팅 및 지원&#10;- 개인정보보호 컨설팅 및 정책 수립 지원"></textarea>
+                </div>
+            </div>
+            
+            <!-- Requirements Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-user-check"></i>
+                    <span>자격 요건</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">경력<span class="required">*</span></label>
+                    <select class="form-select">
+                        <option value="">선택해주세요</option>
+                        <option value="0">신입/경력무관</option>
+                        <option value="1">1년 이상</option>
+                        <option value="3">3년 이상</option>
+                        <option value="5" selected>5년 이상</option>
+                        <option value="7">7년 이상</option>
+                        <option value="10">10년 이상</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">학력</label>
+                    <select class="form-select">
+                        <option value="">학력 무관</option>
+                        <option value="high">고졸 이상</option>
+                        <option value="college">대졸 이상</option>
+                        <option value="bachelor">학사 이상</option>
+                        <option value="master">석사 이상</option>
+                        <option value="doctor">박사 이상</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">필수 자격 요건</label>
+                    <textarea class="form-textarea" placeholder="필수적인 자격 요건을 기재해주세요.&#10;&#10;예시:&#10;- 정보보호 관련 경력 5년 이상&#10;- ISMS-P, 개인정보보호 컨설팅 경험&#10;- 정보보호 자격증 보유자 우대 (CISSP, CISA, CISM 등)"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">우대 사항</label>
+                    <textarea class="form-textarea" placeholder="우대 사항을 기재해주세요.&#10;&#10;예시:&#10;- 금융권, 공공기관 컨설팅 경험&#10;- 해외 보안 자격증 보유자&#10;- 보안 관련 강의 및 발표 경험"></textarea>
+                </div>
+            </div>
+            
+            <!-- Work Conditions Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-cog"></i>
+                    <span>근무 조건</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">급여<span class="required">*</span></label>
+                    <div class="salary-range">
+                        <input type="number" class="form-input salary-input" placeholder="최소" value="4000" />
+                        <span>만원</span>
+                        <span>~</span>
+                        <input type="number" class="form-input salary-input" placeholder="최대" value="6000" />
+                        <span>만원</span>
+                    </div>
+                    <div class="form-hint">연봉 또는 월급을 기재해주세요.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">근무지<span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="예: 경기도 성남시 분당구 대왕판교로 645" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">근무 시간</label>
+                    <input type="text" class="form-input" placeholder="예: 월~금 09:00~18:00 (주 40시간)" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">복리후생</label>
+                    <textarea class="form-textarea" placeholder="제공하는 복리후생을 기재해주세요.&#10;&#10;예시:&#10;- 4대 보험, 퇴직금, 연차&#10;- 야근수당, 장기근속상여&#10;- 도서구매비, 식대, 자기계발비&#10;- 경조사비, 단체상해보험, 건강검진"></textarea>
+                </div>
+            </div>
+            
+            <!-- Application Process Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-tasks"></i>
+                    <span>전형 절차</span>
+                </h2>
+                
+                <div class="process-steps" id="processSteps">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <div class="step-inputs">
+                            <input type="text" class="form-input step-title-input" placeholder="단계명" value="서류 전형" />
+                            <input type="text" class="form-input step-desc-input" placeholder="설명" value="제출 서류 검토" />
+                        </div>
+                        <div class="step-actions">
+                            <div class="step-move" title="위로 이동">
+                                <i class="fas fa-chevron-up"></i>
+                            </div>
+                            <div class="step-move" title="아래로 이동">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="step-remove" title="삭제">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <div class="step-inputs">
+                            <input type="text" class="form-input step-title-input" placeholder="단계명" value="1차 면접" />
+                            <input type="text" class="form-input step-desc-input" placeholder="설명" value="실무진 면접" />
+                        </div>
+                        <div class="step-actions">
+                            <div class="step-move" title="위로 이동">
+                                <i class="fas fa-chevron-up"></i>
+                            </div>
+                            <div class="step-move" title="아래로 이동">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="step-remove" title="삭제">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <div class="step-inputs">
+                            <input type="text" class="form-input step-title-input" placeholder="단계명" value="2차 면접" />
+                            <input type="text" class="form-input step-desc-input" placeholder="설명" value="임원진 면접" />
+                        </div>
+                        <div class="step-actions">
+                            <div class="step-move" title="위로 이동">
+                                <i class="fas fa-chevron-up"></i>
+                            </div>
+                            <div class="step-move" title="아래로 이동">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="step-remove" title="삭제">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <div class="step-inputs">
+                            <input type="text" class="form-input step-title-input" placeholder="단계명" value="최종 합격" />
+                            <input type="text" class="form-input step-desc-input" placeholder="설명" value="입사 통보 및 계약" />
+                        </div>
+                        <div class="step-actions">
+                            <div class="step-move" title="위로 이동">
+                                <i class="fas fa-chevron-up"></i>
+                            </div>
+                            <div class="step-move" title="아래로 이동">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="step-remove" title="삭제">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="add-button" id="addProcessStep">
+                    <i class="fas fa-plus"></i>
+                    <span>전형 절차 추가</span>
+                </button>
+            </div>
+            
+            <!-- Application Documents Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-file-alt"></i>
+                    <span>제출 서류</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">필수 서류</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="resume" checked>
+                            <label for="resume">이력서</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cover-letter" checked>
+                            <label for="cover-letter">경력기술서</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="portfolio">
+                            <label for="portfolio">포트폴리오</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="certificate">
+                            <label for="certificate">자격증 사본</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">기타 서류 안내</label>
+                    <textarea class="form-textarea" placeholder="추가로 필요한 서류가 있다면 기재해주세요."></textarea>
+                </div>
+            </div>
+            
+            <!-- Application Period Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>접수 기간<span class="required">*</span></span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">접수 기간</label>
+                    <div class="date-range">
+                        <div class="date-input-group">
+                            <input type="date" class="form-input" value="2024-03-01" />
+                        </div>
+                        <span>~</span>
+                        <div class="date-input-group">
+                            <input type="date" class="form-input" value="2024-03-15" />
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">추가 안내</label>
+                    <textarea class="form-textarea" placeholder="※ 조기 마감될 수 있습니다."></textarea>
+                </div>
+            </div>
+            
+            <!-- Additional Information Section -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-info"></i>
+                    <span>추가 정보</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">담당자 정보</label>
+                    <input type="text" class="form-input" placeholder="담당자명" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">연락처</label>
+                    <input type="tel" class="form-input" placeholder="담당자 연락처" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input type="email" class="form-input" placeholder="담당자 이메일" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">홈페이지</label>
+                    <input type="url" class="form-input" placeholder="회사 홈페이지 URL" />
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fixed Bottom Buttons -->
+    <div class="bottom-buttons">
+        <button class="btn-secondary" id="saveDraftBtn">
+            <i class="fas fa-save"></i>
+            <span>임시저장</span>
+        </button>
+        <button class="btn-primary" id="submitBtn">
+            <i class="fas fa-check"></i>
+            <span>등록하기</span>
+        </button>
+    </div>
+    
+    <script>
+        // Back button functionality
+        document.getElementById('backBtn').addEventListener('click', function() {
+            if (confirm('작성 중인 내용이 저장되지 않을 수 있습니다. 정말 나가시겠습니까?')) {
+                window.history.back();
+            }
+        });
+        
+        // Classification selection
+        document.querySelectorAll('.classification-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const parent = this.closest('.classification-level');
+                parent.querySelectorAll('.classification-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+        
+        // Add process step
+        document.getElementById('addProcessStep').addEventListener('click', function() {
+            const processSteps = document.getElementById('processSteps');
+            const stepCount = processSteps.children.length + 1;
+            
+            const newStep = document.createElement('div');
+            newStep.className = 'process-step';
+            newStep.innerHTML = `
+                <div class="step-number">${stepCount}</div>
+                <div class="step-inputs">
+                    <input type="text" class="form-input step-title-input" placeholder="단계명" />
+                    <input type="text" class="form-input step-desc-input" placeholder="설명" />
+                </div>
+                <div class="step-actions">
+                    <div class="step-move" title="위로 이동">
+                        <i class="fas fa-chevron-up"></i>
+                    </div>
+                    <div class="step-move" title="아래로 이동">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="step-remove" title="삭제">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            `;
+            
+            processSteps.appendChild(newStep);
+            updateStepNumbers();
+            attachStepEventListeners(newStep);
+        });
+        
+        // Update step numbers
+        function updateStepNumbers() {
+            const steps = document.querySelectorAll('.process-step');
+            steps.forEach((step, index) => {
+                const numberElement = step.querySelector('.step-number');
+                numberElement.textContent = index + 1;
+            });
+        }
+        
+        // Attach event listeners to step actions
+        function attachStepEventListeners(stepElement) {
+            // Remove step
+            const removeBtn = stepElement.querySelector('.step-remove');
+            removeBtn.addEventListener('click', function() {
+                if (confirm('이 전형 절차를 삭제하시겠습니까?')) {
+                    stepElement.remove();
+                    updateStepNumbers();
+                }
+            });
+            
+            // Move step up
+            const moveUpBtn = stepElement.querySelector('.step-move:first-child');
+            moveUpBtn.addEventListener('click', function() {
+                const prevStep = stepElement.previousElementSibling;
+                if (prevStep) {
+                    prevStep.parentNode.insertBefore(stepElement, prevStep);
+                    updateStepNumbers();
+                }
+            });
+            
+            // Move step down
+            const moveDownBtn = stepElement.querySelector('.step-move:last-child');
+            moveDownBtn.addEventListener('click', function() {
+                const nextStep = stepElement.nextElementSibling;
+                if (nextStep) {
+                    nextStep.parentNode.insertBefore(nextStep, stepElement);
+                    updateStepNumbers();
+                }
+            });
+        }
+        
+        // Attach event listeners to existing steps
+        document.querySelectorAll('.process-step').forEach(step => {
+            attachStepEventListeners(step);
+        });
+        
+        // Save draft
+        document.getElementById('saveDraftBtn').addEventListener('click', function() {
+            // Collect form data
+            const formData = collectFormData();
+            
+            // Save to localStorage
+            localStorage.setItem('recruitmentDraft', JSON.stringify(formData));
+            
+            // Show success message
+            alert('임시저장되었습니다.');
+        });
+        
+        // Submit form
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            // Validate required fields
+            const requiredFields = document.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.focus();
+                }
+            });
+            
+            if (!isValid) {
+                alert('필수 항목을 모두 입력해주세요.');
+                return;
+            }
+            
+            // Collect form data
+            const formData = collectFormData();
+            
+            // Submit to server (simulation)
+            console.log('Submitting form data:', formData);
+            
+            // Show success message
+            alert('채용 공고가 등록되었습니다.');
+            
+            // Navigate to list
+            window.location.href = '/recruitment-list.html';
+        });
+        
+        // Collect form data
+        function collectFormData() {
+            const formData = {};
+            
+            // Basic info
+            formData.title = document.querySelector('input[placeholder="예: 보안 컨설턴트 (정규직)"]').value;
+            formData.department = document.querySelector('input[placeholder="예: 정보보안팀"]').value;
+            formData.employmentType = document.querySelector('input[name="employment-type"]:checked').value;
+            
+            // Classification
+            const selectedMajor = document.querySelector('.classification-level:first-child .classification-option.selected');
+            const selectedMinor = document.querySelector('.classification-level:last-child .classification-option.selected');
+            formData.majorCategory = selectedMajor ? selectedMajor.dataset.code : '';
+            formData.minorCategory = selectedMinor ? selectedMinor.dataset.code : '';
+            
+            // Job description
+            formData.jobDescription = document.querySelector('textarea[placeholder*="담당할 업무"]').value;
+            
+            // Requirements
+            formData.experience = document.querySelector('select').value;
+            formData.education = document.querySelectorAll('select')[1].value;
+            formData.requirements = document.querySelector('textarea[placeholder*="필수적인 자격 요건"]').value;
+            formData.preferences = document.querySelector('textarea[placeholder*="우대 사항"]').value;
+            
+            // Work conditions
+            const salaryInputs = document.querySelectorAll('.salary-input');
+            formData.salaryMin = salaryInputs[0].value;
+            formData.salaryMax = salaryInputs[1].value;
+            formData.location = document.querySelector('input[placeholder*="경기도 성남시"]').value;
+            formData.workHours = document.querySelector('input[placeholder*="월~금"]').value;
+            formData.benefits = document.querySelector('textarea[placeholder*="제공하는 복리후생"]').value;
+            
+            // Process steps
+            formData.processSteps = [];
+            document.querySelectorAll('.process-step').forEach(step => {
+                const title = step.querySelector('.step-title-input').value;
+                const desc = step.querySelector('.step-desc-input').value;
+                if (title || desc) {
+                    formData.processSteps.push({ title, description: desc });
+                }
+            });
+            
+            // Application documents
+            formData.requiredDocuments = [];
+            document.querySelectorAll('.checkbox-item input:checked').forEach(checkbox => {
+                formData.requiredDocuments.push(checkbox.nextElementSibling.textContent);
+            });
+            formData.otherDocuments = document.querySelectorAll('textarea')[2].value;
+            
+            // Application period
+            const dateInputs = document.querySelectorAll('.date-range input[type="date"]');
+            formData.startDate = dateInputs[0].value;
+            formData.endDate = dateInputs[1].value;
+            formData.additionalInfo = document.querySelectorAll('textarea')[3].value;
+            
+            // Contact info
+            formData.contactName = document.querySelector('input[placeholder="담당자명"]').value;
+            formData.contactPhone = document.querySelector('input[placeholder="담당자 연락처"]').value;
+            formData.contactEmail = document.querySelector('input[placeholder="담당자 이메일"]').value;
+            formData.website = document.querySelector('input[placeholder="회사 홈페이지 URL"]').value;
+            
+            return formData;
+        }
+        
+        // Load draft on page load
+        window.addEventListener('load', function() {
+            const draft = localStorage.getItem('recruitmentDraft');
+            if (draft) {
+                const formData = JSON.parse(draft);
+                
+                // Fill form fields with draft data
+                // (Implementation depends on specific field mapping)
+                
+                if (confirm('임시저장된 내용이 있습니다. 불러오시겠습니까?')) {
+                    // Restore form fields
+                    console.log('Loading draft:', formData);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 결제내역</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* App Header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f0f2f5;
+            color: #4a6cf7;
+            cursor: pointer;
+        }
+        
+        .app-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a6cf7;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* App Content */
+        .app-content {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .stat-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            opacity: 0.3;
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+        
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: #f0f2f5;
+            color: #777;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-tab.active {
+            background-color: #4a6cf7;
+            color: white;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background-color: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            background-color: #3a5bd9;
+        }
+        
+        /* Payment History List */
+        .payment-list {
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .payment-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f2f5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-item:hover {
+            background-color: #f8f9fc;
+        }
+        
+        .payment-item:last-child {
+            border-bottom: none;
+        }
+        
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .payment-info {
+            flex: 1;
+        }
+        
+        .payment-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .payment-date {
+            font-size: 13px;
+            color: #777;
+        }
+        
+        .payment-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-completed {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+        
+        .status-pending {
+            background-color: #fff3e0;
+            color: #ff9800;
+        }
+        
+        .status-refunded {
+            background-color: #fce4ec;
+            color: #f44336;
+        }
+        
+        .status-recurring {
+            background-color: #e3f2fd;
+            color: #2196f3;
+        }
+        
+        .payment-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .payment-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a6cf7;
+        }
+        
+        .payment-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border: 1px solid #e0e6ed;
+            border-radius: 6px;
+            background-color: #fff;
+            color: #777;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            border-color: #4a6cf7;
+            color: #4a6cf7;
+        }
+        
+        /* Chart Section */
+        .chart-section {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .chart-period {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .period-btn {
+            padding: 6px 12px;
+            border: 1px solid #e0e6ed;
+            border-radius: 6px;
+            background-color: #fff;
+            color: #777;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .period-btn.active {
+            background-color: #4a6cf7;
+            color: white;
+            border-color: #4a6cf7;
+        }
+        
+        .chart-container {
+            height: 200px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 10px;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #4a6cf7, #764ba2);
+            border-radius: 4px 4px 0 0;
+            margin: 0 5px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+        
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .chart-bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a6cf7;
+        }
+        
+        /* Recurring Payments */
+        .recurring-section {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #4a6cf7;
+        }
+        
+        .recurring-item {
+            padding: 15px;
+            border: 1px solid #e0e6ed;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .recurring-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .recurring-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .recurring-title {
+            font-weight: 600;
+        }
+        
+        .recurring-toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background-color: #ccc;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .recurring-toggle.active {
+            background-color: #4a6cf7;
+        }
+        
+        .recurring-toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .recurring-toggle.active::after {
+            left: 26px;
+        }
+        
+        .recurring-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #777;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f0f2f5;
+            color: #777;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        
+        .detail-label {
+            color: #777;
+            font-size: 14px;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: #4a6cf7;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5bd9;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #4a6cf7;
+            color: #4a6cf7;
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(74, 108, 247, 0.1);
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #777;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item.active {
+            color: #4a6cf7;
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app-content {
+                padding: 15px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-controls {
+                flex-direction: column;
+            }
+            
+            .filter-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">결제내역</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-download"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- 통계 카드 -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">이번달 결제</div>
+                <div class="stat-value">7,810,000원</div>
+                <i class="fas fa-won-sign stat-icon"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">올해 누적</div>
+                <div class="stat-value">45,200,000원</div>
+                <i class="fas fa-chart-line stat-icon"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">정기결제</div>
+                <div class="stat-value">3건</div>
+                <i class="fas fa-sync-alt stat-icon"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">환불 건수</div>
+                <div class="stat-value">1건</div>
+                <i class="fas fa-undo stat-icon"></i>
+            </div>
+        </div>
+        
+        <!-- 필터 섹션 -->
+        <div class="filter-section">
+            <div class="filter-tabs">
+                <div class="filter-tab active" data-filter="all">전체</div>
+                <div class="filter-tab" data-filter="completed">결제완료</div>
+                <div class="filter-tab" data-filter="pending">결제대기</div>
+                <div class="filter-tab" data-filter="refunded">환불</div>
+                <div class="filter-tab" data-filter="recurring">정기결제</div>
+            </div>
+            <div class="filter-controls">
+                <select class="filter-select" id="periodFilter">
+                    <option value="all">전체 기간</option>
+                    <option value="today">오늘</option>
+                    <option value="week">이번 주</option>
+                    <option value="month">이번 달</option>
+                    <option value="quarter">이번 분기</option>
+                    <option value="year">올해</option>
+                </select>
+                <select class="filter-select" id="itemFilter">
+                    <option value="all">전체 항목</option>
+                    <option value="subscription">구독료</option>
+                    <option value="consulting">컨설팅</option>
+                    <option value="education">교육</option>
+                    <option value="advertising">광고</option>
+                </select>
+                <button class="filter-btn" id="applyFilter">적용</button>
+            </div>
+        </div>
+        
+        <!-- 결제 통계 차트 -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h3 class="chart-title">결제 통계</h3>
+                <div class="chart-period">
+                    <button class="period-btn active" data-period="month">월별</button>
+                    <button class="period-btn" data-period="year">연도별</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-bars">
+                    <div class="chart-bar" style="height: 60%">
+                        <span class="chart-bar-value">320만</span>
+                        <span class="chart-bar-label">1월</span>
+                    </div>
+                    <div class="chart-bar" style="height: 80%">
+                        <span class="chart-bar-value">450만</span>
+                        <span class="chart-bar-label">2월</span>
+                    </div>
+                    <div class="chart-bar" style="height: 70%">
+                        <span class="chart-bar-value">380만</span>
+                        <span class="chart-bar-label">3월</span>
+                    </div>
+                    <div class="chart-bar" style="height: 90%">
+                        <span class="chart-bar-value">520만</span>
+                        <span class="chart-bar-label">4월</span>
+                    </div>
+                    <div class="chart-bar" style="height: 75%">
+                        <span class="chart-bar-value">410만</span>
+                        <span class="chart-bar-label">5월</span>
+                    </div>
+                    <div class="chart-bar" style="height: 85%">
+                        <span class="chart-bar-value">480만</span>
+                        <span class="chart-bar-label">6월</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 정기결제 관리 -->
+        <div class="recurring-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-sync-alt"></i>
+                    정기결제 관리
+                </h3>
+                <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;">
+                    <i class="fas fa-plus"></i> 추가
+                </button>
+            </div>
+            <div class="recurring-item">
+                <div class="recurring-header">
+                    <div class="recurring-title">Pro 플랜 구독</div>
+                    <div class="recurring-toggle active"></div>
+                </div>
+                <div class="recurring-info">
+                    <span>월 100,000원</span>
+                    <span>다음 결제: 2025.02.01</span>
+                </div>
+            </div>
+            <div class="recurring-item">
+                <div class="recurring-header">
+                    <div class="recurring-title">컨설팅 서비스</div>
+                    <div class="recurring-toggle active"></div>
+                </div>
+                <div class="recurring-info">
+                    <span>월 3,000,000원</span>
+                    <span>다음 결제: 2025.02.15</span>
+                </div>
+            </div>
+            <div class="recurring-item">
+                <div class="recurring-header">
+                    <div class="recurring-title">광고 서비스</div>
+                    <div class="recurring-toggle"></div>
+                </div>
+                <div class="recurring-info">
+                    <span>월 500,000원</span>
+                    <span>일시정지</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 결제 내역 목록 -->
+        <div class="payment-list">
+            <div class="payment-item" data-id="1">
+                <div class="payment-header">
+                    <div class="payment-info">
+                        <div class="payment-title">Pro 플랜 구독료</div>
+                        <div class="payment-date">2025.01.01 10:30</div>
+                    </div>
+                    <div class="payment-status status-recurring">정기결제</div>
+                </div>
+                <div class="payment-details">
+                    <div class="payment-amount">100,000원</div>
+                    <div class="payment-actions">
+                        <button class="action-btn view-detail">상세</button>
+                        <button class="action-btn download-receipt">영수증</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-item" data-id="2">
+                <div class="payment-header">
+                    <div class="payment-info">
+                        <div class="payment-title">ISMS-P 컨설팅</div>
+                        <div class="payment-date">2025.01.05 14:20</div>
+                    </div>
+                    <div class="payment-status status-completed">결제완료</div>
+                </div>
+                <div class="payment-details">
+                    <div class="payment-amount">3,000,000원</div>
+                    <div class="payment-actions">
+                        <button class="action-btn view-detail">상세</button>
+                        <button class="action-btn download-receipt">영수증</button>
+                        <button class="action-btn request-refund">환불</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-item" data-id="3">
+                <div class="payment-header">
+                    <div class="payment-info">
+                        <div class="payment-title">ISMS-P 심사원 교육</div>
+                        <div class="payment-date">2025.01.10 09:15</div>
+                    </div>
+                    <div class="payment-status status-pending">결제대기</div>
+                </div>
+                <div class="payment-details">
+                    <div class="payment-amount">3,500,000원</div>
+                    <div class="payment-actions">
+                        <button class="action-btn view-detail">상세</button>
+                        <button class="action-btn cancel-payment">취소</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-item" data-id="4">
+                <div class="payment-header">
+                    <div class="payment-info">
+                        <div class="payment-title">프리미엄 광고</div>
+                        <div class="payment-date">2025.01.15 16:45</div>
+                    </div>
+                    <div class="payment-status status-completed">결제완료</div>
+                </div>
+                <div class="payment-details">
+                    <div class="payment-amount">500,000원</div>
+                    <div class="payment-actions">
+                        <button class="action-btn view-detail">상세</button>
+                        <button class="action-btn download-receipt">영수증</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-item" data-id="5">
+                <div class="payment-header">
+                    <div class="payment-info">
+                        <div class="payment-title">ISO 27001 교육 (환불)</div>
+                        <div class="payment-date">2024.12.20 11:30</div>
+                    </div>
+                    <div class="payment-status status-refunded">환불완료</div>
+                </div>
+                <div class="payment-details">
+                    <div class="payment-amount">-2,800,000원</div>
+                    <div class="payment-actions">
+                        <button class="action-btn view-detail">상세</button>
+                        <button class="action-btn download-receipt">영수증</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-item" data-id="6">
+                <div class="payment-header">
+                    <div class="payment-info">
+                        <div class="payment-title">Basic 플랜 구독료</div>
+                        <div class="payment-date">2024.12.01 10:00</div>
+                    </div>
+                    <div class="payment-status status-completed">결제완료</div>
+                </div>
+                <div class="payment-details">
+                    <div class="payment-amount">50,000원</div>
+                    <div class="payment-actions">
+                        <button class="action-btn view-detail">상세</button>
+                        <button class="action-btn download-receipt">영수증</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 상세 내역 모달 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">결제 상세 정보</h3>
+                <div class="modal-close" id="closeDetailModal">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="detail-row">
+                    <div class="detail-label">결제번호</div>
+                    <div class="detail-value">PAY-20250105-1420</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">결제 항목</div>
+                    <div class="detail-value">ISMS-P 컨설팅</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">결제 금액</div>
+                    <div class="detail-value">3,000,000원</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">부가세</div>
+                    <div class="detail-value">300,000원</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">결제 수단</div>
+                    <div class="detail-value">신용카드 (국민카드)</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">결제일시</div>
+                    <div class="detail-value">2025.01.05 14:20:35</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">결제 상태</div>
+                    <div class="detail-value">결제완료</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">공급자</div>
+                    <div class="detail-value">㈜시큐리티파트너스</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">사업자등록번호</div>
+                    <div class="detail-value">123-45-67890</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="closeDetailBtn">닫기</button>
+                <button class="btn btn-primary" id="downloadReceiptBtn">영수증 다운로드</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 환불 신청 모달 -->
+    <div class="modal" id="refundModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">환불 신청</h3>
+                <div class="modal-close" id="closeRefundModal">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="detail-row">
+                    <div class="detail-label">결제 항목</div>
+                    <div class="detail-value">ISMS-P 컨설팅</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">결제 금액</div>
+                    <div class="detail-value">3,000,000원</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">환불 사유</div>
+                    <div class="detail-value">
+                        <select style="width: 100%; padding: 8px; border: 1px solid #e0e6ed; border-radius: 6px;">
+                            <option>서비스 불만족</option>
+                            <option>일정 변경</option>
+                            <option>중복 결제</option>
+                            <option>기타</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">상세 설명</div>
+                    <div class="detail-value">
+                        <textarea style="width: 100%; padding: 8px; border: 1px solid #e0e6ed; border-radius: 6px; min-height: 100px; resize: vertical;" placeholder="환불 사유를 상세히 입력해주세요."></textarea>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">환불 계좌</div>
+                    <div class="detail-value">
+                        <input type="text" style="width: 100%; padding: 8px; border: 1px solid #e0e6ed; border-radius: 6px;" placeholder="은행명 계좌번호 예금주">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelRefundBtn">취소</button>
+                <button class="btn btn-primary" id="submitRefundBtn">환불 신청</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>홈</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user-plus"></i>
+            <span>전문가 등록</span>
+        </a>        
+        <a href="#" class="nav-item">
+            <i class="fas fa-clipboard-check"></i>
+            <span>심사 지원</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>일정관리</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>성공사례</span>
+        </a>
+    </nav>
+    
+    <script>
+        // 필터 탭 기능
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                // 실제 필터링 로직 구현
+            });
+        });
+        
+        // 기간 필터 적용
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            const period = document.getElementById('periodFilter').value;
+            const item = document.getElementById('itemFilter').value;
+            console.log('Filter applied:', period, item);
+            // 실제 필터링 로직 구현
+        });
+        
+        // 차트 기간 전환
+        const periodBtns = document.querySelectorAll('.period-btn');
+        periodBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                periodBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // 차트 데이터 업데이트 로직
+            });
+        });
+        
+        // 정기결제 토글
+        const recurringToggles = document.querySelectorAll('.recurring-toggle');
+        recurringToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                // 실제 정기결제 상태 변경 로직
+            });
+        });
+        
+        // 상세 정보 모달
+        const detailModal = document.getElementById('detailModal');
+        const closeDetailModal = document.getElementById('closeDetailModal');
+        const closeDetailBtn = document.getElementById('closeDetailBtn');
+        
+        document.querySelectorAll('.view-detail').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                detailModal.classList.add('active');
+            });
+        });
+        
+        closeDetailModal.addEventListener('click', function() {
+            detailModal.classList.remove('active');
+        });
+        
+        closeDetailBtn.addEventListener('click', function() {
+            detailModal.classList.remove('active');
+        });
+        
+        // 환불 신청 모달
+        const refundModal = document.getElementById('refundModal');
+        const closeRefundModal = document.getElementById('closeRefundModal');
+        const cancelRefundBtn = document.getElementById('cancelRefundBtn');
+        
+        document.querySelectorAll('.request-refund').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                refundModal.classList.add('active');
+            });
+        });
+        
+        closeRefundModal.addEventListener('click', function() {
+            refundModal.classList.remove('active');
+        });
+        
+        cancelRefundBtn.addEventListener('click', function() {
+            refundModal.classList.remove('active');
+        });
+        
+        // 환불 신청 제출
+        document.getElementById('submitRefundBtn').addEventListener('click', function() {
+            alert('환불 신청이 접수되었습니다. 검토 후 3영업일 내에 처리됩니다.');
+            refundModal.classList.remove('active');
+        });
+        
+        // 영수증 다운로드
+        document.querySelectorAll('.download-receipt').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                alert('영수증이 다운로드됩니다.');
+            });
+        });
+        
+        document.getElementById('downloadReceiptBtn').addEventListener('click', function() {
+            alert('영수증이 다운로드됩니다.');
+        });
+        
+        // 결제 취소
+        document.querySelectorAll('.cancel-payment').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (confirm('결제를 취소하시겠습니까?')) {
+                    alert('결제가 취소되었습니다.');
+                }
+            });
+        });
+        
+        // 결제 항목 클릭
+        document.querySelectorAll('.payment-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                console.log('Payment item clicked:', id);
+                // 상세 페이지로 이동 또는 모달 표시
+            });
+        });
+        
+        // 뒤로가기
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        // 모달 외부 클릭 시 닫기
+        window.addEventListener('click', function(e) {
+            if (e.target === detailModal) {
+                detailModal.classList.remove('active');
+            }
+            if (e.target === refundModal) {
+                refundModal.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

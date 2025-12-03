@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>전시 - 기업 마이페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .header-icon:hover {
+            color: var(--primary-color);
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 20px;
+        }
+
+        /* --- Side Menu --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--card-background);
+            box-shadow: var(--shadow-md);
+            transition: left 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .user-avatar i {
+            font-size: 2rem;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-type {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .side-menu-content {
+            padding: 10px 0;
+        }
+
+        .menu-category {
+            margin-bottom: 15px;
+        }
+
+        .menu-category-title {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-category-title i {
+            margin-right: 10px;
+        }
+
+        .menu-items {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px 12px 35px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .menu-item.active {
+            background-color: rgba(0,123,255,0.1);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 10px 0;
+        }
+
+        /* --- Overlay --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- My Page Container --- */
+        .my-page-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* --- Menu Cards List --- */
+        .menu-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 2rem;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* --- Menu Card --- */
+        .menu-card {
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 15px 20px;
+            transition: background-color 0.2s ease;
+            border-left: 5px solid transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            border-bottom: 1px solid var(--border-color);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .menu-card:last-child {
+            border-bottom: none;
+        }
+
+        .menu-card:hover {
+            background-color: var(--light-color);
+            transform: none;
+            box-shadow: none;
+            text-decoration: none;
+        }
+
+        .menu-card.active {
+            background-color: rgba(0, 123, 255, 0.05);
+            border-left-color: var(--primary-color);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .menu-card-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .menu-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            background-color: #e3f2fd;
+            color: var(--primary-color);
+            margin-bottom: 0;
+        }
+
+        .menu-card-content {
+            flex: 1;
+        }
+
+        .menu-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+            margin-bottom: 2px;
+        }
+
+        .menu-card-description {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .menu-card-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background-color: var(--light-color);
+            color: var(--text-muted);
+        }
+
+        .menu-card.has-content .menu-card-status {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .menu-card-arrow {
+            color: var(--text-muted);
+            margin-left: 10px;
+        }
+
+        /* --- Tabs Container --- */
+        .tabs-container {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .tab-content {
+            padding: 20px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- Profile Section --- */
+        .profile-section {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .company-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 30px;
+            overflow: hidden;
+            border: 2px dashed var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .company-logo:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(0,123,255,0.05);
+        }
+
+        .company-logo i {
+            font-size: 3rem;
+            color: var(--text-muted);
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .company-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .company-type {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .company-details {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .company-details span {
+            margin-right: 20px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        .company-details i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* --- Form Styles --- */
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .form-section-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* --- Table Styles --- */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: rgba(0,0,0,0.02);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        /* --- Status Badge --- */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-completed {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+        }
+
+        .status-cancelled {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e6ea;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* --- Cards --- */
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .card-body {
+            color: var(--text-color);
+        }
+
+        /* --- Timeline --- */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -25px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            border: 2px solid var(--card-background);
+        }
+
+        .timeline-content {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .timeline-date {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .timeline-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Portfolio Grid --- */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .portfolio-item {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .portfolio-image {
+            height: 200px;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .portfolio-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .portfolio-content {
+            padding: 15px;
+        }
+
+        .portfolio-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .portfolio-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .portfolio-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            background-color: var(--light-color);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .portfolio-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* --- Service History Cards --- */
+        .service-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .service-card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .service-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .service-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .service-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .service-status {
+            margin-bottom: 10px;
+        }
+
+        .service-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* --- Review Section --- */
+        .review-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .review-cards {
+            display: grid;
+            gap: 20px;
+        }
+
+        .review-card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .reviewer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .reviewer-avatar i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .reviewer-details h4 {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        .review-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .review-rating {
+            color: var(--warning-color);
+            margin-bottom: 10px;
+        }
+
+        .review-content {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .review-project {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* --- Payment Methods --- */
+        .payment-methods {
+            display: grid;
+            gap: 15px;
+        }
+
+        .payment-method {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .payment-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .payment-icon i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .payment-details h4 {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        .payment-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .payment-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-default {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* --- Shopping Cart --- */
+        .cart-items {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .cart-item {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .cart-item-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .cart-summary {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-row.total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* --- Payment History --- */
+        .payment-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* --- Inquiry Section --- */
+        .inquiry-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .inquiry-item {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .inquiry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .inquiry-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .inquiry-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .inquiry-content {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .inquiry-response {
+            background-color: var(--light-color);
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .response-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--border-color);
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .service-cards,
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .cart-item-actions {
+                margin-top: 15px;
+                width: 100%;
+            }
+            
+            .payment-method {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .payment-actions {
+                margin-top: 15px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="app-title">전시(專時)</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <div class="my-page-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">기업 마이페이지</h1>
+            </div>
+            
+            <!-- Menu Cards List -->
+            <div class="menu-cards-grid">
+                <a href="02기업정보 뷰어.html" class="menu-card active" data-section="MyProfileCorporate">
+                    <div class="menu-card-left">
+                        <div class="menu-card-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-title">기업 정보 관리</div>
+                            <div class="menu-card-description">기업의 기본 정보, 연혁, 소개 등을 관리합니다. 전문 기업의 매력을 어필하세요.</div>
+                        </div>
+                    </div>
+                    <span class="menu-card-status">활성</span>
+                    <i class="fas fa-chevron-right menu-card-arrow"></i>
+                </a>
+
+                <a href="/기업연혁관리.html" class="menu-card has-content" data-section="CompanyHistoryManagement">
+                    <div class="menu-card-left">
+                        <div class="menu-card-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-title">기업 연혁 관리</div>
+                            <div class="menu-card-description">기업의 주요 연혁과 성공 스토리를 관리합니다. 신뢰도를 쌓아보세요.</div>
+                        </div>
+                    </div>
+                    <span class="menu-card-status">10개 등록</span>
+                    <i class="fas fa-chevron-right menu-card-arrow"></i>
+                </a>
+
+                <a href="/포트폴리오_리스트.html" class="menu-card has-content" data-section="PortfolioManagementCorporate">
+                    <div class="menu-card-left">
+                        <div class="menu-card-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-title">포트폴리오 관리</div>
+                            <div class="menu-card-description">성공 사례와 역량을 증명하는 포트폴리오를 관리합니다. 실제 결과물로 보여주세요.</div>
+                        </div>
+                    </div>
+                    <span class="menu-card-status">5개 등록</span>
+                    <i class="fas fa-chevron-right menu-card-arrow"></i>
+                </a>
+
+                <a href="/서비스이용내역_기업.html" class="menu-card has-content" data-section="ServiceHistoryCorporate">
+                    <div class="menu-card-left">
+                        <div class="menu-card-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-title">서비스 내역</div>
+                            <div class="menu-card-description">제공한 서비스 이력을 확인하고 관리합니다. 기업의 전문가 활동 기록입니다.</div>
+                        </div>
+                    </div>
+                    <span class="menu-card-status">진행중 3건</span>
+                    <i class="fas fa-chevron-right menu-card-arrow"></i>
+                </a>
+
+                <a href="/리뷰관리.html" class="menu-card has-content" data-section="ReviewManagementCorporate">
+                    <div class="menu-card-left">
+                        <div class="menu-card-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-title">리뷰 관리</div>
+                            <div class="menu-card-description">고객 리뷰를 확인하고 관리합니다. 만족도와 신뢰도를 높이는 중요한 소통입니다.</div>
+                        </div>
+                    </div>
+                    <span class="menu-card-status">5.0점 (12개)</span>
+                    <i class="fas fa-chevron-right menu-card-arrow"></i>
+                </a>
+
+                <a href="/일정관리_기업.html" class="menu-card has-content" data-section="ScheduleManagementCorporate">
+                    <div class="menu-card-left">
+                        <div class="menu-card-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-title">일정 관리</div>
+                            <div class="menu-card-description">전문가 일정과 예약을 효율적으로 관리합니다. 시간을 최적화하여 서비스 품질을 높이세요.</div>
+                        </div>
+                    </div>
+                    <span class="menu-card-status">예약 5건, 희망 2건</span>
+                    <i class="fas fa-chevron-right menu-card-arrow"></i>
+                </a>
+
+                
+                <a href="/결제수단관리.html" class="menu-card has-content" data-section="PaymentManagementCorporate">
+                    <div class="menu-card-left">
+                        <div class="menu-card-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-title">결제수단 관리</div>
+                            <div class="menu-card-description">기업 결제수단 정보를 관리합니다. 원활한 정산을 위해 설정해주세요.</div>
+                        </div>
+                    </div>
+                    <span class="menu-card-status">3개 등록</span>
+                    <i class="fas fa-chevron-right menu-card-arrow"></i>
+                </a>
+
+                <a href="/결제내역리스트_기업.html" class="menu-card" data-section="PaymentHistoryCorporate">
+                    <div class="menu-card-left">
+                        <div class="menu-card-icon">
+                            <i class="fas fa-won-sign"></i>
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-title">결제 내역</div>
+                            <div class="menu-card-description">과거 결제 기록을 확인합니다. 비용 관리와 재무 기록을 확인하세요.</div>
+                        </div>
+                    </div>
+                    <span class="menu-card-status">전체 내역</span>
+                    <i class="fas fa-chevron-right menu-card-arrow"></i>
+                </a>
+
+                <a href="/1대1_문의리스트.html" class="menu-card" data-section="CPQuestinAnswers">
+                    <div class="menu-card-left">
+                        <div class="menu-card-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="menu-card-content">
+                            <div class="menu-card-title">1:1 문의</div>
+                            <div class="menu-card-description">고객 문의와 답변을 관리합니다. 궁금한 점을 자유롭게 질문하세요.</div>
+                        </div>
+                    </div>
+                    <span class="menu-card-status">문의하기</span>
+                    <i class="fas fa-chevron-right menu-card-arrow"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Menu Toggle
+    document.getElementById('menuToggle').addEventListener('click', function() {
+        document.getElementById('sideMenu').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    });
+
+    // Overlay Click
+    document.getElementById('overlay').addEventListener('click', function() {
+        document.getElementById('sideMenu').classList.remove('active');
+        document.getElementById('overlay').classList.remove('active');
+    });
+
+    // Menu Card Navigation
+    const menuCards = document.querySelectorAll('.menu-card');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const menuItems = document.querySelectorAll('.menu-item[data-tab]');
+    const tabButtons = document.querySelectorAll('.tab-button');
+
+    function switchTab(tabId) {
+        // Remove active class from all elements
+        menuCards.forEach(card => card.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        menuItems.forEach(item => item.classList.remove('active'));
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+
+        // Add active class to corresponding elements
+        const targetMenuCard = document.querySelector(`.menu-card[data-section="${tabId}"]`);
+        const targetTabContent = document.getElementById(tabId);
+        const targetMenuItem = document.querySelector(`.menu-item[data-tab="${tabId}"]`);
+        const targetTabButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+
+        if (targetMenuCard) targetMenuCard.classList.add('active');
+        if (targetTabContent) targetTabContent.classList.add('active');
+        if (targetMenuItem) targetMenuItem.classList.add('active');
+        if (targetTabButton) targetTabButton.classList.add('active');
+
+        // Scroll to tab content smoothly
+        if (targetTabContent) {
+            targetTabContent.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }
+
+    // Menu card clicks
+    menuCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const tabId = card.getAttribute('data-section');
+            switchTab(tabId);
+        });
+    });
+
+    // Menu item clicks
+    menuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tabId = item.getAttribute('data-tab');
+            switchTab(tabId);
+        });
+    });
+
+    // Tab button clicks (for backward compatibility)
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabId = button.getAttribute('data-tab');
+            switchTab(tabId);
+        });
+    });
+
+    // Initialize - show first tab by default
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstCard = document.querySelector('.menu-card[data-section="MyProfileCorporate"]');
+        const firstSection = document.getElementById('MyProfileCorporate');
+        if (firstCard && firstSection) {
+            firstCard.classList.add('active');
+            firstSection.classList.add('active');
+        } else {
+            // Hide all other sections except first one
+            tabContents.forEach(section => {
+                if (section.id !== 'MyProfileCorporate') {
+                    section.classList.remove('active');
+                }
+            });
+        }
+    });
+
+    // Add hover effects for interactive elements
+    document.querySelectorAll('.btn, .card, .service-card, .portfolio-item, .review-card, .payment-method, .cart-item, .inquiry-item').forEach(element => {
+        element.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        element.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // 1:1 문의 기능
+    // 문의 폼 제출
+    document.getElementById('inquiryForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // 폼 유효성 검사
+        const inquiryType = document.getElementById('inquiryType').value;
+        const inquiryTitle = document.getElementById('inquiryTitle').value.trim();
+        const inquiryContent = document.getElementById('inquiryContent').value.trim();
+        const inquiryEmail = document.getElementById('inquiryEmail').value.trim();
+        const agreeTerms = document.getElementById('agreeTerms').checked;
+
+        if (!inquiryType) {
+            alert('문의 유형을 선택해주세요.');
+            return;
+        }
+
+        if (!inquiryTitle) {
+            alert('문의 제목을 입력해주세요.');
+            return;
+        }
+
+        if (!inquiryContent) {
+            alert('문의 내용을 입력해주세요.');
+            return;
+        }
+
+        if (!inquiryEmail) {
+            alert('이메일 주소를 입력해주세요.');
+            return;
+        }
+
+        if (!agreeTerms) {
+            alert('개인정보 수집 및 이용에 동의해주세요.');
+            return;
+        }
+
+        // 문의 제출 시뮬레이션
+        alert('문의가 성공적으로 접수되었습니다. 24시간 내에 답변드리겠습니다.');
+
+        // 폼 초기화
+        resetInquiryForm();
+
+        // 문의 내역에 새 항목 추가 (시뮬레이션)
+        addNewInquiryToHistory(inquiryType, inquiryTitle, inquiryContent, inquiryEmail);
+    });
+
+    // 문의 폼 초기화
+    function resetInquiryForm() {
+        document.getElementById('inquiryForm').reset();
+    }
+
+    // 문의 상세보기 토글
+    function toggleInquiryDetail(button) {
+        const inquiryItem = button.closest('.inquiry-item');
+        const content = inquiryItem.querySelector('.inquiry-content');
+        const response = inquiryItem.querySelector('.inquiry-response');
+        const icon = button.querySelector('i');
+
+        if (content.style.display === 'none' || !content.style.display) {
+            // 상세보기 펼치기
+            content.style.display = 'block';
+            if (response) {
+                response.style.display = 'block';
+            }
+            icon.className = 'fas fa-chevron-up';
+            button.className = 'btn btn-sm btn-primary';
+        } else {
+            // 상세보기 접기
+            content.style.display = 'none';
+            if (response) {
+                response.style.display = 'none';
+            }
+            icon.className = 'fas fa-chevron-down';
+            button.className = 'btn btn-sm btn-primary';
+        }
+    }
+
+    // 새 문의 내역 추가 (시뮬레이션)
+    function addNewInquiryToHistory(type, title, content, email) {
+        const inquiryList = document.querySelector('.inquiry-list');
+        const today = new Date().toISOString().split('T')[0];
+
+        // 유형에 따른 텍스트 변환
+        const typeText = {
+            'service': '서비스 관련',
+            'payment': '결제 관련',
+            'account': '계정 관련',
+            'technical': '기술 지원',
+            'partnership': '제휴 문의',
+            'other': '기타'
+        }[type] || '기타';
+
+        const newInquiry = document.createElement('div');
+        newInquiry.className = 'inquiry-item';
+        newInquiry.innerHTML = `
+            <div class="inquiry-header">
+                <div style="flex: 1;">
+                    <div class="inquiry-title">${title}</div>
+                    <div class="inquiry-meta">
+                        <span style="margin-right: 15px;"><i class="fas fa-tag"></i> ${typeText}</span>
+                        <span style="margin-right: 15px;"><i class="fas fa-calendar"></i> ${today}</span>
+                        <span class="status-badge status-pending"><i class="fas fa-clock"></i> 답변 대기</span>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-secondary" onclick="toggleInquiryDetail(this)">
+                    <i class="fas fa-chevron-down"></i> 상세보기
+                </button>
+            </div>
+
+            <div class="inquiry-content">
+                ${content.replace(/\n/g, '<br>')}
+            </div>
+
+            <div class="inquiry-response" style="display: none;">
+                <div class="response-header">
+                    <i class="fas fa-reply"></i> 답변 대기 중
+                </div>
+                <p>고객님의 문의는 현재 담당자가 검토 중입니다. 빠른 시간內 답변 드리겠습니다.</p>
+            </div>
+        `;
+
+        // 새 문의를 리스트 맨 위에 추가
+        inquiryList.insertBefore(newInquiry, inquiryList.firstChild);
+
+        // 애니메이션 효과
+        newInquiry.style.opacity = '0';
+        newInquiry.style.transform = 'translateY(-10px)';
+        newInquiry.style.transition = 'all 0.3s ease';
+
+        setTimeout(() => {
+            newInquiry.style.opacity = '1';
+            newInquiry.style.transform = 'translateY(0)';
+        }, 100);
+    }
+
+    // 파일 업로드 표시
+    document.getElementById('inquiryFile').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+        if (files.length > 5) {
+            alert('최대 5개 파일까지 업로드 가능합니다.');
+            e.target.value = '';
+            return;
+        }
+
+        for (let file of files) {
+            if (file.size > maxSize) {
+                alert(`${file.name} 파일 크기가 10MB를 초과했습니다.`);
+                e.target.value = '';
+                return;
+            }
+
+            if (!allowedTypes.includes(file.type)) {
+                alert(`${file.name} 파일 형식을 지원하지 않습니다.\n지원 형식: JPG, PNG, PDF, DOC, DOCX`);
+                e.target.value = '';
+                return;
+            }
+        }
+
+        // 파일 정보 표시 (선택적)
+        if (files.length > 0) {
+            const fileNames = files.map(f => f.name).join(', ');
+            console.log('선택된 파일:', fileNames);
+        }
+    });
+
+    // 이메일 형식 검증
+    document.getElementById('inquiryEmail').addEventListener('blur', function() {
+        const email = this.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (email && !emailRegex.test(email)) {
+            this.style.borderColor = 'var(--danger-color)';
+            this.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.1)';
+            alert('올바른 이메일 주소를 입력해주세요.');
+        } else {
+            this.style.borderColor = '';
+            this.style.boxShadow = '';
+        }
+    });
+
+    // 전화번호 형식 자동 변환
+    document.getElementById('inquiryPhone').addEventListener('input', function() {
+        let value = this.value.replace(/[^0-9]/g, '');
+
+        if (value.length <= 3) {
+            value = value;
+        } else if (value.length <= 7) {
+            value = value.slice(0, 3) + '-' + value.slice(3);
+        } else if (value.length <= 11) {
+            value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7);
+        }
+
+        this.value = value;
+    });
+
+    // 초기 로드 시 문의 내역의 상세보기는 접어두기
+    document.addEventListener('DOMContentLoaded', function() {
+        const inquiryItems = document.querySelectorAll('.inquiry-item');
+        inquiryItems.forEach(item => {
+            const content = item.querySelector('.inquiry-content');
+            const response = item.querySelector('.inquiry-response');
+            if (content) {
+                content.style.display = 'none';
+            }
+            if (response) {
+                response.style.display = 'none';
+            }
+
+            // 기존 아이콘 확인 및 변경
+            const button = item.querySelector('.inquiry-header button');
+            if (button) {
+                const icon = button.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-chevron-down';
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

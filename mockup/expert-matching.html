@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전문가 매칭 | 전시(專時)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-common.css">
+    <link rel="stylesheet" href="expert-matching.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 사이드바 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">전시(專時)</div>
+                <div class="sidebar-subtitle">전문가 매칭</div>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-title">대시보드</div>
+                    <a href="admin-dashboard.html" class="menu-item" data-page="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>전체 현황</span>
+                    </a>
+                    <a href="skill-manage.html" class="menu-item" data-page="skills">
+                        <i class="fas fa-chart-line"></i>
+                        <span>스킬 관리</span>
+                    </a>
+                    <a href="expert-matching.html" class="menu-item active" data-page="expert-matching">
+                        <i class="fas fa-search-plus"></i>
+                        <span>전문가 매칭</span>
+                    </a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-title">프로젝트 매칭</div>
+                    <a href="project-matching.html" class="menu-item" data-page="project-matching">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>프로젝트 매칭</span>
+                    </a>
+                    <a href="request-management.html" class="menu-item" data-page="request-management">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>요청 관리</span>
+                    </a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-title">전문가 관리</div>
+                    <a href="expert-verification.html" class="menu-item" data-page="expert-verification">
+                        <i class="fas fa-certificate"></i>
+                        <span>전문가 인증</span>
+                    </a>
+                    <a href="expert-recommendation.html" class="menu-item" data-page="expert-recommendation">
+                        <i class="fas fa-robot"></i>
+                        <span>전문가 추천</span>
+                    </a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-title">AI 시스템</div>
+                    <a href="ai-recommendation.html" class="menu-item" data-page="ai-recommendation">
+                        <i class="fas fa-brain"></i>
+                        <span>AI 추천</span>
+                    </a>
+                    <a href="expert-rating-system.html" class="menu-item" data-page="expert-rating-system">
+                        <i class="fas fa-star"></i>
+                        <span>전문가 평가</span>
+                    </a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-title">심사/인증</div>
+                    <a href="expert-audit.html" class="menu-item" data-page="expert-audit">
+                        <i class="fas fa-search"></i>
+                        <span>전문가 심사</span>
+                    </a>
+                    <a href="portfolio-review.html" class="menu-item" data-page="portfolio-review">
+                        <i class="fas fa-images"></i>
+                        <span>포트폴리오 검토</span>
+                    </a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-title">시스템</div>
+                    <a href="#" class="menu-item" data-page="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>환경 설정</span>
+                    </a>
+                    <a href="#" class="menu-item" data-page="logs">
+                        <i class="fas fa-file-alt"></i>
+                        <span>로그 기록</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <header class="header">
+                <h1><i class="fas fa-search-plus"></i> 전문가 매칭</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openMatchingAlgorithm()">
+                        <i class="fas fa-cogs"></i> 매칭 알고리즘
+                    </button>
+                    <button class="btn btn-success" onclick="refreshMatchingData()">
+                        <i class="fas fa-sync"></i> 데이터 새로고침
+                    </button>
+                </div>
+            </header>
+
+            <!-- 매칭 통계 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>등록 전문가</h3>
+                        <p class="stat-value">2,847</p>
+                        <span class="stat-change positive">+127</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>전체 프로젝트</h3>
+                        <p class="stat-value">1,456</p>
+                        <span class="stat-change positive">+89</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>완료된 매칭</h3>
+                        <p class="stat-value">8,234</p>
+                        <span class="stat-change positive">+234</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>평균 매칭 시간</h3>
+                        <p class="stat-value">2.8일</p>
+                        <span class="stat-change negative">-0.3일</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon yellow">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>평균 만족도</h3>
+                        <p class="stat-value">4.7</p>
+                        <span class="stat-change positive">+0.2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 실시간 매칭 -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>실시간 매칭 현황</h2>
+                    <div class="header-filters">
+                        <select id="matchingStatusFilter">
+                            <option value="">전체 상태</option>
+                            <option value="pending">대기 중</option>
+                            <option value="matching">매칭 중</option>
+                            <option value="matched">매칭 완료</option>
+                            <option value="completed">완료됨</option>
+                            <option value="cancelled">취소됨</option>
+                        </select>
+                        <select id="priorityFilter">
+                            <option value="">전체 우선순위</option>
+                            <option value="urgent">긴급</option>
+                            <option value="high">높음</option>
+                            <option value="medium">보통</option>
+                            <option value="low">낮음</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="matching-list" id="expertMatchingList">
+                    <!-- 동적으로 채워질 내용 -->
+                </div>
+
+                <!-- 페이징 -->
+                <div class="pagination">
+                    <button class="pagination-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">...</button>
+                    <button class="pagination-btn">10</button>
+                    <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 매칭 알고리즘 모달 -->
+    <div id="matchingAlgorithmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>매칭 알고리즘 설정</h3>
+                <button class="close-btn" onclick="closeMatchingModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="matching-settings">
+                    <!-- 스킬 가중치 -->
+                    <div class="setting-section">
+                        <h4>스킬 매칭 가중치</h4>
+                        <div class="setting-item">
+                            <label>정확히 일치 스킬</label>
+                            <input type="range" id="exactSkillWeight" min="0" max="100" value="70" class="range-slider">
+                            <span class="range-value">70%</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>관련 스킬 가중치</label>
+                            <input type="range" id="relatedSkillWeight" min="0" max="100" value="30" class="range-slider">
+                            <span class="range-value">30%</span>
+                        </div>
+                    </div>
+
+                    <!-- 경험 가중치 -->
+                    <div class="setting-section">
+                        <h4>경험 가중치</h4>
+                        <div class="setting-item">
+                            <label>경력 연수</label>
+                            <input type="range" id="experienceWeight" min="0" max="100" value="40" class="range-slider">
+                            <span class="range-value">40%</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>프로젝트 성공률</label>
+                            <input type="range" id="projectSuccessWeight" min="0" max="100" value="60" class="range-slider">
+                            <span class="range-value">60%</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>전문가 평점</label>
+                            <input type="range" id="ratingWeight" min="0" max="100" value="35" class="range-slider">
+                            <span class="range-value">35%</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>인증 상태</label>
+                            <input type="range" id="verificationWeight" min="0" max="100" value="25" class="range-slider">
+                            <span class="range-value">25%</span>
+                        </div>
+                    </div>
+
+                    <!-- AI 매칭 설정 -->
+                    <div class="setting-section">
+                        <h4>AI 매칭 설정</h4>
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="aiMatchingEnabled" checked>
+                                <span>AI 자동 매칭 활성화</span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>AI 추천 임계치</label>
+                            <input type="number" id="aiRecommendationLimit" min="1" max="10" value="5" class="number-input">
+                            <span>명</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>최소 매칭 점수</label>
+                            <input type="number" id="minMatchingScore" min="0" max="100" value="75" class="number-input">
+                            <span>%</span>
+                        </div>
+                    </div>
+
+                    <!-- 자동 매칭 -->
+                    <div class="setting-section">
+                        <h4>자동 매칭 설정</h4>
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="autoMatchingEnabled" checked>
+                                <span>자동 매칭 활성화</span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>매칭 실행 주기</label>
+                            <select id="matchingInterval" class="select-input">
+                                <option value="immediate">즉시</option>
+                                <option value="daily">매일</option>
+                                <option value="weekly">매주</option>
+                                <option value="monthly">매월</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeMatchingModal()">취소</button>
+                <button class="btn btn-primary" onclick="saveMatchingSettings()">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="expert-matching.js"></script>
+</body>
+</html>

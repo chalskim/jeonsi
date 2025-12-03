@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>사용자 결제관리 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+            --sidebar-width: 280px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Admin Layout --- */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--dark-color) 0%, #1a1a1a 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .admin-sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        
+
+        /* --- Main Content --- */
+        .admin-main {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            background-color: var(--background-color);
+            min-height: 100vh;
+        }
+
+        .admin-main.expanded {
+            margin-left: 0;
+        }
+
+        /* --- Top Bar --- */
+        .admin-topbar {
+            background: linear-gradient(135deg, var(--card-background) 0%, #f8f9fa 100%);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .page-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-btn:hover {
+            background-color: var(--light-color);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        .admin-profile:hover {
+            background-color: var(--light-color);
+        }
+
+        .admin-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .admin-name {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        /* --- Content Area --- */
+        .admin-content {
+            padding: 20px;
+        }
+
+        /* --- Payment Stats --- */
+        .payment-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, var(--success-color) 0%, #1e7e34 100%);
+            color: white;
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #e0a800 100%);
+            color: white;
+        }
+
+        .stat-icon.red {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #c82333 100%);
+            color: white;
+        }
+
+        .stat-trend {
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .trend-up {
+            color: var(--success-color);
+        }
+
+        .trend-down {
+            color: var(--danger-color);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- Action Buttons --- */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        /* --- Filters --- */
+        .filters-section {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 30px;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
+        }
+
+        /* --- Table --- */
+        .table-container {
+            background: var(--card-background);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-bar {
+            display: flex;
+            background: var(--light-color);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            max-width: 300px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            font-size: 0.9rem;
+        }
+
+        .search-btn {
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .payment-table th {
+            background: linear-gradient(135deg, var(--light-color) 0%, #e9ecef 100%);
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .payment-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .payment-table tr:hover {
+            background-color: var(--light-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 2px;
+        }
+
+        .user-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge.success {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+        }
+
+        .badge.warning {
+            background: rgba(255, 193, 7, 0.2);
+            color: var(--warning-color);
+        }
+
+        .badge.danger {
+            background: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
+        }
+
+        .badge.info {
+            background: rgba(23, 162, 184, 0.2);
+            color: var(--info-color);
+        }
+
+        .badge.secondary {
+            background: rgba(108, 117, 125, 0.2);
+            color: var(--secondary-color);
+        }
+
+        .amount {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .amount.success {
+            color: var(--success-color);
+        }
+
+        .amount.danger {
+            color: var(--danger-color);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .btn-sm {
+            padding: 5px 8px;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-icon {
+            background: transparent;
+            color: var(--text-muted);
+        }
+
+        .btn-icon:hover {
+            color: var(--primary-color);
+            background: var(--light-color);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .admin-main {
+                margin-left: 0;
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .payment-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .table-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .search-bar {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Container -->
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="sidebar"></aside>
+
+        <!-- Main Content -->
+        <main class="admin-main" id="mainContent">
+            <!-- Top Bar -->
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">사용자 결제관리</h1>
+                </div>
+                <div class="topbar-right">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="admin-profile">
+                        <div class="admin-avatar">관</div>
+                        <div class="admin-name">관리자</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="admin-content">
+                <!-- Payment Stats -->
+                <div class="payment-stats">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-won-sign"></i>
+                            </div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+18.2%</span>
+                            </div>
+                        </div>
+                        <div class="stat-value">₩12,580,000</div>
+                        <div class="stat-label">총 매출</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon green">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+12.5%</span>
+                            </div>
+                        </div>
+                        <div class="stat-value">486</div>
+                        <div class="stat-label">완료된 결제</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-trend trend-down">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>-5.3%</span>
+                            </div>
+                        </div>
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">대기중 결제</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon red">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+2.1%</span>
+                            </div>
+                        </div>
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">결제 실패</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        결제 등록
+                    </button>
+                    <button class="btn btn-success">
+                        <i class="fas fa-sync-alt"></i>
+                        상태 업데이트
+                    </button>
+                    <button class="btn btn-warning">
+                        <i class="fas fa-undo"></i>
+                        환불 처리
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-file-export"></i>
+                        엑셀 다운로드
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-section">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">시작일</label>
+                            <input type="date" class="form-control" id="startDate" value="2024-12-01">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">종료일</label>
+                            <input type="date" class="form-control" id="endDate" value="2024-12-31">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">결제 상태</label>
+                            <select class="form-control" id="paymentStatus">
+                                <option value="">전체</option>
+                                <option value="completed">완료</option>
+                                <option value="pending">대기중</option>
+                                <option value="failed">실패</option>
+                                <option value="cancelled">취소</option>
+                                <option value="refunded">환불</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">결제 방법</label>
+                            <select class="form-control" id="paymentMethod">
+                                <option value="">전체</option>
+                                <option value="card">카드</option>
+                                <option value="bank">계좌이체</option>
+                                <option value="kakao">카카오페이</option>
+                                <option value="naver">네이버페이</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="section-title">
+                            <i class="fas fa-credit-card"></i>
+                            결제 내역
+                        </div>
+                        <div class="search-bar">
+                            <input type="text" class="search-input" placeholder="사용자, 상품명으로 검색..." id="searchInput">
+                            <button class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="payment-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllPayments"></th>
+                                    <th>결제 ID</th>
+                                    <th>사용자 정보</th>
+                                    <th>상품명</th>
+                                    <th>결제 방법</th>
+                                    <th>금액</th>
+                                    <th>상태</th>
+                                    <th>결제일</th>
+                                    <th>관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentTableBody">
+                                <!-- Table rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mock payment data
+        const paymentData = [
+            {
+                id: 'PAY-2024-1201',
+                userName: '김철수',
+                userEmail: 'kim.dev@expert.com',
+                userType: 'expert',
+                productName: '프리미엄 월간 구독',
+                productType: 'subscription',
+                paymentMethod: 'card',
+                amount: 99000,
+                status: 'completed',
+                paymentDate: '2024-12-01 10:30',
+                nextPaymentDate: '2025-01-01',
+                description: '전문가 프리미엄 기능 1개월'
+            },
+            {
+                id: 'PAY-2024-1202',
+                userName: '이영희',
+                userEmail: 'lee.ux@expert.com',
+                userType: 'expert',
+                productName: '프로젝트 등록 광고',
+                productType: 'promotion',
+                paymentMethod: 'kakao',
+                amount: 150000,
+                status: 'completed',
+                paymentDate: '2024-12-02 14:15',
+                nextPaymentDate: null,
+                description: '상단 노출 광고 7일'
+            },
+            {
+                id: 'PAY-2024-1203',
+                userName: '기업A',
+                userEmail: 'company@business.com',
+                userType: 'company',
+                productName: '채용 공고 등록 패키지',
+                productType: 'package',
+                paymentMethod: 'bank',
+                amount: 500000,
+                status: 'pending',
+                paymentDate: '2024-12-02 16:45',
+                nextPaymentDate: null,
+                description: '채용 공고 10개 + 기업 노출'
+            },
+            {
+                id: 'PAY-2024-1204',
+                userName: '박민준',
+                userEmail: 'park.backend@expert.com',
+                userType: 'expert',
+                productName: '스킬 인증 테스트',
+                productType: 'verification',
+                paymentMethod: 'naver',
+                amount: 30000,
+                status: 'failed',
+                paymentDate: '2024-12-02 09:20',
+                nextPaymentDate: null,
+                description: 'Java 백엔드 스킬 인증'
+            },
+            {
+                id: 'PAY-2024-1205',
+                userName: '최지아',
+                userEmail: 'choi.pm@expert.com',
+                userType: 'expert',
+                productName: '프리미엄 월간 구독',
+                productType: 'subscription',
+                paymentMethod: 'card',
+                amount: 99000,
+                status: 'completed',
+                paymentDate: '2024-12-01 11:00',
+                nextPaymentDate: '2025-01-01',
+                description: '전문가 프리미엄 기능 1개월'
+            },
+            {
+                id: 'PAY-2024-1206',
+                userName: '기업B',
+                userEmail: 'startup@business.com',
+                userType: 'company',
+                productName: '프로젝트 매칭 서비스',
+                productType: 'service',
+                paymentMethod: 'card',
+                amount: 300000,
+                status: 'refunded',
+                paymentDate: '2024-11-28 13:30',
+                nextPaymentDate: null,
+                description: '프로젝트 전문가 매칭 (환불)'
+            },
+            {
+                id: 'PAY-2024-1207',
+                userName: '이영희',
+                userEmail: 'lee.ux@expert.com',
+                userType: 'expert',
+                productName: '추가 프로필 슬롯',
+                productType: 'add-on',
+                paymentMethod: 'kakao',
+                amount: 25000,
+                status: 'completed',
+                paymentDate: '2024-12-02 15:40',
+                nextPaymentDate: null,
+                description: '프로필 포트폴리오 추가 슬롯 3개'
+            },
+            {
+                id: 'PAY-2024-1208',
+                userName: '김철수',
+                userEmail: 'kim.dev@expert.com',
+                userType: 'expert',
+                productName: '긴급 프로젝트 우선순위',
+                productType: 'promotion',
+                paymentMethod: 'card',
+                amount: 80000,
+                status: 'pending',
+                paymentDate: '2024-12-02 17:00',
+                nextPaymentDate: null,
+                description: '프로젝트 검색 상단 노출 3일'
+            }
+        ];
+
+        let filteredPayments = [...paymentData];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            var sidebarEl = document.getElementById('sidebar');
+            if (sidebarEl) {
+                fetch('admin-sidebar.html')
+                    .then(function(r){return r.text()})
+                    .then(function(html){
+                        sidebarEl.innerHTML = html;
+                        var activeLink = sidebarEl.querySelector("a[href$='payment-manage.html']");
+                        if (activeLink) activeLink.classList.add('active');
+                        renderPaymentTable();
+                        setupEventListeners();
+                    })
+                    .catch(function(){
+                        renderPaymentTable();
+                        setupEventListeners();
+                    });
+            } else {
+                renderPaymentTable();
+                setupEventListeners();
+            }
+        });
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Sidebar toggle
+            document.getElementById('sidebarToggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+                document.getElementById('mainContent').classList.toggle('expanded');
+            });
+
+            // Search
+            document.getElementById('searchInput').addEventListener('input', filterPayments);
+
+            // Filters
+            document.getElementById('startDate').addEventListener('change', filterPayments);
+            document.getElementById('endDate').addEventListener('change', filterPayments);
+            document.getElementById('paymentStatus').addEventListener('change', filterPayments);
+            document.getElementById('paymentMethod').addEventListener('change', filterPayments);
+
+            // Select all checkbox
+            document.getElementById('selectAllPayments').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.payment-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+            });
+        }
+
+        // Render Payment Table
+        function renderPaymentTable() {
+            const tbody = document.getElementById('paymentTableBody');
+            tbody.innerHTML = '';
+
+            filteredPayments.forEach(payment => {
+                const row = createPaymentRow(payment);
+                tbody.appendChild(row);
+            });
+        }
+
+        // Create Payment Row
+        function createPaymentRow(payment) {
+            const row = document.createElement('tr');
+
+            const statusClass = payment.status === 'completed' ? 'success' :
+                               payment.status === 'pending' ? 'warning' :
+                               payment.status === 'failed' ? 'danger' :
+                               payment.status === 'refunded' ? 'secondary' : 'info';
+
+            const statusText = payment.status === 'completed' ? '완료' :
+                              payment.status === 'pending' ? '대기중' :
+                              payment.status === 'failed' ? '실패' :
+                              payment.status === 'refunded' ? '환불' : '취소';
+
+            const paymentMethodText = payment.paymentMethod === 'card' ? '카드' :
+                                     payment.paymentMethod === 'bank' ? '계좌이체' :
+                                     payment.paymentMethod === 'kakao' ? '카카오페이' : '네이버페이';
+
+            const userTypeText = payment.userType === 'expert' ? '전문가' : '기업';
+
+            row.innerHTML = `
+                <td>
+                    <input type="checkbox" class="payment-checkbox" value="${payment.id}">
+                </td>
+                <td>
+                    <strong>${payment.id}</strong>
+                </td>
+                <td>
+                    <div class="user-info">
+                        <div class="user-avatar-small">${payment.userName.charAt(0)}</div>
+                        <div class="user-details">
+                            <div class="user-name">${payment.userName}</div>
+                            <div class="user-meta">${userTypeText} • ${payment.userEmail}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <strong>${payment.productName}</strong>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                            ${payment.description}
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge info">${paymentMethodText}</span>
+                </td>
+                <td>
+                    <div class="amount ${payment.status === 'completed' ? 'success' : payment.status === 'failed' || payment.status === 'refunded' ? 'danger' : ''}">
+                        ₩${payment.amount.toLocaleString()}
+                    </div>
+                </td>
+                <td>
+                    <span class="badge ${statusClass}">${statusText}</span>
+                </td>
+                <td>
+                    <div>${payment.paymentDate}</div>
+                    ${payment.nextPaymentDate ? `<div style="font-size: 0.8rem; color: var(--text-muted);">차기 결제: ${payment.nextPaymentDate}</div>` : ''}
+                </td>
+                <td>
+                    <div class="table-actions">
+                        <button class="btn-sm btn-icon" onclick="viewPaymentDetail('${payment.id}')" title="상세보기">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-sm btn-icon" onclick="editPayment('${payment.id}')" title="수정">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${payment.status === 'pending' ? `
+                            <button class="btn-sm btn-icon" onclick="confirmPayment('${payment.id}')" title="결제확인">
+                                <i class="fas fa-check" style="color: var(--success-color);"></i>
+                            </button>
+                        ` : ''}
+                        ${payment.status === 'completed' ? `
+                            <button class="btn-sm btn-icon" onclick="processRefund('${payment.id}')" title="환불">
+                                <i class="fas fa-undo" style="color: var(--warning-color);"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                </td>
+            `;
+
+            return row;
+        }
+
+        // Filter Payments
+        function filterPayments() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const statusFilter = document.getElementById('paymentStatus').value;
+            const methodFilter = document.getElementById('paymentMethod').value;
+
+            filteredPayments = paymentData.filter(payment => {
+                const matchesSearch = !searchTerm ||
+                    payment.userName.toLowerCase().includes(searchTerm) ||
+                    payment.userEmail.toLowerCase().includes(searchTerm) ||
+                    payment.productName.toLowerCase().includes(searchTerm);
+
+                const matchesStartDate = !startDate || payment.paymentDate >= startDate;
+                const matchesEndDate = !endDate || payment.paymentDate.split(' ')[0] <= endDate;
+                const matchesStatus = !statusFilter || payment.status === statusFilter;
+                const matchesMethod = !methodFilter || payment.paymentMethod === methodFilter;
+
+                return matchesSearch && matchesStartDate && matchesEndDate && matchesStatus && matchesMethod;
+            });
+
+            renderPaymentTable();
+        }
+
+        // Payment Actions
+        function viewPaymentDetail(paymentId) {
+            const payment = paymentData.find(p => p.id === paymentId);
+            if (payment) {
+                alert(`결제 상세 정보:\n\n결제 ID: ${payment.id}\n사용자: ${payment.userName}\n상품: ${payment.productName}\n금액: ₩${payment.amount.toLocaleString()}\n상태: ${payment.status}\n결제일: ${payment.paymentDate}`);
+            }
+        }
+
+        function editPayment(paymentId) {
+            alert(`결제 정보 수정 기능은 준비 중입니다: ${paymentId}`);
+        }
+
+        function confirmPayment(paymentId) {
+            if (confirm(`결제를 확정하시겠습니까? (${paymentId})`)) {
+                const payment = paymentData.find(p => p.id === paymentId);
+                if (payment) {
+                    payment.status = 'completed';
+                    renderPaymentTable();
+                    alert('결제가 확정되었습니다.');
+                }
+            }
+        }
+
+        function processRefund(paymentId) {
+            if (confirm(`환불을 처리하시겠습니까? (${paymentId})`)) {
+                const payment = paymentData.find(p => p.id === paymentId);
+                if (payment) {
+                    payment.status = 'refunded';
+                    renderPaymentTable();
+                    alert('환불이 처리되었습니다.');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

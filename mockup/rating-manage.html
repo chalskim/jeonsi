@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>별점 관리 | 전시(專時)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-common.css">
+    <link rel="stylesheet" href="rating-manage.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 사이드바 -->
+        <div class="sidebar">
+        </div>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <header class="header">
+                <h1><i class="fas fa-star"></i> 별점 관리</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="exportRatings()">
+                        <i class="fas fa-download"></i> 내보내기
+                    </button>
+                </div>
+            </header>
+
+            <!-- 통계 카드 -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>평균 평점</h3>
+                        <p class="stat-value">4.2</p>
+                        <span class="stat-change positive">+0.3</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>총 평가 수</h3>
+                        <p class="stat-value">1,234</p>
+                        <span class="stat-change positive">+89</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>평가한 사용자</h3>
+                        <p class="stat-value">856</p>
+                        <span class="stat-change positive">+45</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>저평가 리뷰</h3>
+                        <p class="stat-value">23</p>
+                        <span class="stat-change negative">+5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 검색 및 필터 -->
+            <div class="search-filter-section">
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <label>검색</label>
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="사용자명, 서비스명 검색...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label>평점</label>
+                        <select id="ratingFilter">
+                            <option value="">전체</option>
+                            <option value="5">5점</option>
+                            <option value="4">4점</option>
+                            <option value="3">3점</option>
+                            <option value="2">2점</option>
+                            <option value="1">1점</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>기간</label>
+                        <select id="periodFilter">
+                            <option value="">전체 기간</option>
+                            <option value="today">오늘</option>
+                            <option value="week">일주일</option>
+                            <option value="month">한 달</option>
+                            <option value="quarter">3개월</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>상태</label>
+                        <select id="statusFilter">
+                            <option value="">전체</option>
+                            <option value="normal">일반</option>
+                            <option value="reported">신고됨</option>
+                            <option value="hidden">숨김</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary" onclick="resetFilters()">
+                        <i class="fas fa-undo"></i> 초기화
+                    </button>
+                </div>
+            </div>
+
+            <!-- 별점 목록 -->
+            <div class="content-section">
+                <h2>별점 목록</h2>
+                <div class="table-responsive">
+                    <table class="ratings-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll"></th>
+                                <th>번호</th>
+                                <th>평가자</th>
+                                <th>피평가자</th>
+                                <th>서비스명</th>
+                                <th>평점</th>
+                                <th>평가 내용</th>
+                                <th>평가일</th>
+                                <th>상태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ratingsTableBody">
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>1</td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/32x32" alt="사용자" class="user-avatar">
+                                        <span class="user-name">김민준</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/32x32" alt="사용자" class="user-avatar">
+                                        <span class="user-name">이서연</span>
+                                    </div>
+                                </td>
+                                <td>웹 개발 서비스</td>
+                                <td>
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <span class="rating-text">5.0</span>
+                                </td>
+                                <td class="review-text">정말 만족스러운 서비스였습니다. 전문성도 높고...</td>
+                                <td>2024-12-01</td>
+                                <td><span class="status-badge normal">일반</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon view" onclick="viewRating(1)" title="상세보기">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn-icon edit" onclick="editRating(1)" title="수정">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon delete" onclick="deleteRating(1)" title="삭제">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>2</td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/32x32" alt="사용자" class="user-avatar">
+                                        <span class="user-name">박지혁</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/32x32" alt="사용자" class="user-avatar">
+                                        <span class="user-name">최수아</span>
+                                    </div>
+                                </td>
+                                <td>디자인 작업</td>
+                                <td>
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span class="rating-text">3.5</span>
+                                </td>
+                                <td class="review-text">디자인은 좋았지만, 소통에 조금 아쉬움이 있었습니다.</td>
+                                <td>2024-11-30</td>
+                                <td><span class="status-badge normal">일반</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon view" onclick="viewRating(2)" title="상세보기">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn-icon edit" onclick="editRating(2)" title="수정">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon delete" onclick="deleteRating(2)" title="삭제">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>3</td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/32x32" alt="사용자" class="user-avatar">
+                                        <span class="user-name">정은우</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="https://via.placeholder.com/32x32" alt="사용자" class="user-avatar">
+                                        <span class="user-name">강하은</span>
+                                    </div>
+                                </td>
+                                <td>번역 서비스</td>
+                                <td>
+                                    <div class="rating-stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span class="rating-text">2.0</span>
+                                </td>
+                                <td class="review-text">번역 퀄리티가 기대에 미치지 못했습니다.</td>
+                                <td>2024-11-29</td>
+                                <td><span class="status-badge reported">신고됨</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon view" onclick="viewRating(3)" title="상세보기">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn-icon edit" onclick="editRating(3)" title="수정">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon delete" onclick="deleteRating(3)" title="삭제">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 페이징 -->
+                <div class="pagination">
+                    <button class="pagination-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">...</button>
+                    <button class="pagination-btn">10</button>
+                    <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+
+                <!-- 일괄 작업 -->
+                <div class="bulk-actions">
+                    <div class="selected-count">선택된 항목: <span id="selectedCount">0</span>개</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-warning" onclick="hideSelected()">
+                            <i class="fas fa-eye-slash"></i> 선택 숨기기
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteSelected()">
+                            <i class="fas fa-trash"></i> 선택 삭제
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 평점 분석 -->
+            <div class="content-section">
+                <h2>평점 분석</h2>
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h3>평점 분포</h3>
+                        <div class="rating-distribution">
+                            <div class="rating-bar">
+                                <span class="rating-label">5점</span>
+                                <div class="bar-container">
+                                    <div class="bar filled" style="width: 45%"></div>
+                                </div>
+                                <span class="rating-count">45%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span class="rating-label">4점</span>
+                                <div class="bar-container">
+                                    <div class="bar filled" style="width: 30%"></div>
+                                </div>
+                                <span class="rating-count">30%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span class="rating-label">3점</span>
+                                <div class="bar-container">
+                                    <div class="bar filled" style="width: 15%"></div>
+                                </div>
+                                <span class="rating-count">15%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span class="rating-label">2점</span>
+                                <div class="bar-container">
+                                    <div class="bar filled" style="width: 7%"></div>
+                                </div>
+                                <span class="rating-count">7%</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span class="rating-label">1점</span>
+                                <div class="bar-container">
+                                    <div class="bar filled" style="width: 3%"></div>
+                                </div>
+                                <span class="rating-count">3%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analysis-card">
+                        <h3>주요 키워드</h3>
+                        <div class="keywords">
+                            <span class="keyword-tag positive">만족 (234)</span>
+                            <span class="keyword-tag positive">전문성 (189)</span>
+                            <span class="keyword-tag positive">친절 (156)</span>
+                            <span class="keyword-tag negative">지연 (45)</span>
+                            <span class="keyword-tag negative">비용 (32)</span>
+                            <span class="keyword-tag neutral">소통 (78)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모달 -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">별점 상세 정보</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="rating-detail">
+                    <div class="detail-section">
+                        <h4>평가 정보</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>평가자</label>
+                                <span id="evaluatorName">김민준</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>피평가자</label>
+                                <span id="evaluatedName">이서연</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>서비스명</label>
+                                <span id="serviceName">웹 개발 서비스</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>평점</label>
+                                <div class="rating-stars" id="modalRating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <span class="rating-text">5.0</span>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <label>평가일</label>
+                                <span id="ratingDate">2024-12-01</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>상태</label>
+                                <span class="status-badge normal" id="ratingStatus">일반</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <h4>평가 내용</h4>
+                        <textarea id="ratingContent" readonly rows="5">정말 만족스러운 서비스였습니다. 전문성도 높고 소통도 원활했습니다.</textarea>
+                    </div>
+                    <div class="detail-section">
+                        <h4>관리자 메모</h4>
+                        <textarea id="adminMemo" rows="3" placeholder="관리자 메모를 입력하세요..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">취소</button>
+                <button class="btn btn-primary" onclick="saveRating()">저장</button>
+                <button class="btn btn-warning" onclick="hideRating()">숨기기</button>
+                <button class="btn btn-danger" onclick="deleteRatingConfirm()">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="rating-manage.js"></script>
+</body>
+</html>

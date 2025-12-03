@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>관리자 - 별점 평가 관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding: 20px;
+        }
+
+        /* --- Side Menu --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--card-background);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-type {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .side-menu-content {
+            padding: 10px 0;
+        }
+
+        .menu-category {
+            margin-bottom: 15px;
+        }
+
+        .menu-category-title {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .menu-category-title i {
+            margin-right: 10px;
+        }
+
+        .menu-items {
+            background-color: rgba(0,0,0,0.02);
+        }
+        /* --- Sidebar --- */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--dark-color) 0%, #1a1a1a 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .admin-sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px 12px 35px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .menu-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .menu-item.active {
+            background-color: rgba(0,123,255,0.1);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 10px 0;
+        }
+
+        /* --- Overlay --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Page Content --- */
+        .page-header {
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .page-description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* --- Stats Cards --- */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        .stat-change.negative {
+            color: var(--danger-color);
+        }
+
+        /* --- Filters Section --- */
+        .filters-section {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .filters-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .filters-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-input, .filter-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .filter-date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* --- Reviews Table --- */
+        .reviews-table-container {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .reviews-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .reviews-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: var(--light-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .reviews-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .reviews-table tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reviewer-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .reviewer-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .reviewer-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reviewer-name {
+            font-weight: 500;
+        }
+
+        .reviewer-role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .star {
+            color: var(--warning-color);
+        }
+
+        .star.empty {
+            color: var(--border-color);
+        }
+
+        .review-content {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .review-content.full {
+            white-space: normal;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-active {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-hidden {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--secondary-color);
+        }
+
+        .status-deleted {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .table-actions-cell {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
+        }
+
+        .action-btn.view {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+        }
+
+        .action-btn.hide {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--secondary-color);
+        }
+
+        .action-btn.delete {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* --- Pagination --- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 20px 0;
+        }
+
+        .page-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--card-background);
+            color: var(--dark-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        /* --- Modal --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .review-detail-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .reviewer-detail-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .reviewer-detail-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .reviewer-detail-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .reviewer-detail-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reviewer-detail-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .reviewer-detail-role {
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .review-date {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .review-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-rating-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .review-content-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .review-text {
+            line-height: 1.6;
+        }
+
+        .review-target-info {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .target-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .target-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--card-background);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .target-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .target-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .target-name {
+            font-weight: bold;
+        }
+
+        .target-role {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .admin-actions {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .action-log {
+            margin-top: 15px;
+        }
+
+        .log-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            min-width: 120px;
+        }
+
+        .log-action {
+            font-weight: 500;
+        }
+
+        .log-user {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-sidebar" id="sidebar"></div>
+
+        <main class="admin-main">
+            <!-- App Header -->
+            <header class="admin-topbar">
+                <div class="header-icon" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="app-title">관리자 - 별점 평가 관리</div>
+                <div class="header-icons">
+                    <div class="header-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="header-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- App Content -->
+            <div class="app-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1 class="page-title">별점 평가 관리</h1>
+                    <p class="page-description">사용자들이 남긴 별점 평가를 관리하고, 부적절한 리뷰를 숨기거나 삭제할 수 있습니다.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-title">전체 리뷰 수</div>
+                        <div class="stat-value">1,258</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 지난 달 대비 12% 증가
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">신고된 리뷰</div>
+                        <div class="stat-value">23</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-up"></i> 지난 달 대비 8% 증가
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">숨김 처리된 리뷰</div>
+                        <div class="stat-value">47</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-down"></i> 지난 달 대비 5% 감소
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">삭제된 리뷰</div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-down"></i> 지난 달 대비 3% 감소
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters Section -->
+                <div class="filters-section">
+                    <div class="filters-header">
+                        <div class="filters-title">검색 필터</div>
+                        <div class="filters-actions">
+                            <button class="btn btn-outline" id="resetFilters">초기화</button>
+                            <button class="btn btn-primary" id="applyFilters">적용</button>
+                        </div>
+                    </div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">검색어</label>
+                            <input type="text" class="filter-input" placeholder="리뷰 내용, 작성자, 대상 검색">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">상태</label>
+                            <select class="filter-select">
+                                <option value="">전체</option>
+                                <option value="active">활성</option>
+                                <option value="hidden">숨김</option>
+                                <option value="deleted">삭제</option>
+                                <option value="reported">신고됨</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">별점</label>
+                            <select class="filter-select">
+                                <option value="">전체</option>
+                                <option value="5">5점</option>
+                                <option value="4">4점</option>
+                                <option value="3">3점</option>
+                                <option value="2">2점</option>
+                                <option value="1">1점</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">기간</label>
+                            <div class="filter-date-range">
+                                <input type="date" class="filter-input" id="startDate">
+                                <span>~</span>
+                                <input type="date" class="filter-input" id="endDate">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">리뷰 대상</label>
+                            <select class="filter-select">
+                                <option value="">전체</option>
+                                <option value="expert">전문가</option>
+                                <option value="company">기업</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">작성자 유형</label>
+                            <select class="filter-select">
+                                <option value="">전체</option>
+                                <option value="expert">전문가</option>
+                                <option value="company">기업</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Table -->
+                <div class="reviews-table-container">
+                    <div class="table-header">
+                        <div class="table-title">리뷰 목록</div>
+                        <div class="table-actions">
+                            <button class="btn btn-outline">선택 항목 숨기기</button>
+                            <button class="btn btn-outline">선택 항목 삭제</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="reviews-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAll"></th>
+                                    <th>작성자</th>
+                                    <th>대상</th>
+                                    <th>별점</th>
+                                    <th>리뷰 내용</th>
+                                    <th>작성일</th>
+                                    <th>상태</th>
+                                    <th>신고 수</th>
+                                    <th>관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" class="review-checkbox"></td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/user1/100/100.jpg" alt="사용자">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">김민수</div>
+                                                <div class="reviewer-role">전문가</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/company1/100/100.jpg" alt="기업">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">㈜테크솔루션</div>
+                                                <div class="reviewer-role">기업</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="rating">
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <span>5.0</span>
+                                        </div>
+                                    </td>
+                                    <td class="review-content">정말 전문적이고 시간 약속도 잘 지키는 분입니다. 다음에도 꼭 다시 협력하고 싶습니다.</td>
+                                    <td>2023-11-15</td>
+                                    <td><span class="status-badge status-active">활성</span></td>
+                                    <td>0</td>
+                                    <td>
+                                        <div class="table-actions-cell">
+                                            <button class="action-btn view" data-id="1">보기</button>
+                                            <button class="action-btn hide" data-id="1">숨기기</button>
+                                            <button class="action-btn delete" data-id="1">삭제</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="review-checkbox"></td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/user2/100/100.jpg" alt="사용자">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">이지영</div>
+                                                <div class="reviewer-role">기업</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/expert1/100/100.jpg" alt="전문가">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">박상민</div>
+                                                <div class="reviewer-role">전문가</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="rating">
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star empty"></i>
+                                            <span>4.0</span>
+                                        </div>
+                                    </td>
+                                    <td class="review-content">업무 능력은 좋지만 커뮤니케이션에 약간의 문제가 있었습니다. 다음에는 더 개선되면 좋겠습니다.</td>
+                                    <td>2023-11-14</td>
+                                    <td><span class="status-badge status-hidden">숨김</span></td>
+                                    <td>2</td>
+                                    <td>
+                                        <div class="table-actions-cell">
+                                            <button class="action-btn view" data-id="2">보기</button>
+                                            <button class="action-btn hide" data-id="2">복원</button>
+                                            <button class="action-btn delete" data-id="2">삭제</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="review-checkbox"></td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/user3/100/100.jpg" alt="사용자">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">최준호</div>
+                                                <div class="reviewer-role">전문가</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/company2/100/100.jpg" alt="기업">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">㈜디지털이노베이션</div>
+                                                <div class="reviewer-role">기업</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="rating">
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star empty"></i>
+                                            <i class="fas fa-star star empty"></i>
+                                            <i class="fas fa-star star empty"></i>
+                                            <i class="fas fa-star star empty"></i>
+                                            <span>1.0</span>
+                                        </div>
+                                    </td>
+                                    <td class="review-content">정말 최악이었습니다. 약속 시간도 안 지키고 결과물도 형편없었습니다. 절대 추천하지 않습니다.</td>
+                                    <td>2023-11-13</td>
+                                    <td><span class="status-badge status-reported">신고됨</span></td>
+                                    <td>5</td>
+                                    <td>
+                                        <div class="table-actions-cell">
+                                            <button class="action-btn view" data-id="3">보기</button>
+                                            <button class="action-btn hide" data-id="3">숨기기</button>
+                                            <button class="action-btn delete" data-id="3">삭제</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="review-checkbox"></td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/user4/100/100.jpg" alt="사용자">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">정수진</div>
+                                                <div class="reviewer-role">기업</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/expert2/100/100.jpg" alt="전문가">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">강현우</div>
+                                                <div class="reviewer-role">전문가</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="rating">
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <span>5.0</span>
+                                        </div>
+                                    </td>
+                                    <td class="review-content">매우 만족스러운 협업이었습니다. 전문성과 친절함 모두 갖춘 분입니다. 다음에도 꼭 다시 협력하고 싶습니다.</td>
+                                    <td>2023-11-12</td>
+                                    <td><span class="status-badge status-active">활성</span></td>
+                                    <td>0</td>
+                                    <td>
+                                        <div class="table-actions-cell">
+                                            <button class="action-btn view" data-id="4">보기</button>
+                                            <button class="action-btn hide" data-id="4">숨기기</button>
+                                            <button class="action-btn delete" data-id="4">삭제</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="review-checkbox"></td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/user5/100/100.jpg" alt="사용자">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">박서연</div>
+                                                <div class="reviewer-role">전문가</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="reviewer-info">
+                                            <div class="reviewer-avatar">
+                                                <img src="https://picsum.photos/seed/company3/100/100.jpg" alt="기업">
+                                            </div>
+                                            <div class="reviewer-details">
+                                                <div class="reviewer-name">㈜핀테크코리아</div>
+                                                <div class="reviewer-role">기업</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="rating">
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star empty"></i>
+                                            <i class="fas fa-star star empty"></i>
+                                            <span>3.0</span>
+                                        </div>
+                                    </td>
+                                    <td class="review-content">평균적인 수준이었습니다. 기대했던 것보다는 조금 아쉬웠지만, 그래도 괜찮았습니다.</td>
+                                    <td>2023-11-11</td>
+                                    <td><span class="status-badge status-deleted">삭제</span></td>
+                                    <td>1</td>
+                                    <td>
+                                        <div class="table-actions-cell">
+                                            <button class="action-btn view" data-id="5">보기</button>
+                                            <button class="action-btn hide" data-id="5">복원</button>
+                                            <button class="action-btn delete" data-id="5">영구 삭제</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">4</button>
+                    <button class="page-btn">5</button>
+                    <button class="page-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+<!-- Review Detail Modal -->
+    <div class="modal" id="reviewDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">리뷰 상세 정보</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="review-detail-header">
+                    <div class="reviewer-detail-info">
+                        <div class="reviewer-detail-avatar">
+                            <img src="https://picsum.photos/seed/user1/200/200.jpg" alt="작성자">
+                        </div>
+                        <div class="reviewer-detail-details">
+                            <div class="reviewer-detail-name">김민수</div>
+                            <div class="reviewer-detail-role">전문가</div>
+                            <div class="review-date">2023년 11월 15일 작성</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="review-rating-value">5.0</div>
+                        <div class="rating">
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                            <i class="fas fa-star star"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-content-section">
+                    <h3 class="section-title">리뷰 내용</h3>
+                    <p class="review-text">
+                        정말 전문적이고 시간 약속도 잘 지키는 분입니다. 다음에도 꼭 다시 협력하고 싶습니다.
+                        프로젝트 진행 중에 발생한 문제들에 대해서도 신속하게 대처해주셨고, 결과물도 매우 만족스러웠습니다.
+                        특히 마감일을 잘 지켜주셔서 저희 팀이 큰 도움을 받았습니다. 다른 분들에게도 강력히 추천합니다.
+                    </p>
+                </div>
+
+                <div class="review-target-info">
+                    <h3 class="section-title">리뷰 대상</h3>
+                    <div class="target-header">
+                        <div class="target-avatar">
+                            <img src="https://picsum.photos/seed/company1/200/200.jpg" alt="대상">
+                        </div>
+                        <div class="target-details">
+                            <div class="target-name">㈜테크솔루션</div>
+                            <div class="target-role">기업</div>
+                        </div>
+                    </div>
+                    <p>IT 솔루션 개발 및 컨설팅 전문 기업</p>
+                </div>
+
+                <div class="admin-actions">
+                    <h3 class="section-title">관리자 조치</h3>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">상태</label>
+                            <select class="filter-select">
+                                <option value="active">활성</option>
+                                <option value="hidden">숨김</option>
+                                <option value="deleted">삭제</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">조치 사유</label>
+                            <input type="text" class="filter-input" placeholder="조치 사유를 입력하세요">
+                        </div>
+                    </div>
+                    <div class="filter-row">
+                        <button class="btn btn-outline">취소</button>
+                        <button class="btn btn-primary">저장</button>
+                    </div>
+                </div>
+
+                <div class="action-log">
+                    <h3 class="section-title">처리 이력</h3>
+                    <div class="log-item">
+                        <div class="log-time">2023-11-16 10:30:15</div>
+                        <div class="log-action">리뷰 작성</div>
+                        <div class="log-user">시스템</div>
+                    </div>
+                    <div class="log-item">
+                        <div class="log-time">2023-11-16 14:22:33</div>
+                        <div class="log-action">리뷰 조회</div>
+                        <div class="log-user">관리자(admin)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="hideReview">숨기기</button>
+                <button class="btn btn-outline" id="deleteReview">삭제</button>
+                <button class="btn btn-primary" id="saveChanges">변경사항 저장</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Side Menu Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('overlay');
+
+        menuToggle.addEventListener('click', () => {
+            sideMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sideMenu.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Review Detail Modal
+        const viewButtons = document.querySelectorAll('.action-btn.view');
+        const reviewDetailModal = document.getElementById('reviewDetailModal');
+        const closeModal = document.getElementById('closeModal');
+
+        viewButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                reviewDetailModal.classList.add('active');
+            });
+        });
+
+        closeModal.addEventListener('click', () => {
+            reviewDetailModal.classList.remove('active');
+        });
+
+        // Select All Checkbox
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const reviewCheckboxes = document.querySelectorAll('.review-checkbox');
+
+        selectAllCheckbox.addEventListener('change', () => {
+            reviewCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+        });
+
+        // Review Actions
+        const hideButtons = document.querySelectorAll('.action-btn.hide');
+        const deleteButtons = document.querySelectorAll('.action-btn.delete');
+
+        hideButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const reviewId = button.getAttribute('data-id');
+                const action = button.textContent.trim();
+                
+                if (confirm(`리뷰를 ${action} 처리하시겠습니까?`)) {
+                    // Here you would typically make an API call to update the review status
+                    console.log(`Review ${reviewId} ${action} action performed`);
+                    
+                    // Update the button text based on current status
+                    if (action === '숨기기') {
+                        button.textContent = '복원';
+                    } else if (action === '복원') {
+                        button.textContent = '숨기기';
+                    }
+                }
+            });
+        });
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const reviewId = button.getAttribute('data-id');
+                const action = button.textContent.trim();
+                
+                if (confirm(`리뷰를 ${action} 처리하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
+                    // Here you would typically make an API call to delete the review
+                    console.log(`Review ${reviewId} ${action} action performed`);
+                    
+                    // Update the button text based on current status
+                    if (action === '삭제') {
+                        button.textContent = '영구 삭제';
+                    }
+                }
+            });
+        });
+
+        // Modal Actions
+        document.getElementById('hideReview').addEventListener('click', () => {
+            if (confirm('이 리뷰를 숨기시겠습니까?')) {
+                // Here you would typically make an API call to hide the review
+                console.log('Review hidden');
+                reviewDetailModal.classList.remove('active');
+            }
+        });
+
+        document.getElementById('deleteReview').addEventListener('click', () => {
+            if (confirm('이 리뷰를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                // Here you would typically make an API call to delete the review
+                console.log('Review deleted');
+                reviewDetailModal.classList.remove('active');
+            }
+        });
+
+        document.getElementById('saveChanges').addEventListener('click', () => {
+            // Here you would typically make an API call to save the changes
+            console.log('Changes saved');
+            reviewDetailModal.classList.remove('active');
+        });
+
+        // Filter Actions
+        document.getElementById('applyFilters').addEventListener('click', () => {
+            // Here you would typically apply the filters and refresh the table
+            console.log('Filters applied');
+        });
+
+        document.getElementById('resetFilters').addEventListener('click', () => {
+            // Here you would typically reset the filters
+            console.log('Filters reset');
+        });
+    </script>
+</body>
+</html>

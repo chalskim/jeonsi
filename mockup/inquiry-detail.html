@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>문의 상세 정보 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .header-icon:hover {
+            color: var(--primary-color);
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 20px;
+        }
+
+        /* --- Side Menu --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--card-background);
+            box-shadow: var(--shadow-md);
+            transition: left 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .user-avatar i {
+            font-size: 2rem;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-type {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .side-menu-content {
+            padding: 10px 0;
+        }
+
+        .menu-category {
+            margin-bottom: 15px;
+        }
+
+        .menu-category-title {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-category-title i {
+            margin-right: 10px;
+        }
+
+        .menu-items {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px 12px 35px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .menu-item.active {
+            background-color: rgba(0,123,255,0.1);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 10px 0;
+        }
+
+        /* --- Overlay --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Main Container --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Breadcrumb --- */
+        .breadcrumb {
+            background-color: var(--card-background);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .breadcrumb-item {
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb-item:not(:last-child)::after {
+            content: "/";
+            margin: 0 10px;
+            color: var(--text-muted);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        /* --- Action Buttons --- */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--light-color) 0%, #e9ecef 100%);
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #1e7e34 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #c82333 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #e0a800 100%);
+            color: var(--dark-color);
+        }
+
+        /* --- Status Badge --- */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-badge i {
+            margin-right: 5px;
+            font-size: 0.7rem;
+        }
+
+        .status-badge.pending {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-badge.processing {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+        }
+
+        .status-badge.completed {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        /* --- Priority Badge --- */
+        .priority-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .priority-badge.high {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .priority-badge.medium {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .priority-badge.low {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        /* --- Card --- */
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--light-color) 0%, #e9ecef 100%);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* --- Inquiry Header --- */
+        .inquiry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .inquiry-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .inquiry-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* --- Info Grid --- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        /* --- Content Section --- */
+        .content-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-text {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 8px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            min-height: 150px;
+        }
+
+        /* --- Attachments --- */
+        .attachment-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .attachment-item:hover {
+            background-color: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .attachment-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .attachment-info {
+            flex: 1;
+        }
+
+        .attachment-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .attachment-size {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .attachment-action {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        /* --- Reply Section --- */
+        .reply-section {
+            border-top: 2px solid var(--primary-color);
+            padding-top: 20px;
+        }
+
+        .reply-item {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .reply-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .reply-author {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .reply-date {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .reply-content {
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .empty-reply {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .inquiry-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .inquiry-title {
+                min-width: auto;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="app-title">문의 상세 정보</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">5</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-name">관리자</div>
+                <div class="user-type">전시 관리팀</div>
+            </div>
+        </div>
+        <div class="side-menu-content">
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>관리자 메뉴</span>
+                </div>
+                <div class="menu-items">
+                    <a href="inquiry-list.html" class="menu-item">
+                        <i class="fas fa-comments"></i>
+                        <span>1:1 문의 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-users"></i>
+                        <span>사용자 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>통계 분석</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-cog"></i>
+                    <span>설정</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-bell"></i>
+                        <span>알림 설정</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>보안 설정</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>로그아웃</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for Side Menu -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- App Content -->
+    <div class="app-content">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="inquiry-list.html" class="breadcrumb-item">1:1 문의 관리</a>
+                <a href="#" class="breadcrumb-item active">문의 상세 정보</a>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="goToReply()">
+                    <i class="fas fa-reply"></i>
+                    답변하기
+                </button>
+                <button class="btn btn-secondary" onclick="updateStatus()">
+                    <i class="fas fa-edit"></i>
+                    상태 변경
+                </button>
+                <button class="btn btn-warning" onclick="updatePriority()">
+                    <i class="fas fa-flag"></i>
+                    우선순위 변경
+                </button>
+                <button class="btn btn-danger" onclick="deleteInquiry()">
+                    <i class="fas fa-trash"></i>
+                    삭제
+                </button>
+            </div>
+
+            <!-- Inquiry Details Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="inquiry-header">
+                        <h1 class="inquiry-title">결제 수단 등록이 안돼요</h1>
+                        <div class="inquiry-meta">
+                            <span class="status-badge pending">
+                                <i class="fas fa-clock"></i>대기 중
+                            </span>
+                            <span class="priority-badge high">높음</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Basic Information -->
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">문의 ID</div>
+                            <div class="info-value">INQ-2024-001</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">작성자</div>
+                            <div class="info-value">김철수 (kimcheolsu@email.com)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">문의 유형</div>
+                            <div class="info-value">결제 관련</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">연락처</div>
+                            <div class="info-value">010-1234-5678</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">작성일</div>
+                            <div class="info-value">2024-12-02 10:30</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">마지막 업데이트</div>
+                            <div class="info-value">2024-12-02 10:30</div>
+                        </div>
+                    </div>
+
+                    <!-- Inquiry Content -->
+                    <div class="content-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-comment-dots"></i>
+                            문의 내용
+                        </h3>
+                        <div class="content-text">안녕하세요.
+
+전시(專時) 서비스를 이용하고 있는 김철수입니다.
+
+결제 수단 등록을 하려고 하는데 계속 오류가 발생합니다.
+
+1. 마이페이지 → 결제수단 관리 페이지로 이동
+2. 신규 카드 등록 버튼 클릭
+3. 카드 정보 입력 후 등록 버튼 클릭
+4. "카드 등록 중 오류가 발생했습니다." 메시지 출력
+
+위와 같은 단계로 진행했는데, 여러 번 시도해도 같은 오류가 발생합니다.
+
+사용 중인 카드는 현대카드이고, 유효기간은 2026년까지입니다.
+다른 카드도 시도해보았지만 동일한 현상이 발생합니다.
+
+확인 부탁드립니다.
+
+감사합니다.</div>
+                    </div>
+
+                    <!-- Attachments -->
+                    <div class="content-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-paperclip"></i>
+                            첨부 파일
+                        </h3>
+                        <div class="attachment-list">
+                            <a href="#" class="attachment-item">
+                                <div class="attachment-icon">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="attachment-info">
+                                    <div class="attachment-name">error_screenshot.png</div>
+                                    <div class="attachment-size">2.3 MB</div>
+                                </div>
+                                <div class="attachment-action">
+                                    <i class="fas fa-download"></i>
+                                </div>
+                            </a>
+                            <a href="#" class="attachment-item">
+                                <div class="attachment-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="attachment-info">
+                                    <div class="attachment-name">card_info.pdf</div>
+                                    <div class="attachment-size">1.5 MB</div>
+                                </div>
+                                <div class="attachment-action">
+                                    <i class="fas fa-download"></i>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reply Section -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-reply"></i>
+                        답변 내역
+                    </div>
+                </div>
+                <div class="card-body reply-section">
+                    <div class="empty-reply">
+                        <i class="fas fa-inbox fa-3x" style="margin-bottom: 15px; color: var(--text-muted);"></i>
+                        <p>아직 답변이 없습니다.</p>
+                        <p style="margin-top: 10px;">
+                            <button class="btn btn-primary" onclick="goToReply()">
+                                <i class="fas fa-reply"></i>
+                                첫 답변 작성하기
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Menu Toggle
+    document.getElementById('menuToggle').addEventListener('click', function() {
+        document.getElementById('sideMenu').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    });
+
+    // Overlay Click
+    document.getElementById('overlay').addEventListener('click', function() {
+        document.getElementById('sideMenu').classList.remove('active');
+        document.getElementById('overlay').classList.remove('active');
+    });
+
+    // Get URL parameters
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // Load inquiry data based on ID
+    function loadInquiryData() {
+        const inquiryId = getUrlParameter('id');
+        console.log('Loading inquiry:', inquiryId);
+
+        // In a real implementation, this would fetch data from the server
+        // For now, we'll use static data as shown in the HTML
+    }
+
+    // Go to reply page
+    function goToReply() {
+        const inquiryId = getUrlParameter('id');
+        window.location.href = `inquiry-reply.html?id=${inquiryId}`;
+    }
+
+    // Update status
+    function updateStatus() {
+        const statusOptions = ['대기 중', '처리 중', '답변 완료'];
+        const currentStatus = '대기 중';
+
+        let html = '<div style="padding: 20px;">';
+        html += '<h3 style="margin-bottom: 15px;">상태 변경</h3>';
+        html += '<div style="margin-bottom: 15px;">';
+        html += '<label>현재 상태: <strong>' + currentStatus + '</strong></label><br>';
+        html += '<label style="margin-top: 10px; display: block;">새로운 상태:</label>';
+        html += '<select id="newStatus" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">';
+
+        statusOptions.forEach(status => {
+            html += '<option value="' + status + '"' + (status === currentStatus ? ' selected' : '') + '>' + status + '</option>';
+        });
+
+        html += '</select>';
+        html += '</div>';
+        html += '<div style="text-align: right; margin-top: 20px;">';
+        html += '<button onclick="this.closest(\'html\').querySelector(\'.modal-overlay\').remove()" style="padding: 8px 16px; margin-right: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">취소</button>';
+        html += '<button onclick="saveStatus()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">저장</button>';
+        html += '</div>';
+        html += '</div>';
+
+        showModal(html);
+    }
+
+    // Save status
+    function saveStatus() {
+        const newStatus = document.getElementById('newStatus').value;
+        document.querySelector('.modal-overlay').remove();
+
+        // Update status badge
+        const statusBadge = document.querySelector('.status-badge');
+        statusBadge.className = 'status-badge ' + (newStatus === '대기 중' ? 'pending' : newStatus === '처리 중' ? 'processing' : 'completed');
+        statusBadge.innerHTML = '<i class="fas ' + (newStatus === '대기 중' ? 'fa-clock' : newStatus === '처리 중' ? 'fa-spinner' : 'fa-check-circle') + '"></i>' + newStatus;
+
+        alert('상태가 변경되었습니다: ' + newStatus);
+    }
+
+    // Update priority
+    function updatePriority() {
+        const priorityOptions = ['낮음', '보통', '높음'];
+        const currentPriority = '높음';
+
+        let html = '<div style="padding: 20px;">';
+        html += '<h3 style="margin-bottom: 15px;">우선순위 변경</h3>';
+        html += '<div style="margin-bottom: 15px;">';
+        html += '<label>현재 우선순위: <strong>' + currentPriority + '</strong></label><br>';
+        html += '<label style="margin-top: 10px; display: block;">새로운 우선순위:</label>';
+        html += '<select id="newPriority" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">';
+
+        priorityOptions.forEach(priority => {
+            html += '<option value="' + priority + '"' + (priority === currentPriority ? ' selected' : '') + '>' + priority + '</option>';
+        });
+
+        html += '</select>';
+        html += '</div>';
+        html += '<div style="text-align: right; margin-top: 20px;">';
+        html += '<button onclick="this.closest(\'html\').querySelector(\'.modal-overlay\').remove()" style="padding: 8px 16px; margin-right: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">취소</button>';
+        html += '<button onclick="savePriority()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">저장</button>';
+        html += '</div>';
+        html += '</div>';
+
+        showModal(html);
+    }
+
+    // Save priority
+    function savePriority() {
+        const newPriority = document.getElementById('newPriority').value;
+        document.querySelector('.modal-overlay').remove();
+
+        // Update priority badge
+        const priorityBadge = document.querySelector('.priority-badge');
+        priorityBadge.className = 'priority-badge ' + (newPriority === '높음' ? 'high' : newPriority === '보통' ? 'medium' : 'low');
+        priorityBadge.textContent = newPriority;
+
+        alert('우선순위가 변경되었습니다: ' + newPriority);
+    }
+
+    // Delete inquiry
+    function deleteInquiry() {
+        if (confirm('정말로 이 문의를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+            alert('문의가 삭제되었습니다.');
+            window.location.href = 'inquiry-list.html';
+        }
+    }
+
+    // Show modal
+    function showModal(content) {
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        modalOverlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        `;
+
+        const modalContent = document.createElement('div');
+        modalContent.style.cssText = `
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        `;
+        modalContent.innerHTML = content;
+
+        modalOverlay.appendChild(modalContent);
+        document.body.appendChild(modalOverlay);
+
+        // Close modal when clicking overlay
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                modalOverlay.remove();
+            }
+        });
+    }
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadInquiryData();
+    });
+</script>
+</body>
+</html>

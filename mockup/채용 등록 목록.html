@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>내 채용 목록 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .header-back {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 80px; /* Space for fixed bottom button */
+        }
+
+        /* --- Stats Section --- */
+        .stats-section {
+            background-color: var(--card-background);
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* --- Tab Navigation --- */
+        .tab-nav {
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: var(--header-height);
+            z-index: 100;
+        }
+
+        .tab-container {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-button {
+            flex: 1;
+            min-width: 100px;
+            padding: 15px 10px;
+            background: none;
+            border: none;
+            font-size: 0.95rem;
+            cursor: pointer;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .tab-button.active {
+            font-weight: bold;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-count {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* --- Filter Section --- */
+        .filter-section {
+            background-color: var(--card-background);
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-bar {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 0.9rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .filter-button {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sort-dropdown {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* --- Tab Content --- */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- Recruitment List --- */
+        .recruitment-list {
+            padding: 15px;
+        }
+
+        .recruitment-card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .recruitment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .card-title-section {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .card-company {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .card-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .tag-status {
+            background-color: var(--light-color);
+            color: var(--text-color);
+        }
+
+        .tag-urgent {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .action-button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
+        }
+
+        .action-button:hover {
+            background-color: #e9ecef;
+        }
+
+        .action-button.primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .action-button.danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .card-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .card-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .card-stat i {
+            color: var(--primary-color);
+        }
+
+        .card-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Scheduled Section --- */
+        .scheduled-card {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .scheduled-badge {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .empty-description {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .empty-button {
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* --- Floating Action Button --- */
+        .fab {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 999;
+            transition: transform 0.2s;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- Filter Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            width: 90%;
+            max-width: 500px;
+            margin: 30px auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-option {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .filter-option.selected {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-reset {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .btn-apply {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-back" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">채용등록 목록</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-home"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <div class="tab-container">
+                <button class="tab-button active" data-tab="active">
+                    진행 중
+                    <span class="tab-count">8</span>
+                </button>
+                <button class="tab-button" data-tab="scheduled">
+                    예정
+                    <span class="tab-count">2</span>
+                </button>
+                <button class="tab-button" data-tab="closed">
+                    마감
+                    <span class="tab-count">2</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-controls">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="공고 제목, 부서 검색..." />
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <button class="filter-button" id="filterBtn">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <select class="sort-dropdown">
+                    <option value="recent">최신순</option>
+                    <option value="deadline">마감임박순</option>
+                    <option value="applicants">지원자 많은순</option>
+                    <option value="title">제목순</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- 진행 중 Tab Content -->
+        <div class="tab-content active" id="active">
+            <div class="recruitment-list">
+                <!-- Active Recruitment 1 -->
+                <div class="recruitment-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <div class="card-title">보안 컨설턴트 (정규직)</div>
+                            <div class="card-company">정보보안팀 • 경기 성남시</div>
+                            <div class="card-tags">
+                                <span class="card-tag tag-status">정규직</span>
+                                <span class="card-tag tag-status">5년 이상</span>
+                                <span class="card-tag tag-urgent">D-7</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-button primary">
+                                <i class="fas fa-edit"></i> 수정
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-users"></i> 지원자 보기
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-pause"></i> 일시중지
+                            </button>
+                            <button class="action-button danger">
+                                <i class="fas fa-trash"></i> 삭제
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <i class="fas fa-users"></i>
+                                <span>45명 지원</span>
+                            </div>
+                            <div class="card-stat">
+                                <i class="fas fa-eye"></i>
+                                <span>1,234 조회</span>
+                            </div>
+                            <div class="card-stat">
+                                <i class="fas fa-bookmark"></i>
+                                <span>23 저장</span>
+                            </div>
+                        </div>
+                        <div class="card-date">
+                            <i class="fas fa-calendar"></i>
+                            <span>2024.03.15 마감</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Recruitment 2 -->
+                <div class="recruitment-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <div class="card-title">클라우드 엔지니어 (계약직)</div>
+                            <div class="card-company">인프라팀 • 서울 강남구</div>
+                            <div class="card-tags">
+                                <span class="card-tag tag-status">계약직</span>
+                                <span class="card-tag tag-status">3년 이상</span>
+                                <span class="card-tag tag-urgent">D-15</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-button primary">
+                                <i class="fas fa-edit"></i> 수정
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-users"></i> 지원자 보기
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-pause"></i> 일시중지
+                            </button>
+                            <button class="action-button danger">
+                                <i class="fas fa-trash"></i> 삭제
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <i class="fas fa-users"></i>
+                                <span>32명 지원</span>
+                            </div>
+                            <div class="card-stat">
+                                <i class="fas fa-eye"></i>
+                                <span>892 조회</span>
+                            </div>
+                            <div class="card-stat">
+                                <i class="fas fa-bookmark"></i>
+                                <span>15 저장</span>
+                            </div>
+                        </div>
+                        <div class="card-date">
+                            <i class="fas fa-calendar"></i>
+                            <span>2024.03.23 마감</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 예정 Tab Content -->
+        <div class="tab-content" id="scheduled">
+            <div class="recruitment-list">
+                <!-- Scheduled Recruitment 1 -->
+                <div class="recruitment-card scheduled-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <div class="card-title">프론트엔드 개발자 (정규직)</div>
+                            <div class="card-company">개발팀 • 서울</div>
+                            <div class="card-tags">
+                                <span class="card-tag scheduled-badge">예정</span>
+                                <span class="card-tag tag-status">정규직</span>
+                                <span class="card-tag tag-status">3년 이상</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-button primary">
+                                <i class="fas fa-edit"></i> 수정
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-users"></i> 지원자 보기
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-play"></i> 지금 시작
+                            </button>
+                            <button class="action-button danger">
+                                <i class="fas fa-trash"></i> 삭제
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <i class="fas fa-clock"></i>
+                                <span>3월 20일 시작 예정</span>
+                            </div>
+                        </div>
+                        <div class="card-date">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>2024.03.20 ~ 2024.04.20</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Scheduled Recruitment 2 -->
+                <div class="recruitment-card scheduled-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <div class="card-title">데이터 분석가 (정규직)</div>
+                            <div class="card-company">데이터팀 • 판교</div>
+                            <div class="card-tags">
+                                <span class="card-tag scheduled-badge">예정</span>
+                                <span class="card-tag tag-status">정규직</span>
+                                <span class="card-tag tag-status">신입/경력무관</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-button primary">
+                                <i class="fas fa-edit"></i> 수정
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-users"></i> 지원자 보기
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-play"></i> 지금 시작
+                            </button>
+                            <button class="action-button danger">
+                                <i class="fas fa-trash"></i> 삭제
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <i class="fas fa-clock"></i>
+                                <span>4월 1일 시작 예정</span>
+                            </div>
+                        </div>
+                        <div class="card-date">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>2024.04.01 ~ 2024.04.30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 마감 Tab Content -->
+        <div class="tab-content" id="closed">
+            <div class="recruitment-list">
+                <!-- Closed Recruitment 1 -->
+                <div class="recruitment-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <div class="card-title">백엔드 개발자 (정규직)</div>
+                            <div class="card-company">개발팀 • 서울</div>
+                            <div class="card-tags">
+                                <span class="card-tag tag-status">마감</span>
+                                <span class="card-tag tag-status">정규직</span>
+                                <span class="card-tag tag-status">5년 이상</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-button">
+                                <i class="fas fa-chart-bar"></i> 통계
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-download"></i> 다운로드
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-redo"></i> 재게시
+                            </button>
+                            <button class="action-button danger">
+                                <i class="fas fa-trash"></i> 삭제
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <i class="fas fa-users"></i>
+                                <span>78명 지원</span>
+                            </div>
+                            <div class="card-stat">
+                                <i class="fas fa-eye"></i>
+                                <span>2,156 조회</span>
+                            </div>
+                            <div class="card-stat">
+                                <i class="fas fa-bookmark"></i>
+                                <span>41 저장</span>
+                            </div>
+                        </div>
+                        <div class="card-date">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>2024.02.28 마감</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Closed Recruitment 2 -->
+                <div class="recruitment-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <div class="card-title">UI/UX 디자이너 (계약직)</div>
+                            <div class="card-company">디자인팀 • 판교</div>
+                            <div class="card-tags">
+                                <span class="card-tag tag-status">마감</span>
+                                <span class="card-tag tag-status">계약직</span>
+                                <span class="card-tag tag-status">3년 이상</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-button">
+                                <i class="fas fa-chart-bar"></i> 통계
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-download"></i> 다운로드
+                            </button>
+                            <button class="action-button">
+                                <i class="fas fa-redo"></i> 재게시
+                            </button>
+                            <button class="action-button danger">
+                                <i class="fas fa-trash"></i> 삭제
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <i class="fas fa-users"></i>
+                                <span>56명 지원</span>
+                            </div>
+                            <div class="card-stat">
+                                <i class="fas fa-eye"></i>
+                                <span>1,432 조회</span>
+                            </div>
+                            <div class="card-stat">
+                                <i class="fas fa-bookmark"></i>
+                                <span>28 저장</span>
+                            </div>
+                        </div>
+                        <div class="card-date">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>2024.02.15 마감</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty State (hidden by default) -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <div class="empty-title">등록된 채용 공고가 없습니다</div>
+            <div class="empty-description">
+                첫 채용 공고를 등록해보세요
+            </div>
+            <button class="empty-button" onclick="window.location.href='채용%20등록.html'">
+                <i class="fas fa-plus"></i> 채용 공고 등록
+            </button>
+        </div>
+    </div>
+    
+    <!-- Floating Action Button -->
+    <button class="fab" id="fabBtn">
+        <i class="fas fa-plus"></i>
+    </button>
+    
+    <!-- Filter Modal -->
+    <div class="modal" id="filterModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">상세 필터</h3>
+                <button class="modal-close" id="modalCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-group">
+                    <label class="filter-label">고용 형태</label>
+                    <div class="filter-options">
+                        <div class="filter-option" data-value="full-time">정규직</div>
+                        <div class="filter-option" data-value="contract">계약직</div>
+                        <div class="filter-option" data-value="intern">인턴</div>
+                        <div class="filter-option" data-value="part-time">파트타임</div>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">경력</label>
+                    <div class="filter-options">
+                        <div class="filter-option" data-value="0">신입/경력무관</div>
+                        <div class="filter-option" data-value="1">1년 이상</div>
+                        <div class="filter-option" data-value="3">3년 이상</div>
+                        <div class="filter-option" data-value="5">5년 이상</div>
+                        <div class="filter-option" data-value="7">7년 이상</div>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">근무지</label>
+                    <div class="filter-options">
+                        <div class="filter-option" data-value="seoul">서울</div>
+                        <div class="filter-option" data-value="gyeonggi">경기</div>
+                        <div class="filter-option" data-value="remote">원격</div>
+                        <div class="filter-option" data-value="all">전국</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-reset" id="resetFilters">초기화</button>
+                <button class="btn-apply" id="applyFilters">적용</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab-button').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                this.classList.add('active');
+                const tabId = this.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const activeTab = document.querySelector('.tab-content.active');
+            const cards = activeTab.querySelectorAll('.recruitment-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const company = card.querySelector('.card-company').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || company.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Filter modal
+        const filterModal = document.getElementById('filterModal');
+        const filterBtn = document.getElementById('filterBtn');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        
+        filterBtn.addEventListener('click', function() {
+            filterModal.classList.add('active');
+        });
+        
+        modalCloseBtn.addEventListener('click', function() {
+            filterModal.classList.remove('active');
+        });
+        
+        // Filter options
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+        
+        // Apply filters
+        document.getElementById('applyFilters').addEventListener('click', function() {
+            // Apply filter logic here
+            filterModal.classList.remove('active');
+        });
+        
+        // Reset filters
+        document.getElementById('resetFilters').addEventListener('click', function() {
+            document.querySelectorAll('.filter-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === filterModal) {
+                filterModal.classList.remove('active');
+            }
+        });
+        
+        // Action buttons
+        document.querySelectorAll('.action-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const action = this.textContent.trim();
+                const card = this.closest('.recruitment-card');
+                const title = card.querySelector('.card-title').textContent;
+                
+                switch(action) {
+                    case '수정':
+                        window.location.href = `/recruitment-edit.html?id=${Date.now()}`;
+                        break;
+                    case '지금 시작':
+                        if (confirm(`'${title}' 공고를 지금 시작하시겠습니까?`)) {
+                            alert('공고가 시작되었습니다.');
+                            // Move to active tab
+                            document.querySelector('[data-tab="active"]').click();
+                        }
+                        break;
+                    case '재게시':
+                        if (confirm(`'${title}' 공고를 재게시하시겠습니까?`)) {
+                            alert('공고가 재게시되었습니다.');
+                            // Move to active tab
+                            document.querySelector('[data-tab="active"]').click();
+                        }
+                        break;
+                    case '통계':
+                        window.location.href = `/recruitment-stats.html?id=${Date.now()}`;
+                        break;
+                    case '다운로드':
+                        alert('지원자 목록을 다운로드합니다.');
+                        break;
+                    case '지원자 보기':
+                        window.location.href = `채용%20지원자%20관리.html?title=${encodeURIComponent(title)}`;
+                        break;
+                    case '일시중지':
+                        if (confirm(`'${title}' 공고를 일시중지하시겠습니까?`)) {
+                            alert('공고가 일시중지되었습니다.');
+                        }
+                        break;
+                    case '삭제':
+                        if (confirm(`'${title}' 공고를 삭제하시겠습니까?\n삭제된 공고는 복구할 수 없습니다.`)) {
+                            card.remove();
+                            checkEmptyState();
+                        }
+                        break;
+                }
+            });
+        });
+
+        // Recruitment card click navigation
+        document.querySelectorAll('.recruitment-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.card-title').textContent;
+                window.location.href = `채용%20상세.html?title=${encodeURIComponent(title)}`;
+            });
+        });
+        
+        // Check empty state
+        function checkEmptyState() {
+            const activeTab = document.querySelector('.tab-content.active');
+            const visibleCards = activeTab.querySelectorAll('.recruitment-card:not([style*="display: none"])');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (visibleCards.length === 0) {
+                emptyState.style.display = 'block';
+                activeTab.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                activeTab.style.display = 'block';
+            }
+        }
+        
+        // FAB button
+        document.getElementById('fabBtn').addEventListener('click', function() {
+            window.location.href = '채용%20등록.html';
+        });
+        
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        // Sort dropdown
+        document.querySelector('.sort-dropdown').addEventListener('change', function() {
+            const sortValue = this.value;
+            sortRecruitments(sortValue);
+        });
+        
+        // Sort function
+        function sortRecruitments(sortBy) {
+            const activeTab = document.querySelector('.tab-content.active');
+            const list = activeTab.querySelector('.recruitment-list');
+            const cards = Array.from(list.querySelectorAll('.recruitment-card'));
+            
+            cards.sort((a, b) => {
+                switch(sortBy) {
+                    case 'recent':
+                        // Sort by date (newest first)
+                        return new Date(b.dataset.date || 0) - new Date(a.dataset.date || 0);
+                    case 'deadline':
+                        // Sort by deadline (soonest first)
+                        return new Date(a.dataset.deadline || Infinity) - new Date(b.dataset.deadline || Infinity);
+                    case 'applicants':
+                        // Sort by number of applicants (most first)
+                        return parseInt(b.dataset.applicants || 0) - parseInt(a.dataset.applicants || 0);
+                    case 'title':
+                        // Sort alphabetically
+                        return a.querySelector('.card-title').textContent.localeCompare(b.querySelector('.card-title').textContent);
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Re-append sorted cards
+            cards.forEach(card => list.appendChild(card));
+        }
+    </script>
+</body>
+</html>

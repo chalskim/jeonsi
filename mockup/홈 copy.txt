@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>전시 - 전문가 시간 연결 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 0;
+        }
+
+        /* --- Side Menu --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--card-background);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-type {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .side-menu-content {
+            padding: 10px 0;
+        }
+
+        .menu-category {
+            margin-bottom: 15px;
+        }
+
+        .menu-category-title {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .menu-category-title i {
+            margin-right: 10px;
+        }
+
+        .menu-items {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px 12px 35px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .menu-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 10px 0;
+        }
+
+        /* --- Overlay --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Search Section --- */
+        .search-section {
+            padding: 20px;
+            background-color: var(--card-background);
+            text-align: center;
+        }
+
+        .search-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .search-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-bar {
+            display: flex;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            overflow: hidden;
+            flex-grow: 1;
+            max-width: 500px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            border: none;
+            padding: 10px 15px;
+            font-size: 1rem;
+        }
+
+        .search-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        
+        .detailed-search-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .detailed-search-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .detailed-search-button.active {
+            background-color: var(--dark-color);
+            transform: rotate(180deg);
+        }
+
+        .quick-filters {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 5px 15px;
+            border-radius: 15px;
+            background-color: var(--light-color);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .filter-chip.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* --- Expanded Search Section --- */
+        .expanded-search {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: var(--card-background);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .expanded-search.active {
+            max-height: 800px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .expanded-search-content {
+            padding: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .filter-group h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filter-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .filter-options select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* Date Range Picker */
+        .date-range-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .date-input-group label {
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+        }
+
+        .date-input-group input {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* Days of Week Selector */
+        .days-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .day-checkbox {
+            position: relative;
+        }
+
+        .day-checkbox input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .day-checkbox label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .day-checkbox input[type="checkbox"]:checked + label {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .expanded-search-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .expanded-search-footer button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-reset {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .btn-apply {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* --- Banner Carousel --- */
+        .banner-carousel {
+            position: relative;
+            background-color: var(--card-background);
+            margin-bottom: 10px;
+        }
+
+        .banner-container {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .banner-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            color: white;
+        }
+
+        /* Banner Background Colors */
+        .banner-slide:nth-child(1) {
+            background: linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%);
+        }
+        .banner-slide:nth-child(2) {
+            background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%);
+        }
+        .banner-slide:nth-child(3) {
+            background: linear-gradient(135deg, #F2994A 0%, #F2C94C 100%);
+        }
+        .banner-slide:nth-child(4) {
+            background: linear-gradient(135deg, #0BA360 0%, #3CBA92 100%);
+        }
+
+        .banner-slide.active {
+            opacity: 1;
+        }
+
+        .banner-content {
+            max-width: 80%;
+        }
+
+        .banner-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .banner-desc {
+            margin-bottom: 15px;
+        }
+
+        .banner-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+        
+        .banner-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .banner-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .banner-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+
+        .banner-dot.active {
+            background-color: white;
+        }
+
+        /* --- Tabs --- */
+        .tab-container {
+            background-color: var(--background-color);
+        }
+
+        .tab-nav {
+            display: flex;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 5px;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .tab-button.active {
+            font-weight: bold;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- Sections & Cards --- */
+        .urgent-section, .general-section, .experts-section {
+            padding: 15px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .urgent-recruitment-container, .experts-scroll-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 20px;
+        }
+
+        .urgent-recruitment-scroll, .experts-scroll {
+            display: flex;
+            gap: 15px;
+        }
+
+        .urgent-card, .expert-card {
+            min-width: 250px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        .urgent-badge, .expert-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .urgent-title, .expert-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .urgent-company, .expert-company {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .urgent-footer, .expert-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .urgent-price, .expert-price {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .urgent-deadline {
+            font-size: 0.8rem;
+            color: var(--danger-color);
+        }
+
+        .expert-rating {
+            font-size: 0.9rem;
+        }
+
+        .star {
+            color: var(--warning-color);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .card-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .card-badge.new { background-color: var(--success-color); }
+        .card-badge.hot { background-color: var(--danger-color); }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-company {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .card-tag {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background-color: var(--light-color);
+            color: var(--text-muted);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-price {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .card-rating {
+            font-size: 0.9rem;
+        }
+
+        /* --- Repetition Info --- */
+        .repetition-info {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .repetition-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        /* --- Schedule Days (New Style) --- */
+        .schedule-days {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-left: 5px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+        }
+        .page-btn {
+            min-width: 36px;
+            height: 32px;
+            padding: 0 10px;
+            border: 1px solid var(--light-color);
+            border-radius: 6px;
+            background-color: var(--card-background);
+            color: var(--dark-color);
+            cursor: pointer;
+        }
+        .page-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="app-title">전시(專時)</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <div class="user-info">
+                <div class="user-name">홍길동</div>
+                <div class="user-type">㈜테크솔루션</div>
+            </div>
+        </div>
+
+        <div class="side-menu-content">
+                        
+            <!-- 마이페이지 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-user"></i>
+                    <span>마이페이지</span>
+                </div>
+                <div class="menu-items">
+                    <a href="/마이페이지_개인.html" class="menu-item">
+                        <i class="fas fa-user-circle"></i>
+                        <span>내정보(개인)</span>
+                    </a>
+                    <a href="/마이페이지_기업.html" class="menu-item">
+                        <i class="fas fa-building"></i>
+                        <span>내정보(기업)</span>
+                    </a>
+                </div>
+            </div>
+            <div class="menu-divider"></div>
+            <!-- 성공사례 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-trophy"></i>
+                    <span>성공사례</span>
+                </div>
+                <div class="menu-items">
+                    <a href="/성공사례.html" class="menu-item">
+                        <i class="fas fa-trophy"></i>
+                        <span>성공사례</span>
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="menu-divider"></div>
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-briefcase"></i>
+                    <span>업무/콘텐츠</span>
+                </div>
+                <div class="menu-items">
+                    <a href="/단기%20의뢰%20목록.html" class="menu-item">
+                        <i class="fas fa-handshake"></i>
+                        <span>단기의뢰 목록 및 등록</span>
+                    </a>
+                    <a href="/전문가%20프로필%20목록.html" class="menu-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span>전문가 목록 및 등록</span>
+                    </a>
+                    <a href="/교육%20등록%20목록.html" class="menu-item">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>전문 교육 목록 및 등록</span>
+                    </a>
+                    <a href="/채용%20등록%20목록.html" class="menu-item">
+                        <i class="fas fa-certificate"></i>
+                        <span>구인 목록 및 등록</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="menu-divider"></div>
+            <!-- 일정/즐겨찾기 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-calendar-bookmark"></i>
+                    <span>일정/즐겨찾기</span>
+                </div>
+                <div class="menu-items">
+                    <a href="/일정관리_개인.html" class="menu-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span> 일정관리(개인) </span>
+                    </a>
+                    <a href="/일정관리_기업.html" class="menu-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span> 일정관리(기업) </span>
+                        </a>
+                    <a href="북마크_개인.html" class="menu-item">
+                        <i class="fas fa-bookmark"></i>
+                        <span>북마크(개인)</span>
+                    </a>
+                    <a href="/북마크_기업.html" class="menu-item">
+                        <i class="fas fa-building"></i>
+                        <span>북마크(기업)</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="menu-divider"></div>
+            <!-- 결제/장바구니 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>결제/장바구니</span>
+                </div>
+                <div class="menu-items">
+                    <a href="/장바구니_기업.html" class="menu-item">
+                        <i class="fas fa-shopping-basket"></i>
+                        <span>기업 장바구니</span>
+                    </a>
+                    <a href="/장바구니_개인.html" class="menu-item">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span>개인 장바구니</span>
+                    </a>
+                    <a href="/결제관리_기업.html" class="menu-item">
+                        <i class="fas fa-credit-card"></i>
+                        <span>기업 결제관리</span>
+                    </a>
+                    <a href="/결제관리_개인.html" class="menu-item">
+                        <i class="fas fa-wallet"></i>
+                        <span>개인 결제관리</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="menu-divider"></div>
+            <!-- 설정/도움말 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-cog"></i>
+                    <span>설정/QA질문</span>
+                </div>
+                <div class="menu-items">
+                    <a href="/설정.html" class="menu-item">
+                        <i class="fas fa-cogs"></i>
+                        <span>설정</span>
+                    </a>
+                    <a href="/QA질문.html" class="menu-item">
+                        <i class="fas fa-question-circle"></i>
+                        <span>QA질문</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="menu-divider"></div>
+            <!-- 기타 -->
+            <div class="menu-category">
+                <div class="menu-items">
+                    <a href="/뉴스_공지.html" class="menu-item">
+                        <i class="fas fa-bell"></i>
+                        <span> 뉴스/공지 사항 </span>
+                    </a>
+                    <a href="/_기본/로그인.html" class="menu-item">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>로그인/회원가입</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 관리자 메뉴 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-user-shield"></i>
+                    <span>관리자 메뉴</span>
+                </div>
+                <div class="menu-items">
+                    <a href="/사용자_리스트_관리자.html" class="menu-item">
+                        <i class="fas fa-users-cog"></i>
+                        <span>사용자/콘텐츠 관리</span>
+                    </a>
+                    <a href="/inquiry-list.html" class="menu-item">
+                        <i class="fas fa-comments"></i>
+                        <span>Q&A 답변 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>공고 관리</span>
+                    </a>
+                    <a href="/news-manage.html" class="menu-item">
+                        <i class="fas fa-newspaper"></i>
+                        <span>공지 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-ad"></i>
+                        <span>베너 광고 관리</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <!-- Overlay for Side Menu -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Search Section -->
+        <div class="search-section">
+            <h1 class="search-title">필요할 때 딱, 전문가의 시간 한 조각 – 전시 </h1>
+            <div class="search-controls">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="단기 의뢰, 전문가, 교육, 구인 검색...">
+                    <button class="search-button">검색</button>
+                </div>
+                <button class="detailed-search-button" id="detailedSearchBtn" title="상세 검색">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+            </div>
+            <div class="quick-filters">
+                <div class="filter-chip active" data-filter="short-term">단기 의뢰</div>
+                <div class="filter-chip" data-filter="experts">전문가</div>
+                <div class="filter-chip" data-filter="education">교육</div>
+                <div class="filter-chip" data-filter="recruitment">구인</div>
+            </div>
+        </div>
+        
+        <!-- Expanded Search Section -->
+        <div class="expanded-search" id="expandedSearch">
+            <div class="expanded-search-content">
+                <!-- Filters for "단기 의뢰" -->
+                <div id="short-term-filters" class="filter-panel">
+                    <div class="filter-group">
+                        <h3>카테고리</h3>
+                        <div class="filter-options">
+                            <label><input type="checkbox" name="category" value="security"> 정보보안</label>
+                            <label><input type="checkbox" name="category" value="cloud"> 클라우드</label>
+                            <label><input type="checkbox" name="category" value="network"> 네트워크</label>
+                            <label><input type="checkbox" name="category" value="data"> 데이터</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>중분류</h3>
+                        <div class="filter-options" id="short-term-suboptions"></div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>근무 형태</h3>
+                        <div class="filter-options">
+                            <label><input type="checkbox" name="work-type" value="remote"> 원격</label>
+                            <label><input type="checkbox" name="work-type" value="offline"> 오프라인</label>
+                            <label><input type="checkbox" name="work-type" value="hybrid"> 하이브리드</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>기간</h3>
+                        <div class="date-range-container">
+                            <div class="date-input-group">
+                                <label for="start-date">시작일</label>
+                                <input type="date" id="start-date" name="start-date">
+                            </div>
+                            <div class="date-input-group">
+                                <label for="end-date">종료일</label>
+                                <input type="date" id="end-date" name="end-date">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>요일</h3>
+                        <div class="days-selector">
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="day-mon" name="days" value="mon">
+                                <label for="day-mon">월</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="day-tue" name="days" value="tue">
+                                <label for="day-tue">화</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="day-wed" name="days" value="wed">
+                                <label for="day-wed">수</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="day-thu" name="days" value="thu">
+                                <label for="day-thu">목</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="day-fri" name="days" value="fri">
+                                <label for="day-fri">금</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="day-sat" name="days" value="sat">
+                                <label for="day-sat">토</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="day-sun" name="days" value="sun">
+                                <label for="day-sun">일</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters for "전문가" -->
+                <div id="experts-filters" class="filter-panel" style="display:none;">
+                    <div class="filter-group">
+                        <h3>전문 분야</h3>
+                        <div class="filter-options">
+                            <label><input type="checkbox" name="expertise" value="isms"> ISMS-P</label>
+                            <label><input type="checkbox" name="expertise" value="iso27001"> ISO 27001</label>
+                            <label><input type="checkbox" name="expertise" value="cloud"> 클라우드 보안</label>
+                            <label><input type="checkbox" name="expertise" value="network"> 네트워크 보안</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>중분류</h3>
+                        <div class="filter-options" id="experts-suboptions"></div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>경력</h3>
+                        <div class="filter-options">
+                            <select name="experience">
+                                <option value="">전체</option>
+                                <option value="5">5년 이상</option>
+                                <option value="10">10년 이상</option>
+                                <option value="15">15년 이상</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>가능 기간</h3>
+                        <div class="date-range-container">
+                            <div class="date-input-group">
+                                <label for="expert-start-date">시작일</label>
+                                <input type="date" id="expert-start-date" name="expert-start-date">
+                            </div>
+                            <div class="date-input-group">
+                                <label for="expert-end-date">종료일</label>
+                                <input type="date" id="expert-end-date" name="expert-end-date">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>가능 요일</h3>
+                        <div class="days-selector">
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="expert-day-mon" name="expert-days" value="mon">
+                                <label for="expert-day-mon">월</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="expert-day-tue" name="expert-days" value="tue">
+                                <label for="expert-day-tue">화</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="expert-day-wed" name="expert-days" value="wed">
+                                <label for="expert-day-wed">수</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="expert-day-thu" name="expert-days" value="thu">
+                                <label for="expert-day-thu">목</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="expert-day-fri" name="expert-days" value="fri">
+                                <label for="expert-day-fri">금</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="expert-day-sat" name="expert-days" value="sat">
+                                <label for="expert-day-sat">토</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="expert-day-sun" name="expert-days" value="sun">
+                                <label for="expert-day-sun">일</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters for "교육" -->
+                <div id="education-filters" class="filter-panel" style="display:none;">
+                    <div class="filter-group">
+                        <h3>교육 대분류</h3>
+                        <div class="filter-options" id="education-major"></div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>교육 중분류</h3>
+                        <div class="filter-options" id="education-suboptions"></div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>교육 형태</h3>
+                        <div class="filter-options">
+                            <label><input type="checkbox" name="edu-format" value="online"> 온라인</label>
+                            <label><input type="checkbox" name="edu-format" value="offline"> 오프라인</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>교육 기간</h3>
+                        <div class="date-range-container">
+                            <div class="date-input-group">
+                                <label for="edu-start-date">시작일</label>
+                                <input type="date" id="edu-start-date" name="edu-start-date">
+                            </div>
+                            <div class="date-input-group">
+                                <label for="edu-end-date">종료일</label>
+                                <input type="date" id="edu-end-date" name="edu-end-date">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>교육 요일</h3>
+                        <div class="days-selector">
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="edu-day-mon" name="edu-days" value="mon">
+                                <label for="edu-day-mon">월</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="edu-day-tue" name="edu-days" value="tue">
+                                <label for="edu-day-tue">화</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="edu-day-wed" name="edu-days" value="wed">
+                                <label for="edu-day-wed">수</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="edu-day-thu" name="edu-days" value="thu">
+                                <label for="edu-day-thu">목</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="edu-day-fri" name="edu-days" value="fri">
+                                <label for="edu-day-fri">금</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="edu-day-sat" name="edu-days" value="sat">
+                                <label for="edu-day-sat">토</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="edu-day-sun" name="edu-days" value="sun">
+                                <label for="edu-day-sun">일</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters for "구인" -->
+                <div id="recruitment-filters" class="filter-panel" style="display:none;">
+                    <div class="filter-group">
+                        <h3>대분류</h3>
+                        <div class="filter-options" id="recruitment-major"></div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>중분류</h3>
+                        <div class="filter-options" id="recruitment-suboptions"></div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>고용 형태</h3>
+                        <div class="filter-options">
+                            <label><input type="checkbox" name="employment-type" value="full-time"> 정규직</label>
+                            <label><input type="checkbox" name="employment-type" value="contract"> 계약직</label>
+                            <label><input type="checkbox" name="employment-type" value="intern"> 인턴</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>경력</h3>
+                        <div class="filter-options">
+                            <select name="req-experience">
+                                <option value="">전체</option>
+                                <option value="0">신입/경력무관</option>
+                                <option value="3">3년 이상</option>
+                                <option value="5">5년 이상</option>
+                                <option value="7">7년 이상</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h3>접수 기간</h3>
+                        <div class="date-range-container">
+                            <div class="date-input-group">
+                                <label for="recruit-start-date">시작일</label>
+                                <input type="date" id="recruit-start-date" name="recruit-start-date">
+                            </div>
+                            <div class="date-input-group">
+                                <label for="recruit-end-date">종료일</label>
+                                <input type="date" id="recruit-end-date" name="recruit-end-date">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expanded-search-footer">
+                    <button class="btn-reset" id="resetFilters">초기화</button>
+                    <button class="btn-apply" id="applyFilters">적용</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Banner Carousel -->
+        <div class="banner-carousel">
+            <div class="banner-container">
+                <!-- Banner 1 -->
+                <div class="banner-slide active">
+                    <div class="banner-content">
+                        <h2 class="banner-title">🎉 단기 프로젝트 전문가 매칭</h2>
+                        <p class="banner-desc">필요한 전문가를 하루 만에 찾아보세요</p>
+                        <button class="banner-button">의뢰 등록</button>
+                    </div>
+                </div>
+                <!-- Banner 2 -->
+                <div class="banner-slide">
+                    <div class="banner-content">
+                        <h2 class="banner-title">🏆 최고의 전문가들이 모인 곳</h2>
+                        <p class="banner-desc">검증된 전문가들과 프로젝트를 진행하세요</p>
+                        <button class="banner-button">전문가 보기</button>
+                    </div>
+                </div>
+                <!-- Banner 3 -->
+                <div class="banner-slide">
+                    <div class="banner-content">
+                        <h2 class="banner-title">🔒 실무 중심 교육 프로그램</h2>
+                        <p class="banner-desc">업계 최고 전문가들의 직접 교육으로 성장하세요</p>
+                        <button class="banner-button">교육 신청</button>
+                    </div>
+                </div>
+                <!-- Banner 4 -->
+                <div class="banner-slide">
+                    <div class="banner-content">
+                        <h2 class="banner-title">🌟 최적의 인재를 찾는 곳</h2>
+                        <p class="banner-desc">전문 인재 채용 성공률 98%</p>
+                        <button class="banner-button">채용 공고 등록</button>
+                    </div>
+                </div>
+            </div>
+            <div class="banner-dots">
+                <span class="banner-dot active" data-slide="0"></span>
+                <span class="banner-dot" data-slide="1"></span>
+                <span class="banner-dot" data-slide="2"></span>
+                <span class="banner-dot" data-slide="3"></span>
+            </div>
+        </div>
+        
+        <!-- Tab Container -->
+        <div class="tab-container">
+            <div class="tab-nav">
+                <button class="tab-button active" data-tab="short-term">단기 의뢰</button>
+                <button class="tab-button" data-tab="experts">전문가</button>
+                <button class="tab-button" data-tab="education">교육</button>
+                <button class="tab-button" data-tab="recruitment">구인</button>
+            </div>
+            
+            <!-- 단기 의뢰 탭 -->
+            <div class="tab-content active" id="short-term">
+                <!-- 긴급 의뢰 섹션 -->
+                <div class="urgent-section">
+                    <div class="section-title"><i class="fas fa-fire"></i><span>긴급 의뢰</span></div>
+                    <div class="urgent-recruitment-container">
+                        <div class="urgent-recruitment-scroll">
+                            <div class="urgent-card">
+                                <div class="urgent-badge">🔥 긴급</div>
+                                <div class="repetition-info">
+                                    <i class="fas fa-clock"></i>
+                                    <span>기간별 반복</span>
+                                </div>
+                                <div class="urgent-title">보안 진단 보고서 작성 (3일)</div>
+                                <div class="urgent-company">㈜테크솔루션 · 원격/오프라인</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">150만원</div>
+                                    <div class="urgent-deadline">02-26~02-28</div>
+                                </div>
+                            </div>
+                            <div class="urgent-card">
+                                <div class="urgent-badge">⚡ 즉시</div>
+                                <div class="repetition-info">
+                                    <i class="fas fa-clock"></i>
+                                    <span>시간별 반복</span>
+                                </div>
+                                <div class="urgent-title">클라우드 아키텍처 설계 (1주)</div>
+                                <div class="urgent-company">㈜클라우드테크 · 원격</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">200만원</div>
+                                    <div class="urgent-deadline">02-23~02-25</div>
+                                </div>
+                            </div>
+                            <div class="urgent-card">
+                                <div class="urgent-badge">🚀 긴급</div>
+                                <div class="repetition-info">
+                                    <i class="fas fa-clock"></i>
+                                    <span>일별 반복</span>
+                                </div>
+                                <div class="urgent-title">개인정보보호 정책 수립 (5일)</div>
+                                <div class="urgent-company">㈜핀테크코리아 · 원격</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">180만원</div>
+                                    <div class="urgent-deadline">03-08~03-10</div>
+                                </div>
+                            </div>
+                            <div class="urgent-card">
+                                <div class="urgent-badge">🔥 특채</div>
+                                <div class="repetition-info">
+                                    <i class="fas fa-clock"></i>
+                                    <span>기간별 반복</span>
+                                </div>
+                                <div class="urgent-title">소프트웨어 품질 검증 (2주)</div>
+                                <div class="urgent-company">㈜디지털이노베이션 · 오프라인</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">350만원</div>
+                                    <div class="urgent-deadline">02-13~02-15</div>
+                                </div>
+                            </div>
+                            <div class="urgent-card">
+                                <div class="urgent-badge">⚡ 즉시</div>
+                                <div class="repetition-info">
+                                    <i class="fas fa-clock"></i>
+                                    <span>주별 반복</span>
+                                </div>
+                                <div class="urgent-title">보안 컨설팅 (주 3회, 1개월)</div>
+                                <div class="urgent-company">㈜보안솔루션 · 하이브리드</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">400만원</div>
+                                    <div class="urgent-deadline">03-29~03-31</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 일반 의뢰 섹션 -->
+                <div class="general-section">
+                    <div class="section-title"><i class="fas fa-briefcase"></i><span>일반 의뢰</span></div>
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge new">신규</span>
+                                <div class="card-title">ISO 27001 인증 컨설팅 (2개월)</div>
+                                <div class="card-company">한국품질인증원 · 경기 성남시</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">오프라인</span>
+                                    <span class="card-tag">주 3회</span>
+                                    <span class="schedule-days">(월, 수, 목)</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">800만원</div>
+                                    <div class="news-date">2025-03-15</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge hot">인기</span>
+                                <div class="card-title">정보보호 관리체계 구축 (3개월)</div>
+                                <div class="card-company">㈜데이터시큐리티 · 서울 판교</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">하이브리드</span>
+                                    <span class="card-tag">주 4회</span>
+                                    <span class="schedule-days">(화, 목, 금)</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">1,200만원</div>
+                                    <div class="news-date">2025-03-20</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge">추천</span>
+                                <div class="card-title">네트워크 보안 점검 (1개월)</div>
+                                <div class="card-company">㈜인프라보안 · 경기 분당</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">원격</span>
+                                    <span class="card-tag">주 2회</span>
+                                    <span class="schedule-days">(월, 금)</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">500만원</div>
+                                    <div class="news-date">2025-03-25</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge new">신규</span>
+                                <div class="card-title">데이터 분석 및 대시보드 구축 (1개월)</div>
+                                <div class="card-company">㈜데이터랩 · 서울 강남구</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">원격</span>
+                                    <span class="card-tag">주 3회</span>
+                                    <span class="schedule-days">(화, 목, 금)</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">600만원</div>
+                                    <div class="news-date">2025-03-28</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge hot">인기</span>
+                                <div class="card-title">마케팅 전략 컨설팅 (6주)</div>
+                                <div class="card-company">㈜브랜드마케팅 · 경기 분당</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">하이브리드</span>
+                                    <span class="card-tag">주 2회</span>
+                                    <span class="schedule-days">(월, 금)</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">450만원</div>
+                                    <div class="news-date">2025-04-05</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge">추천</span>
+                                <div class="card-title">앱 UI/UX 디자인 리뉴얼 (3주)</div>
+                                <div class="card-company">㈜모바일솔루션 · 서울 마포구</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">오프라인</span>
+                                    <span class="card-tag">주 4회</span>
+                                    <span class="schedule-days">(월, 화, 수, 목)</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">700만원</div>
+                                    <div class="news-date">2025-04-10</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pagination" id="short-term-pagination"></div>
+                </div>
+            </div>
+            
+            <!-- 전문가 탭 -->
+            <div class="tab-content" id="experts">
+                <!-- 추천 전문가 섹션 -->
+                <div class="experts-section">
+                    <div class="section-title"><i class="fas fa-star"></i><span>추천 전문가</span></div>
+                    <div class="experts-scroll-container">
+                        <div class="experts-scroll">
+                            <div class="expert-card">
+                                <div class="expert-badge">ISMS-P</div>
+                                <div class="expert-title">김보안 전문가</div>
+                                <div class="expert-company">정보보호 컨설팅 15년</div>
+                                <div class="expert-footer">
+                                    <div class="expert-price">시간당 15만원</div>
+                                    <div class="expert-rating"><i class="fas fa-star star"></i> 4.9 (120)</div>
+                                </div>
+                            </div>
+                            <div class="expert-card">
+                                <div class="expert-badge">클라우드</div>
+                                <div class="expert-title">이클라우드 전문가</div>
+                                <div class="expert-company">AWS/Azure 전문가 10년</div>
+                                <div class="expert-footer">
+                                    <div class="expert-price">시간당 12만원</div>
+                                    <div class="expert-rating"><i class="fas fa-star star"></i> 4.8 (95)</div>
+                                </div>
+                            </div>
+                            <div class="expert-card">
+                                <div class="expert-badge">네트워크</div>
+                                <div class="expert-title">박네트워크 전문가</div>
+                                <div class="expert-company">네트워크 아키텍트 20년</div>
+                                <div class="expert-footer">
+                                    <div class="expert-price">시간당 18만원</div>
+                                    <div class="expert-rating"><i class="fas fa-star star"></i> 5.0 (200)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 일반 전문가 섹션 -->
+                <div class="general-section">
+                    <div class="section-title"><i class="fas fa-users"></i><span> 전문가 목록 </span></div>
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge new">신규</span>
+                                <div class="card-title">최PM 전문가</div>
+                                <div class="card-company">애자일/스크럼 마스터 8년</div>
+                                <div class="card-footer">
+                                    <div class="card-price">시간당 14만원</div>
+                                    <div class="card-rating"><i class="fas fa-star star"></i> 4.7 (88)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge hot">인기</span>
+                                <div class="card-title">정디자이너 전문가</div>
+                                <div class="card-company">UI/UX 디자이너 7년</div>
+                                <div class="card-footer">
+                                    <div class="card-price">시간당 10만원</div>
+                                    <div class="card-rating"><i class="fas fa-star star"></i> 4.9 (150)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge">추천</span>
+                                <div class="card-title">이HR 전문가</div>
+                                <div class="card-company">HR 전략/조직문화 12년</div>
+                                <div class="card-footer">
+                                    <div class="card-price">시간당 13만원</div>
+                                    <div class="card-rating"><i class="fas fa-star star"></i> 4.8 (110)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge new">신규</span>
+                                <div class="card-title">백엔드 개발자</div>
+                                <div class="card-company">Java/Spring 6년</div>
+                                <div class="card-footer">
+                                    <div class="card-price">시간당 11만원</div>
+                                    <div class="card-rating"><i class="fas fa-star star"></i> 4.6 (75)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge hot">인기</span>
+                                <div class="card-title">프론트엔드 개발자</div>
+                                <div class="card-company">React/Vue 5년</div>
+                                <div class="card-footer">
+                                    <div class="card-price">시간당 11만원</div>
+                                    <div class="card-rating"><i class="fas fa-star star"></i> 4.8 (92)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge">추천</span>
+                                <div class="card-title">콘텐츠 기획자</div>
+                                <div class="card-company">웹/앱 기획 4년</div>
+                                <div class="card-footer">
+                                    <div class="card-price">시간당 9만원</div>
+                                    <div class="card-rating"><i class="fas fa-star star"></i> 4.7 (65)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pagination" id="experts-pagination"></div>
+                </div>
+            </div>
+            
+            <!-- 교육 탭 -->
+            <div class="tab-content" id="education">
+                <!-- 추천 교육 섹션 -->
+                <div class="urgent-section">
+                    <div class="section-title"><i class="fas fa-fire"></i><span> 추천 전문교육 </span></div>
+                    <div class="urgent-recruitment-container">
+                        <div class="urgent-recruitment-scroll">
+                            <div class="urgent-card">
+                                <div class="urgent-badge">🔥 인기</div>
+                                <div class="urgent-title">ISMS-P 주간 집중 과정</div>
+                                <div class="urgent-company">한국정보보안교육원</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">100만원</div>
+                                    <div class="urgent-deadline">2025-04-01 개강</div>
+                                </div>
+                            </div>
+                            <div class="urgent-card">
+                                <div class="urgent-badge">⚡ 신규</div>
+                                <div class="urgent-title">클라우드 보안 실무 과정</div>
+                                <div class="urgent-company">클라우드아카데미</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">80만원</div>
+                                    <div class="urgent-deadline">2025-03-25 개강</div>
+                                </div>
+                            </div>
+                            <div class="urgent-card">
+                                <div class="urgent-badge">🚀 추천</div>
+                                <div class="urgent-title">프로젝트 관리(PMP) 준비반</div>
+                                <div class="urgent-company">PMI 한국지부</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">120만원</div>
+                                    <div class="urgent-deadline">2025-04-10 개강</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 일반 교육 섹션 -->
+                <div class="general-section">
+                    <div class="section-title"><i class="fas fa-graduation-cap"></i><span>전문 교육 과정 </span></div>
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge new">신규</span>
+                                <div class="card-title">데이터 사이언스 입문</div>
+                                <div class="card-company">데이터스쿨</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">온라인</span>
+                                    <span class="card-tag">6주</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">150만원</div>
+                                    <div class="news-date">2025-04-15 개강</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge hot">인기</span>
+                                <div class="card-title">디지털 마케팅 실전 과정</div>
+                                <div class="card-company">마케팅랩</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">오프라인</span>
+                                    <span class="card-tag">2일</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">60만원</div>
+                                    <div class="news-date">2025-03-30 개강</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge">추천</span>
+                                <div class="card-title">재무 모델링 및 IR 실무</div>
+                                <div class="card-company">파이낸스아카데미</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">하이브리드</span>
+                                    <span class="card-tag">4주</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">180만원</div>
+                                    <div class="news-date">2025-04-20 개강</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge new">신규</span>
+                                <div class="card-title">Node.js 백엔드 개발</div>
+                                <div class="card-company">코딩웍스</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">온라인</span>
+                                    <span class="card-tag">8주</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">200만원</div>
+                                    <div class="news-date">2025-05-01 개강</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge hot">인기</span>
+                                <div class="card-title">기획자를 위한 Figma 실무</div>
+                                <div class="card-company">디자인스쿨</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">온라인</span>
+                                    <span class="card-tag">4주</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">90만원</div>
+                                    <div class="news-date">2025-04-05 개강</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge">추천</span>
+                                <div class="card-title">스타트업 법률 가이드</div>
+                                <div class="card-company">법무법인 청음</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">오프라인</span>
+                                    <span class="card-tag">1일</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">30만원</div>
+                                    <div class="news-date">2025-04-08 개강</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pagination" id="education-pagination"></div>
+                </div>
+            </div>
+            
+            <!-- 구인 탭 -->
+            <div class="tab-content" id="recruitment">
+                <!-- 긴급 공고 섹션 -->
+                <div class="urgent-section">
+                    <div class="section-title"><i class="fas fa-fire"></i><span>긴급 채용</span></div>
+                    <div class="urgent-recruitment-container">
+                        <div class="urgent-recruitment-scroll">
+                            <div class="urgent-card">
+                                <div class="urgent-badge">🔥 긴급</div>
+                                <div class="urgent-title">시니어 백엔드 개발자 채용</div>
+                                <div class="urgent-company">㈜스타트업A · 경기 판교</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">연봉 9,000만원</div>
+                                    <div class="urgent-deadline">~ 2025-03-31 마감</div>
+                                </div>
+                            </div>
+                            <div class="urgent-card">
+                                <div class="urgent-badge">⚡ 즉시</div>
+                                <div class="urgent-title">마케팅 매니저 채용</div>
+                                <div class="urgent-company">㈜커머스B · 서울 강남</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">연봉 6,500만원</div>
+                                    <div class="urgent-deadline">~ 2025-04-05 마감</div>
+                                </div>
+                            </div>
+                            <div class="urgent-card">
+                                <div class="urgent-badge">🚀 특채</div>
+                                <div class="urgent-title">영업 기획자 채용</div>
+                                <div class="urgent-company">㈜솔루션C · 서울 여의도</div>
+                                <div class="urgent-footer">
+                                    <div class="urgent-price">연봉 7,000만원</div>
+                                    <div class="urgent-deadline">~ 2025-04-10 마감</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 채용 공고 섹션 -->
+                <div class="general-section">
+                    <div class="section-title"><i class="fas fa-briefcase"></i><span>채용 공고</span></div>
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge new">신규</span>
+                                <div class="card-title">시니어 정보보안 엔지니어 채용</div>
+                                <div class="card-company">㈜테크솔루션</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">정규직</span>
+                                    <span class="card-tag">경력 5년 이상</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">연봉 8,000만원</div>
+                                    <div class="news-date">~ 2025-04-15 마감</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge hot">인기</span>
+                                <div class="card-title">클라우드 아키텍트 채용</div>
+                                <div class="card-company">㈜클라우드테크</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">계약직</span>
+                                    <span class="card-tag">경력 7년 이상</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">연봉 1억원</div>
+                                    <div class="news-date">~ 2025-04-30 마감</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge">추천</span>
+                                <div class="card-title">백엔드 개발자 채용</div>
+                                <div class="card-company">㈜소프트웨어하우스</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">정규직</span>
+                                    <span class="card-tag">경력 3년 이상</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">연봉 7,000만원</div>
+                                    <div class="news-date">~ 2025-04-20 마감</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge new">신규</span>
+                                <div class="card-title">프로덕트 매니저 채용</div>
+                                <div class="card-company">㈜스타트업A</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">정규직</span>
+                                    <span class="card-tag">경력 5년 이상</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">연봉 9,000만원</div>
+                                    <div class="news-date">~ 2025-05-01 마감</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge hot">인기</span>
+                                <div class="card-title">UX/UI 디자이너 채용</div>
+                                <div class="card-company">㈜디자인스튜디오B</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">계약직</span>
+                                    <span class="card-tag">경력 2년 이상</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">연봉 6,000만원</div>
+                                    <div class="news-date">~ 2025-04-25 마감</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-badge">추천</span>
+                                <div class="card-title">마케팅 전문가 채용</div>
+                                <div class="card-company">㈜브랜드C</div>
+                                <div class="card-tags">
+                                    <span class="card-tag">정규직</span>
+                                    <span class="card-tag">경력 4년 이상</span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">연봉 6,500만원</div>
+                                    <div class="news-date">~ 2025-05-10 마감</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pagination" id="recruitment-pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Side Menu Toggle ---
+            const menuToggle = document.getElementById('menuToggle');
+            const sideMenu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('overlay');
+
+            menuToggle.addEventListener('click', () => {
+                sideMenu.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', () => {
+                sideMenu.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
+            // --- Banner Carousel ---
+            const slides = document.querySelectorAll('.banner-slide');
+            const dots = document.querySelectorAll('.banner-dot');
+            let currentSlide = 0;
+            const slideInterval = 5000; // 5 seconds
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+
+            // Auto-play
+            let slideTimer = setInterval(nextSlide, slideInterval);
+
+            // Manual navigation
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    clearInterval(slideTimer); // Stop auto-play on manual click
+                    currentSlide = parseInt(dot.dataset.slide);
+                    showSlide(currentSlide);
+                    slideTimer = setInterval(nextSlide, slideInterval); // Resume auto-play
+                });
+            });
+
+            // --- Tab Switching ---
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.dataset.tab;
+
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+
+            // --- Detailed Search Toggle ---
+            const detailedSearchBtn = document.getElementById('detailedSearchBtn');
+            const expandedSearch = document.getElementById('expandedSearch');
+
+            detailedSearchBtn.addEventListener('click', () => {
+                expandedSearch.classList.toggle('active');
+                detailedSearchBtn.classList.toggle('active');
+            });
+            
+            // --- Filter Panel Switching ---
+            const filterChips = document.querySelectorAll('.filter-chip');
+            const filterPanels = document.querySelectorAll('.filter-panel');
+
+            filterChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    // Remove active class from all chips
+                    filterChips.forEach(c => c.classList.remove('active'));
+                    // Add active class to clicked chip
+                    chip.classList.add('active');
+
+                    const filterType = chip.dataset.filter;
+                    
+                    // Hide all filter panels
+                    filterPanels.forEach(panel => panel.style.display = 'none');
+                    
+                    const targetPanel = document.getElementById(`${filterType}-filters`);
+                    if (targetPanel) {
+                        targetPanel.style.display = 'block';
+                    }
+                });
+            });
+
+            // --- Short-term card navigation ---
+            document.querySelectorAll('#short-term .urgent-card, #short-term .card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('button') || e.target.closest('a')) return;
+                    window.location.href = '/단기%20의뢰%20상세.html';
+                });
+            });
+
+            document.querySelectorAll('#experts .expert-card, #experts .card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('button') || e.target.closest('a')) return;
+                    window.location.href = '/전문가%20프로필%20상세.html';
+                });
+            });
+
+            const categoryOptions = [
+                { code: 'IT', name: '기술/개발' },
+                { code: 'DS', name: '디자인/크리에이티브' },
+                { code: 'MK', name: '마케팅/홍보' },
+                { code: 'WR', name: '글쓰기/번역' },
+                { code: 'BZ', name: '비즈니스/경영' },
+                { code: 'HR', name: 'HR/인사' },
+                { code: 'ED', name: '교육/강의' },
+                { code: 'BD', name: '건축/설계' },
+                { code: 'IN', name: '인테리어/시공' },
+                { code: 'FC', name: '설비/수리' },
+                { code: 'SP', name: '스포츠/피트니스' },
+                { code: 'BT', name: '뷰티/패션' },
+                { code: 'EV', name: '행사/엔터테인먼트' },
+                { code: 'LF', name: '생활서비스' },
+                { code: 'PS', name: '전문서비스' }
+            ];
+
+            const subCategoryOptions = {
+                IT: [
+                    { code: 'IT01', name: '웹 개발' },
+                    { code: 'IT02', name: '앱 개발' },
+                    { code: 'IT03', name: 'AI/머신러닝' },
+                    { code: 'IT04', name: '데이터 분석' },
+                    { code: 'IT05', name: '보안/인증' },
+                    { code: 'IT06', name: '클라우드/인프라' },
+                    { code: 'IT07', name: '게임 개발' },
+                    { code: 'IT08', name: '블록체인/Web3' }
+                ],
+                DS: [
+                    { code: 'DS01', name: '영상 편집' },
+                    { code: 'DS02', name: '모션그래픽/3D' },
+                    { code: 'DS03', name: '그래픽 디자인' },
+                    { code: 'DS04', name: '일러스트/캐릭터' },
+                    { code: 'DS05', name: 'UI/UX 디자인' },
+                    { code: 'DS06', name: '제품/산업 디자인' },
+                    { code: 'DS07', name: '사진/촬영' },
+                    { code: 'DS08', name: '음악/사운드' }
+                ],
+                MK: [
+                    { code: 'MK01', name: '퍼포먼스 마케팅' },
+                    { code: 'MK02', name: 'SNS 마케팅' },
+                    { code: 'MK03', name: '콘텐츠 마케팅' },
+                    { code: 'MK04', name: '브랜딩/CI' },
+                    { code: 'MK05', name: 'PR/언론홍보' },
+                    { code: 'MK06', name: '영업/세일즈' }
+                ],
+                WR: [
+                    { code: 'WR01', name: '카피라이팅' },
+                    { code: 'WR02', name: '콘텐츠 글쓰기' },
+                    { code: 'WR03', name: '번역/통역' },
+                    { code: 'WR04', name: '출판/교정' }
+                ],
+                BZ: [
+                    { code: 'BZ01', name: '경영/전략 컨설팅' },
+                    { code: 'BZ02', name: '창업/스타트업' },
+                    { code: 'BZ03', name: '재무/회계' },
+                    { code: 'BZ04', name: '세무/기장' },
+                    { code: 'BZ05', name: '법률/계약' },
+                    { code: 'BZ06', name: '특허/지식재산' }
+                ],
+                HR: [
+                    { code: 'HR01', name: '채용/헤드헌팅' },
+                    { code: 'HR02', name: '인사제도/조직' },
+                    { code: 'HR03', name: '노무/급여' },
+                    { code: 'HR04', name: '커리어 코칭' }
+                ],
+                ED: [
+                    { code: 'ED01', name: '기업교육/강의' },
+                    { code: 'ED02', name: '외국어 교육' },
+                    { code: 'ED03', name: '입시/학원' },
+                    { code: 'ED04', name: '자격증/실무' }
+                ],
+                BD: [
+                    { code: 'BD01', name: '건축 설계' },
+                    { code: 'BD02', name: '토목/조경' },
+                    { code: 'BD03', name: '도시/부동산' }
+                ],
+                IN: [
+                    { code: 'IN01', name: '인테리어 디자인' },
+                    { code: 'IN02', name: '도배/바닥' },
+                    { code: 'IN03', name: '주방/욕실' },
+                    { code: 'IN04', name: '목공/가구' }
+                ],
+                FC: [
+                    { code: 'FC01', name: '전기/조명' },
+                    { code: 'FC02', name: '설비/배관' },
+                    { code: 'FC03', name: '방수/단열' },
+                    { code: 'FC04', name: '철거/청소' }
+                ],
+                SP: [
+                    { code: 'SP01', name: '골프/라켓' },
+                    { code: 'SP02', name: '피트니스/PT' },
+                    { code: 'SP03', name: '요가/필라테스' },
+                    { code: 'SP04', name: '수영/아웃도어' },
+                    { code: 'SP05', name: '댄스/무술' }
+                ],
+                BT: [
+                    { code: 'BT01', name: '메이크업/헤어' },
+                    { code: 'BT02', name: '네일/속눈썹' },
+                    { code: 'BT03', name: '패션/스타일링' }
+                ],
+                EV: [
+                    { code: 'EV01', name: '웨딩/돌잔치' },
+                    { code: 'EV02', name: '행사/컨퍼런스' },
+                    { code: 'EV03', name: 'MC/공연' }
+                ],
+                LF: [
+                    { code: 'LF01', name: '반려동물' },
+                    { code: 'LF02', name: '청소/정리' },
+                    { code: 'LF03', name: '이사/운송' },
+                    { code: 'LF04', name: '수리/설치' }
+                ],
+                PS: [
+                    { code: 'PS01', name: '의료/헬스케어' },
+                    { code: 'PS02', name: '공학/제조' },
+                    { code: 'PS03', name: '물류/무역' },
+                    { code: 'PS04', name: '농업/식품' }
+                ]
+            };
+
+            const shortTermCategoryContainer = document.querySelector('#short-term-filters .filter-group .filter-options');
+            if (shortTermCategoryContainer) {
+                shortTermCategoryContainer.innerHTML = `<select class="filter-select" id="shortTermCategorySelect" name="category"><option value="ALL">전체</option>${categoryOptions.map(c => `<option value="${c.code}">${c.name}</option>`).join('')}</select>`;
+            }
+
+            const expertsCategoryContainer = document.querySelector('#experts-filters .filter-group .filter-options');
+            if (expertsCategoryContainer) {
+                expertsCategoryContainer.innerHTML = `<select class="filter-select" id="expertsCategorySelect" name="expertise"><option value="ALL">전체</option>${categoryOptions.map(c => `<option value="${c.code}">${c.name}</option>`).join('')}</select>`;
+            }
+
+            function populateSubcategories(target, majorCode) {
+                const containerIdMap = {
+                    short: 'short-term-suboptions',
+                    experts: 'experts-suboptions',
+                    education: 'education-suboptions',
+                    recruitment: 'recruitment-suboptions'
+                };
+                const selectIdMap = {
+                    short: 'shortTermSubcategorySelect',
+                    experts: 'expertsSubcategorySelect',
+                    education: 'educationSubcategorySelect',
+                    recruitment: 'recruitmentSubcategorySelect'
+                };
+                const container = document.getElementById(containerIdMap[target]);
+                if (!container) return;
+                let options = `<option value="ALL">전체</option>`;
+                if (majorCode && majorCode !== 'ALL' && subCategoryOptions[majorCode]) {
+                    options += subCategoryOptions[majorCode].map(sc => `<option value="${sc.code}">${sc.name}</option>`).join('');
+                }
+                container.innerHTML = `<select class="filter-select" id="${selectIdMap[target]}" name="subcategory">${options}</select>`;
+            }
+
+            populateSubcategories('short', 'ALL');
+            populateSubcategories('experts', 'ALL');
+            populateSubcategories('education', 'ALL');
+            populateSubcategories('recruitment', 'ALL');
+
+            const shortMajorSelect = document.getElementById('shortTermCategorySelect');
+            if (shortMajorSelect) {
+                shortMajorSelect.addEventListener('change', (e) => {
+                    populateSubcategories('short', e.target.value);
+                });
+            }
+
+            const expertsMajorSelect = document.getElementById('expertsCategorySelect');
+            if (expertsMajorSelect) {
+                expertsMajorSelect.addEventListener('change', (e) => {
+                    populateSubcategories('experts', e.target.value);
+                });
+            }
+
+            const educationMajorContainer = document.getElementById('education-major');
+            if (educationMajorContainer) {
+                educationMajorContainer.innerHTML = `<select class="filter-select" id="educationCategorySelect" name="edu-category"><option value="ALL">전체</option>${categoryOptions.map(c => `<option value='${c.code}'>${c.name}</option>`).join('')}</select>`;
+            }
+
+            const educationMajorSelect = document.getElementById('educationCategorySelect');
+            if (educationMajorSelect) {
+                educationMajorSelect.addEventListener('change', (e) => {
+                    populateSubcategories('education', e.target.value);
+                });
+            }
+
+            const recruitmentMajorContainer = document.getElementById('recruitment-major');
+            if (recruitmentMajorContainer) {
+                recruitmentMajorContainer.innerHTML = `<select class="filter-select" id="recruitmentCategorySelect" name="recruitment-category"><option value="ALL">전체</option>${categoryOptions.map(c => `<option value='${c.code}'>${c.name}</option>`).join('')}</select>`;
+            }
+
+            const recruitmentMajorSelect = document.getElementById('recruitmentCategorySelect');
+            if (recruitmentMajorSelect) {
+                recruitmentMajorSelect.addEventListener('change', (e) => {
+                    populateSubcategories('recruitment', e.target.value);
+                });
+            }
+
+            function setupPagination(tabId, itemsPerPage) {
+                const grid = document.querySelector(`#${tabId} .general-section .card-grid`);
+                if (!grid) return;
+                const cards = Array.from(grid.querySelectorAll('.card'));
+                const totalPages = Math.max(1, Math.ceil(cards.length / itemsPerPage));
+                let currentPage = 1;
+                const pagination = document.getElementById(`${tabId}-pagination`);
+                if (!pagination) return;
+                function renderControls() {
+                    const parts = [];
+                    parts.push(`<button class="page-btn prev" ${currentPage === 1 ? 'disabled' : ''} data-page="${currentPage - 1}">이전</button>`);
+                    for (let i = 1; i <= totalPages; i++) {
+                        parts.push(`<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`);
+                    }
+                    parts.push(`<button class="page-btn next" ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">다음</button>`);
+                    pagination.innerHTML = parts.join('');
+                }
+                function renderPage(page) {
+                    currentPage = page;
+                    cards.forEach((card, idx) => {
+                        card.style.display = (Math.floor(idx / itemsPerPage) + 1) === page ? '' : 'none';
+                    });
+                    renderControls();
+                }
+                pagination.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.page-btn');
+                    if (!btn) return;
+                    const page = parseInt(btn.dataset.page, 10);
+                    if (!Number.isFinite(page)) return;
+                    if (page < 1 || page > totalPages) return;
+                    renderPage(page);
+                });
+                renderPage(1);
+            }
+
+            setupPagination('short-term', 20);
+            setupPagination('experts', 20);
+            setupPagination('education', 20);
+            setupPagination('recruitment', 20);
+        });
+    </script>
+</body>
+</html>

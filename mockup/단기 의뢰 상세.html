@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>의뢰 상세 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- Detail Page Styles --- */
+        .detail-container {
+            padding-bottom: 80px; /* 하단 고정 버튼 공간 확보 */
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-button, .share-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .page-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        /* --- Section Styles --- */
+        .section {
+            background-color: var(--card-background);
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        /* Company Info Section */
+        .company-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            background-color: #e9ecef;
+        }
+
+        .company-basic-info {
+            flex-grow: 1;
+        }
+
+        .company-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .company-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .company-profile-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .company-description {
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .company-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .company-links a {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        /* Request Detail Section */
+        .request-header {
+            margin-bottom: 15px;
+        }
+
+        .request-badges {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge.urgent {
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .badge.remote {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .request-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .request-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .repetition-info {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 15px 0;
+        }
+
+        .classification-info {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 8px 0;
+        }
+
+        .classification-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        .repetition-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        .request-content h4 {
+            font-size: 1.1rem;
+            margin: 20px 0 10px;
+        }
+
+        .required-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .skill-tag {
+            padding: 5px 12px;
+            background-color: var(--light-color);
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .collaboration-conditions {
+            margin-bottom: 15px;
+        }
+
+        .condition-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .condition-item i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .budget-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .budget-amount {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .budget-note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Attachment Section */
+        .attachment-list {
+            margin-top: 10px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .attachment-item:last-child {
+            border-bottom: none;
+        }
+
+        .attachment-item i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .attachment-name {
+            flex-grow: 1;
+        }
+
+        .download-btn {
+            padding: 5px 10px;
+            background-color: var(--light-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* --- Bottom Action Buttons --- */
+        .action-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            background-color: var(--card-background);
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .bookmark-btn, .chat-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            margin-right: 5px;
+        }
+
+        .apply-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .bookmark-btn.bookmarked {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .close-modal {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .price-input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .price-input-group input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px 0 0 4px;
+            border-right: none;
+        }
+
+        .price-unit {
+            padding: 10px;
+            background-color: var(--light-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0 4px 4px 0;
+            border-left: none;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .cancel-btn {
+            padding: 10px 20px;
+            background-color: var(--light-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="detail-container">
+        <!-- Detail Header -->
+        <header class="detail-header">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="page-title">의뢰 상세</h1>
+            <button class="share-button">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </header>
+
+        <!-- Company Info Section -->
+        <section class="section company-info-section">
+            <div class="company-header">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><rect width='60' height='60' rx='8' fill='%234a6fdc'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif' font-size='24' fill='white'>TS</text></svg>" alt="기업 로고" class="company-logo">
+                <div class="company-basic-info">
+                    <h2 class="company-name">㈜테크솔루션</h2>
+                    <div class="company-meta">
+                        <span class="company-industry">IT/소프트웨어</span>
+                        <span class="company-size">50~100명 규모</span>
+                        <span class="company-location">서울 강남구</span>
+                    </div>
+                </div>
+                <button class="company-profile-btn">프로필 보기</button>
+            </div>
+            <div class="company-description">
+                <p>AI 기반 솔루션을 개발하는 스타트업으로, 보안 진단 및 컨설팅 서비스를 제공합니다.</p>
+            </div>
+            <div class="company-links">
+                <a href="#" class="company-website">
+                    <i class="fas fa-globe"></i> 웹사이트
+                </a>
+                <a href="#" class="company-linkedin">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+            </div>
+        </section>
+
+        <!-- Request Detail Section -->
+        <section class="section request-detail-section">
+            <div class="request-header">
+                <div class="request-badges">
+                    <span class="badge urgent">🔥 긴급</span>
+                    <span class="badge remote">원격 가능</span>
+                </div>
+                <h3 class="request-title">보안 진단 보고서 작성 (3일)</h3>
+                <div class="classification-info">
+                    <i class="fas fa-tags"></i>
+                    <span>분류: 기술/개발 > 보안/인증 (IT05)</span>
+                </div>
+                <div class="request-meta">
+                    <span class="request-date">등록일: 2025-03-15</span>
+                    <span class="request-deadline">마감일: 2025-03-20</span>
+                    <span class="request-applicants">지원자: 3명</span>
+                </div>
+            </div>
+            
+            <div class="repetition-info">
+                <i class="fas fa-clock"></i>
+                <span>기간별 반복</span>
+            </div>
+            
+            <div class="request-content">
+                <h4>업무 내용</h4>
+                <p>웹 애플리케이션 보안 진단 결과를 바탕으로 상세 보고서 작성이 필요합니다. 취약점 분석 및 개선 방안 제안까지 포함됩니다.</p>
+                
+                <h4>필요 역량</h4>
+                <div class="required-skills">
+                    <span class="skill-tag">웹 애플리케이션 보안</span>
+                    <span class="skill-tag">보고서 작성</span>
+                    <span class="skill-tag">취약점 분석</span>
+                </div>
+                
+                <h4>협업 조건</h4>
+                <div class="collaboration-conditions">
+                    <div class="condition-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>기간: 3일 (2025-03-26 ~ 2025-03-28)</span>
+                    </div>
+                    <div class="condition-item">
+                        <i class="fas fa-clock"></i>
+                        <span>시간: 총 24시간 (일 8시간)</span>
+                    </div>
+                    <div class="condition-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>근무 형태: 원격/오프라인 혼합</span>
+                    </div>
+                    <div class="condition-item">
+                        <i class="fas fa-comments"></i>
+                        <span>커뮤니케이션: 슬랙, 화상회의</span>
+                    </div>
+                </div>
+                
+                <h4>예산</h4>
+                <div class="budget-info">
+                    <span class="budget-amount">150만원</span>
+                    <span class="budget-note">(세금 별도)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Attachment Section -->
+        <section class="section attachment-section">
+            <h4 class="section-title">첨부 파일</h4>
+            <div class="attachment-list">
+                <div class="attachment-item">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="attachment-name">보안 진단 결과 요약.pdf</span>
+                    <button class="download-btn">다운로드</button>
+                </div>
+                <div class="attachment-item">
+                    <i class="fas fa-file-excel"></i>
+                    <span class="attachment-name">취약점 목록.xlsx</span>
+                    <button class="download-btn">다운로드</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bottom Action Buttons -->
+    <div class="action-buttons">
+        <button class="bookmark-btn" id="bookmarkBtn">
+            <i class="far fa-bookmark"></i> 북마크
+        </button>
+        <button class="chat-btn" id="chatBtn">
+            <i class="fas fa-comment-dots"></i> 채팅 문의
+        </button>
+        <button class="apply-btn" id="applyBtn">
+            <i class="fas fa-paper-plane"></i> 제안서 보내기
+        </button>
+    </div>
+
+    <!-- Proposal Modal -->
+    <div class="modal-overlay" id="proposalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>제안서 작성</h3>
+                <button class="close-modal" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="proposal-price">제안 가격</label>
+                    <div class="price-input-group">
+                        <input type="number" id="proposal-price" placeholder="0">
+                        <span class="price-unit">원</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="available-time">제공 가능 시간</label>
+                    <input type="text" id="available-time" placeholder="예: 평일 오후 2시간, 주말 4시간">
+                </div>
+                
+                <div class="form-group">
+                    <label for="proposal-approach">접근 방식</label>
+                    <textarea id="proposal-approach" rows="4" placeholder="보안 진단 결과를 분석하고 보고서를 작성할 방법을 설명해주세요."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="proposal-portfolio">포트폴리오 링크</label>
+                    <input type="text" id="proposal-portfolio" placeholder="관련 경험을 보여줄 수 있는 포트폴리오 링크">
+                </div>
+                
+                <div class="form-group">
+                    <label for="proposal-message">자기소개 메시지</label>
+                    <textarea id="proposal-message" rows="5" placeholder="이 프로젝트에 왜 적합한지 간단히 소개해주세요."></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeModal()">취소</button>
+                <button class="submit-btn" onclick="submitProposal()">제안서 보내기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- JavaScript Functionality ---
+
+        // 뒤로가기 기능
+        function goBack() {
+            window.history.back();
+        }
+
+        // 모달 열기/닫기
+        function openModal() {
+            document.getElementById('proposalModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('proposalModal').classList.remove('active');
+        }
+
+        // 제안서 제출
+        function submitProposal() {
+            const price = document.getElementById('proposal-price').value;
+            const time = document.getElementById('available-time').value;
+            const approach = document.getElementById('proposal-approach').value;
+            const portfolio = document.getElementById('proposal-portfolio').value;
+            const message = document.getElementById('proposal-message').value;
+            
+            // 유효성 검사
+            if (!price || !time || !approach || !message) {
+                alert('필수 항목을 모두 입력해주세요.');
+                return;
+            }
+            
+            // 제안서 제출 로직 (API 호출 등)
+            console.log('제안서 제출:', { price, time, approach, portfolio, message });
+            
+            // 성공 메시지 표시
+            alert('제안서가 성공적으로 제출되었습니다.');
+            
+            // 모달 닫기
+            closeModal();
+            
+            // 폼 초기화
+            document.getElementById('proposal-price').value = '';
+            document.getElementById('available-time').value = '';
+            document.getElementById('proposal-approach').value = '';
+            document.getElementById('proposal-portfolio').value = '';
+            document.getElementById('proposal-message').value = '';
+        }
+
+        // 페이지 로드 시 이벤트 리스너 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            // 제안서 보내기 버튼 클릭 시 모달 열기
+            document.getElementById('applyBtn').addEventListener('click', openModal);
+            
+            // 북마크 토글
+            const bookmarkBtn = document.getElementById('bookmarkBtn');
+            bookmarkBtn.addEventListener('click', function() {
+                this.classList.toggle('bookmarked');
+                const icon = this.querySelector('i');
+                if (this.classList.contains('bookmarked')) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    this.innerHTML = '<i class="fas fa-bookmark"></i> 북마크됨';
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    this.innerHTML = '<i class="far fa-bookmark"></i> 북마크';
+                }
+            });
+            
+            // 채팅 문의 버튼 클릭 이벤트
+            document.getElementById('chatBtn').addEventListener('click', function() {
+                alert('채팅 화면으로 이동합니다.');
+                // 실제 채팅 화면으로 이동하는 로직 구현
+            });
+            
+            // 첨부 파일 다운로드 버튼 클릭 이벤트
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const fileName = this.previousElementSibling.textContent;
+                    alert(`${fileName} 파일을 다운로드합니다.`);
+                    // 실제 다운로드 로직 구현
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

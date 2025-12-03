@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전문가 서비스 결제 관리 - SuperSlice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-info h2 {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .service-tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            padding: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .service-tab {
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .service-tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .service-tab:hover:not(.active) {
+            background: #ecf0f1;
+        }
+
+        .service-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .service-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upgrade-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .upgrade-card.recommended {
+            border-color: #e74c3c;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommended-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .upgrade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .upgrade-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .upgrade-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .upgrade-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .upgrade-features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #34495e;
+        }
+
+        .upgrade-features .icon {
+            color: #27ae60;
+        }
+
+        .payment-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .payment-date {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .payment-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-right: 16px;
+        }
+
+        .payment-status {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .payment-status.paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .payment-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .payment-status.overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .coupon-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .coupon-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .coupon-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .coupon-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .coupon-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .coupon-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .coupon-item.available {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .coupon-item.used {
+            opacity: 0.6;
+            border-color: #6c757d;
+        }
+
+        .coupon-details {
+            flex: 1;
+        }
+
+        .coupon-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .coupon-description {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .coupon-discount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .total-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .total-row:last-child {
+            border-bottom: none;
+            padding-top: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .discount-row {
+            color: #27ae60;
+        }
+
+        .total-amount {
+            color: #e74c3c;
+            font-size: 24px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .payment-methods {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-method:hover {
+            border-color: #3498db;
+        }
+
+        .payment-method.selected {
+            border-color: #3498db;
+            background: #ecf0f1;
+        }
+
+        .payment-method-icon {
+            width: 40px;
+            height: 40px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 20px;
+        }
+
+        .payment-method-info {
+            flex: 1;
+        }
+
+        .payment-method-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .payment-method-desc {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-tabs {
+                flex-direction: column;
+            }
+
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .upgrade-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .payment-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .coupon-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>전문가 서비스 결제 관리</h1>
+            <p>전문가 등록, 추천 전문가 업그레이드, 교육비 결제를 관리합니다</p>
+        </div>
+
+        <!-- Service Tabs -->
+        <div class="service-tabs">
+            <div class="service-tab active" data-service="upgrade">전문가 등록</div>
+            <div class="service-tab" data-service="subscription">구독 서비스</div>
+            <div class="service-tab" data-service="coupons">쿠폰 관리</div>
+            <div class="service-tab" data-service="history">결제 내역</div>
+        </div>
+
+        <!-- 전문가 등록 섹션 -->
+        <div class="service-section active" id="upgrade-section">
+            <h3 class="section-title">
+                <span>⭐</span>
+                <span>추천 전문가 등록</span>
+            </h3>
+
+            <div class="upgrade-card">
+                <div class="upgrade-header">
+                    <div>
+                        <div class="upgrade-title">전문가 기본 등록</div>
+                        <div style="color: #7f8c8d; font-size: 14px; margin-top: 4px;">기본 전문가 프로필 등록</div>
+                    </div>
+                    <div class="upgrade-price">무료</div>
+                </div>
+                <ul class="upgrade-features">
+                    <li><span class="icon">✓</span>기본 프로필 생성</li>
+                    <li><span class="icon">✓</span>간단 컨설팅 수신</li>
+                    <li><span class="icon">✓</span>기본 검색 노출</li>
+                </ul>
+                <button class="btn btn-primary" onclick="showUpgradeModal('basic')">신청하기</button>
+            </div>
+
+            <div class="upgrade-card recommended">
+                <div class="recommended-badge">가장 인기</div>
+                <div class="upgrade-header">
+                    <div>
+                        <div class="upgrade-title">추천 전문가 등록</div>
+                        <div style="color: #7f8c8d; font-size: 14px; margin-top: 4px;">프리미엄 전문가 등록 및 검증</div>
+                    </div>
+                    <div class="upgrade-price">₩150,000</div>
+                </div>
+                <ul class="upgrade-features">
+                    <li><span class="icon">✓</span>프리미엄 프로필 생성</li>
+                    <li><span class="icon">✓</span>'추천 전문가' 뱃지 표시</li>
+                    <li><span class="icon">✓</span>상위 검색 결과 노출</li>
+                    <li><span class="icon">✓</span>전문가 신원 검증</li>
+                    <li><span class="icon">✓</span>우선 컨설팅 연결</li>
+                    <li><span class="icon">✓</span>월간 성과 분석 리포트</li>
+                </ul>
+                <button class="btn btn-success" onclick="showUpgradeModal('premium')">지금 등록</button>
+            </div>
+
+            <div class="upgrade-card">
+                <div class="upgrade-header">
+                    <div>
+                        <div class="upgrade-title">전문가 등록 + 교육 패키지</div>
+                        <div style="color: #7f8c8d; font-size: 14px; margin-top: 4px;">전문가 등록 + 교육비 할인</div>
+                    </div>
+                    <div class="upgrade-price">₩300,000</div>
+                </div>
+                <ul class="upgrade-features">
+                    <li><span class="icon">✓</span>추천 전문가 모든 혜택</li>
+                    <li><span class="icon">✓</span>선택 교육 3개 과정 무료</li>
+                    <li><span class="icon">✓</span>1:1 전문가 멘토링 (3회)</li>
+                    <li><span class="icon">✓</span>컨설팅 계약서 템플릿 제공</li>
+                    <li><span class="icon">✓</span>마케팅 자료 제공</li>
+                </ul>
+                <button class="btn btn-warning" onclick="showUpgradeModal('package')">패키지 신청</button>
+            </div>
+        </div>
+
+        <!-- 구독 서비스 섹션 -->
+        <div class="service-section" id="subscription-section">
+            <h3 class="section-title">
+                <span>🎓</span>
+                <span>전문가 구독 서비스</span>
+            </h3>
+
+            <div class="coupon-section">
+                <div style="margin-bottom: 16px;">
+                    <label style="font-weight: 500; color: #2c3e50; display: block; margin-bottom: 8px;">구독 쿠폰 적용</label>
+                    <div class="coupon-input-group">
+                        <input type="text" class="coupon-input" id="subscriptionCoupon" placeholder="쿠폰 코드를 입력하세요">
+                        <button class="btn btn-primary" onclick="applySubscriptionCoupon()">쿠폰 적용</button>
+                    </div>
+                </div>
+                <div id="subscriptionCouponMessage" style="display: none; padding: 12px; border-radius: 8px; margin-bottom: 16px;"></div>
+            </div>
+
+            <!-- 베이직 플랜 -->
+            <div class="upgrade-card">
+                <div class="upgrade-header">
+                    <div>
+                        <div class="upgrade-title">전문가 베이직 플랜</div>
+                        <div style="color: #7f8c8d; font-size: 14px; margin-top: 4px;">월간 최신 정보 및 교육 자료 제공</div>
+                    </div>
+                    <div class="upgrade-price">₩30,000/월</div>
+                </div>
+                <ul class="upgrade-features">
+                    <li><span class="icon">✓</span>월간 최신 기술 동향 뉴스레터</li>
+                    <li><span class="icon">✓</span>교육 자료 및 템플릿 무료 다운로드</li>
+                    <li><span class="icon">✓</span>온라인 커뮤니티 접근 가능</li>
+                    <li><span class="icon">✓</span>월간 전문가 포럼 참여</li>
+                </ul>
+                <button class="btn btn-primary" onclick="showSubscriptionModal('basic')">구독하기</button>
+            </div>
+
+            <!-- 스탠다드 플랜 -->
+            <div class="upgrade-card recommended">
+                <div class="recommended-badge">가장 인기</div>
+                <div class="upgrade-header">
+                    <div>
+                        <div class="upgrade-title">전문가 스탠다드 플랜</div>
+                        <div style="color: #7f8c8d; font-size: 14px; margin-top: 4px;">종합 전문가 육성 프로그램</div>
+                    </div>
+                    <div class="upgrade-price">₩80,000/월</div>
+                </div>
+                <ul class="upgrade-features">
+                    <li><span class="icon">✓</span>베이직 플랜 모든 혜택</li>
+                    <li><span class="icon">✓</span>월간 온라인 교육 (4시간)</li>
+                    <li><span class="icon">✓</span>1:1 멘토링 (월 1회)</li>
+                    <li><span class="icon">✓</span>전문가 성과 분석 리포트</li>
+                    <li><span class="icon">✓</span>구독자 전용 교육 자료</li>
+                    <li><span class="icon">✓</span>'전문가 인증' 뱃지 표시</li>
+                </ul>
+                <button class="btn btn-success" onclick="showSubscriptionModal('standard')">지금 구독</button>
+            </div>
+
+            <!-- 프리미엄 플랜 -->
+            <div class="upgrade-card">
+                <div class="upgrade-header">
+                    <div>
+                        <div class="upgrade-title">전문가 프리미엄 플랜</div>
+                        <div style="color: #7f8c8d; font-size: 14px; margin-top: 4px;">VIP 전문가 종합 지원</div>
+                    </div>
+                    <div class="upgrade-price">₩150,000/월</div>
+                </div>
+                <ul class="upgrade-features">
+                    <li><span class="icon">✓</span>스탠다드 플랜 모든 혜택</li>
+                    <li><span class="icon">✓</span>월간 온라인 교육 (8시간)</li>
+                    <li><span class="icon">✓</span>1:1 멘토링 (월 2회)</li>
+                    <li><span class="icon">✓</span>전담 컨설팅 매니저 배정</li>
+                    <li><span class="icon">✓</span>구독자 전용 컨설팅 연결</li>
+                    <li><span class="icon">✓</span>VIP 교육 자료 라이브러리</li>
+                    <li><span class="icon">✓</span>연간 컨퍼런스 무료 참석</li>
+                </ul>
+                <button class="btn btn-warning" onclick="showSubscriptionModal('premium')">프리미엄 구독</button>
+            </div>
+
+            <!-- 개별 교육 구독 -->
+            <div class="upgrade-card">
+                <div class="upgrade-header">
+                    <div>
+                        <div class="upgrade-title">개별 교육 과정 구독</div>
+                        <div style="color: #7f8c8d; font-size: 14px; margin-top: 4px;">필요한 과정만 선택하여 구독</div>
+                    </div>
+                    <div class="upgrade-price">과정별 가격</div>
+                </div>
+                <ul class="upgrade-features">
+                    <li><span class="icon">✓</span>ISMS-P 전문가 과정: ₩45,000/월</li>
+                    <li><span class="icon">✓</span>개인정보보호 과정: ₩35,000/월</li>
+                    <li><span class="icon">✓</span>ISO 27001 과정: ₩60,000/월</li>
+                    <li><span class="icon">✓</span>품질경영 과정: ₩25,000/월</li>
+                    <li><span class="icon">✓</span>수강 기간 유연성</li>
+                </ul>
+                <button class="btn btn-primary" onclick="showSubscriptionModal('custom')">과정 선택</button>
+            </div>
+
+            <!-- 구독 요약 -->
+            <div class="total-section">
+                <div class="total-row">
+                    <span>선택 구독 수</span>
+                    <span id="selectedSubscriptions">0개</span>
+                </div>
+                <div class="total-row">
+                    <span>월 구독료</span>
+                    <span id="monthlyTotal">₩0</span>
+                </div>
+                <div class="total-row discount-row" id="subscriptionDiscountRow" style="display: none;">
+                    <span>쿠폰 할인</span>
+                    <span id="subscriptionDiscountAmount">-₩0</span>
+                </div>
+                <div class="total-row">
+                    <span>월 납부금액</span>
+                    <span class="total-amount" id="finalMonthlyAmount">₩0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 쿠폰 관리 섹션 -->
+        <div class="service-section" id="coupons-section">
+            <h3 class="section-title">
+                <span>🎫</span>
+                <span>나의 쿠폰</span>
+            </h3>
+
+            <div class="coupon-list">
+                <div class="coupon-item available">
+                    <div class="coupon-details">
+                        <div class="coupon-name">신규 전문가 웰컴 쿠폰</div>
+                        <div class="coupon-description">추천 전문가 등록 시 20% 할인 (3개월 내 사용 가능)</div>
+                    </div>
+                    <div class="coupon-discount">-20%</div>
+                    <button class="btn btn-primary" style="margin-left: 16px;">사용하기</button>
+                </div>
+
+                <div class="coupon-item available">
+                    <div class="coupon-details">
+                        <div class="coupon-name">교육비 10% 할인 쿠폰</div>
+                        <div class="coupon-description">모든 교육 과정 10% 할인 (6개월 내 사용 가능)</div>
+                    </div>
+                    <div class="coupon-discount">-10%</div>
+                    <button class="btn btn-primary" style="margin-left: 16px;">사용하기</button>
+                </div>
+
+                <div class="coupon-item used">
+                    <div class="coupon-details">
+                        <div class="coupon-name">첫 결제 15% 할인</div>
+                        <div class="coupon-description">사용 완료 - 2024년 10월 15일</div>
+                    </div>
+                    <div class="coupon-discount" style="color: #6c757d;">-15%</div>
+                    <button class="btn" style="margin-left: 16px; background: #6c757d; color: white;" disabled>사용됨</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결제 내역 섹션 -->
+        <div class="service-section" id="history-section">
+            <h3 class="section-title">
+                <span>📋</span>
+                <span>결제 내역</span>
+            </h3>
+
+            <div class="payment-item">
+                <div class="payment-info">
+                    <div class="payment-title">추천 전문가 등록비</div>
+                    <div class="payment-date">2024년 10월 15일 | 신용카드</div>
+                </div>
+                <div class="payment-amount">₩150,000</div>
+                <span class="payment-status paid">결제 완료</span>
+            </div>
+
+            <div class="payment-item">
+                <div class="payment-info">
+                    <div class="payment-title">품질경영 전문가 과정</div>
+                    <div class="payment-date">2024년 9월 20일 | 계좌이체</div>
+                </div>
+                <div class="payment-amount">₩380,000</div>
+                <span class="payment-status paid">결제 완료</span>
+            </div>
+
+            <div class="payment-item">
+                <div class="payment-info">
+                    <div class="payment-title">컨설팅 계약서 템플릿</div>
+                    <div class="payment-date">2024년 8월 10일 | 신용카드</div>
+                </div>
+                <div class="payment-amount">₩50,000</div>
+                <span class="payment-status paid">결제 완료</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 결제 모달 -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">결제 정보</div>
+                <div class="modal-subtitle" id="paymentSubtitle">안전한 결제 시스템을 통해 결제를 진행합니다</div>
+            </div>
+
+            <div class="success-message" id="successMessage" style="display: none;">
+                결제가 성공적으로 완료되었습니다!
+            </div>
+
+            <div id="paymentForm">
+                <div class="form-group">
+                    <label class="form-label">결제 방식 선택</label>
+                    <div class="payment-methods">
+                        <div class="payment-method selected" data-method="card">
+                            <div class="payment-method-icon">💳</div>
+                            <div class="payment-method-info">
+                                <div class="payment-method-name">신용카드/체크카드</div>
+                                <div class="payment-method-desc">안전한 카드 결제</div>
+                            </div>
+                        </div>
+                        <div class="payment-method" data-method="transfer">
+                            <div class="payment-method-icon">🏦</div>
+                            <div class="payment-method-info">
+                                <div class="payment-method-name">계좌이체</div>
+                                <div class="payment-method-desc">무통장입금 또는 온라인 이체</div>
+                            </div>
+                        </div>
+                        <div class="payment-method" data-method="kakao">
+                            <div class="payment-method-icon">💬</div>
+                            <div class="payment-method-info">
+                                <div class="payment-method-name">카카오페이</div>
+                                <div class="payment-method-desc">간편한 모바일 결제</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">결제 금액</label>
+                    <input type="text" class="form-input" id="paymentAmount" readonly style="font-size: 18px; font-weight: bold;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">이메일 주소</label>
+                    <input type="email" class="form-input" placeholder="영수증 발송용 이메일" value="expert@example.com">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn" onclick="closePaymentModal()">취소</button>
+                <button class="btn btn-success" onclick="processPayment()">결제하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 서비스 탭 전환
+        const serviceTabs = document.querySelectorAll('.service-tab');
+        const serviceSections = document.querySelectorAll('.service-section');
+
+        serviceTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const service = tab.getAttribute('data-service');
+
+                // 탭 활성화
+                serviceTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // 섹션 표시
+                serviceSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(`${service}-section`).classList.add('active');
+            });
+        });
+
+        // 결제 모달
+        function showPaymentModal(course) {
+            const modal = document.getElementById('paymentModal');
+            const subtitle = document.getElementById('paymentSubtitle');
+            const amount = document.getElementById('paymentAmount');
+
+            const courses = {
+                'ism': { name: 'ISMS-P 인증 전문가 과정', price: 450000 },
+                'pippa': { name: '개인정보보호 전문가 양성 과정', price: 350000 },
+                'iso': { name: 'ISO 27001 심사원 과정', price: 600000 }
+            };
+
+            const courseInfo = courses[course];
+            subtitle.textContent = courseInfo.name;
+            amount.value = `₩${courseInfo.price.toLocaleString()}`;
+
+            modal.classList.add('active');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('paymentForm').style.display = 'block';
+        }
+
+        function processPayment() {
+            const form = document.getElementById('paymentForm');
+            const successMessage = document.getElementById('successMessage');
+
+            // 결제 처리 시뮬레이션
+            form.style.display = 'none';
+            successMessage.style.display = 'block';
+
+            // 3초 후 모달 닫기
+            setTimeout(() => {
+                closePaymentModal();
+            }, 3000);
+        }
+
+        // 전문가 등급업 모달
+        function showUpgradeModal(type) {
+            const modal = document.getElementById('paymentModal');
+            const subtitle = document.getElementById('paymentSubtitle');
+            const amount = document.getElementById('paymentAmount');
+
+            const packages = {
+                'basic': { name: '전문가 기본 등록', price: 0 },
+                'premium': { name: '추천 전문가 등록', price: 150000 },
+                'package': { name: '전문가 등록 + 교육 패키지', price: 300000 }
+            };
+
+            const packageInfo = packages[type];
+            subtitle.textContent = packageInfo.name;
+            amount.value = packageInfo.price > 0 ? `₩${packageInfo.price.toLocaleString()}` : '무료';
+
+            modal.classList.add('active');
+        }
+
+        // 쿠폰 적용
+        function applyCoupon() {
+            const couponCode = document.getElementById('couponCode').value.trim();
+            const messageDiv = document.getElementById('couponMessage');
+            const discountRow = document.getElementById('discountRow');
+            const discountAmount = document.getElementById('discountAmount');
+            const finalAmount = document.getElementById('finalAmount');
+
+            if (!couponCode) {
+                messageDiv.textContent = '쿠폰 코드를 입력해주세요.';
+                messageDiv.style.background = '#f8d7da';
+                messageDiv.style.color = '#721c24';
+                messageDiv.style.display = 'block';
+                return;
+            }
+
+            // 쿠폰 유효성 검사 (예시)
+            if (couponCode === 'WELCOME2024') {
+                const discount = 45000; // 10% 할인
+                const originalAmount = 450000;
+                const newAmount = originalAmount - discount;
+
+                messageDiv.textContent = '쿠폰이 적용되었습니다! 10% 할인이 적용되었습니다.';
+                messageDiv.style.background = '#d4edda';
+                messageDiv.style.color = '#155724';
+                messageDiv.style.display = 'block';
+
+                discountRow.style.display = 'flex';
+                discountAmount.textContent = `-₩${discount.toLocaleString()}`;
+                finalAmount.textContent = `₩${newAmount.toLocaleString()}`;
+            } else if (couponCode === 'EXPERT10') {
+                const discount = 35000; // 10% 할인
+                const originalAmount = 350000;
+                const newAmount = originalAmount - discount;
+
+                messageDiv.textContent = '쿠폰이 적용되었습니다! 10% 할인이 적용되었습니다.';
+                messageDiv.style.background = '#d4edda';
+                messageDiv.style.color = '#155724';
+                messageDiv.style.display = 'block';
+
+                discountRow.style.display = 'flex';
+                discountAmount.textContent = `-₩${discount.toLocaleString()}`;
+                finalAmount.textContent = `₩${newAmount.toLocaleString()}`;
+            } else {
+                messageDiv.textContent = '유효하지 않은 쿠폰 코드입니다.';
+                messageDiv.style.background = '#f8d7da';
+                messageDiv.style.color = '#721c24';
+                messageDiv.style.display = 'block';
+            }
+        }
+
+        // 결제 방식 선택
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                method.classList.add('selected');
+            });
+        });
+
+        // 모달 외부 클릭 시 닫기
+        document.getElementById('paymentModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closePaymentModal();
+            }
+        });
+        // 모달 외부 클릭 시 닫기
+        document.getElementById('paymentModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closePaymentModal();
+            }
+        });
+
+        // 구독 서비스 관련 전역 변수
+        let currentPaymentItem = null;
+        let currentCouponType = 'all';
+
+        const subscriptionPlans = {
+            'basic': {
+                price: 30000,
+                name: '전문가 베이직 플랜',
+                description: '매월 뉴스레터, 무료 자료 접근, 커뮤니티 참여',
+                features: ['월간 뉴스레터', '무료 자료 다운로드', '커뮤니티 참여', 'Q&A 게시판 이용']
+            },
+            'standard': {
+                price: 80000,
+                name: '전문가 스탠다드 플랜',
+                description: '월간 교육, 1:1 멘토링, 유료 자료 접근',
+                features: ['월간 온라인 교육', '월 1회 1:1 멘토링', '모든 자료 접근', '커뮤니티 우선 참여']
+            },
+            'premium': {
+                price: 150000,
+                name: '전문가 프리미엄 플랜',
+                description: '전담 매니저, VIP 교육, 특별 혜택',
+                features: ['전담 매니저 배정', '무제한 1:1 멘토링', 'VIP 교육 프로그램', '우선 고객 지원']
+            },
+            'course': {
+                price: 25000,
+                name: '개별 과정 구독',
+                description: '선택한 과정의 월간 구독',
+                features: ['해당 과정 모든 콘텐츠', '월간 업데이트', '수료증 발급']
+            }
+        };
+
+        const availableCoupons = [
+            { code: 'SUB30', discount: 30, description: '구독 서비스 30% 할인', applicableServices: ['구독'] },
+            { code: 'WELCOME15', discount: 15, description: '신규 가입 15% 할인', applicableServices: ['전문가', '추천', '구독'] },
+            { code: 'PREMIUM20', discount: 20, description: '프리미엄 플랜 20% 할인', applicableServices: ['구독'] }
+        ];
+
+        // 구독 서비스 관련 함수
+        function showSubscriptionModal(plan, courseName = null) {
+            const planInfo = subscriptionPlans[plan];
+            if (!planInfo) return;
+
+            let title = planInfo.name;
+            let description = planInfo.description;
+
+            if (courseName) {
+                title = courseName;
+                description = `월 ${planInfo.price.toLocaleString()}원의 구독료로 매월 새로운 콘텐츠와 혜택을 이용할 수 있습니다.`;
+            }
+
+            currentPaymentItem = {
+                type: plan === 'course' ? 'course' : 'subscription',
+                plan: plan,
+                name: title,
+                basePrice: planInfo.price,
+                description: description
+            };
+
+            updateSubscriptionModal();
+            document.getElementById('subscriptionPaymentModal').style.display = 'flex';
+        }
+
+        function updateSubscriptionModal() {
+            const item = currentPaymentItem;
+            if (!item) return;
+
+            document.getElementById('subscriptionItemName').textContent = item.name;
+            document.getElementById('subscriptionBasePrice').textContent = `월 ${item.basePrice.toLocaleString()}원`;
+
+            const couponSelect = document.getElementById('subscriptionCouponSelect');
+            couponSelect.value = '';
+            document.getElementById('subscriptionCouponInput').style.display = 'none';
+            document.getElementById('subscriptionCouponCode').value = '';
+            updateSubscriptionPrice();
+        }
+
+        function updateSubscriptionPrice() {
+            const item = currentPaymentItem;
+            if (!item) return;
+
+            const couponSelect = document.getElementById('subscriptionCouponSelect');
+            const couponInput = document.getElementById('subscriptionCouponCode');
+            const selectedCouponText = couponSelect.value;
+
+            let discount = 0;
+            let finalPrice = item.basePrice;
+
+            if (selectedCouponText) {
+                const coupon = availableCoupons.find(c => `${c.discount}% 할인쿠폰` === selectedCouponText);
+                if (coupon) {
+                    discount = Math.floor(item.basePrice * coupon.discount / 100);
+                    finalPrice = item.basePrice - discount;
+                }
+            } else if (couponInput.value.trim()) {
+                const enteredCode = couponInput.value.trim();
+                const coupon = availableCoupons.find(c => c.code === enteredCode);
+                if (coupon && coupon.applicableServices.includes('구독')) {
+                    discount = Math.floor(item.basePrice * coupon.discount / 100);
+                    finalPrice = item.basePrice - discount;
+                }
+            }
+
+            document.getElementById('subscriptionDiscount').textContent = `-${discount.toLocaleString()}원`;
+            document.getElementById('subscriptionFinalPrice').textContent = `월 ${finalPrice.toLocaleString()}원`;
+        }
+
+        function applySubscriptionCoupon() {
+            const couponSelect = document.getElementById('subscriptionCouponSelect');
+            const couponInput = document.getElementById('subscriptionCouponCode');
+            const applyButton = document.getElementById('applySubscriptionCouponBtn');
+
+            if (couponSelect.value === '직접입력') {
+                if (!couponInput.value.trim()) {
+                    showNotification('쿠폰 코드를 입력해주세요.', 'error');
+                    return;
+                }
+            }
+
+            const couponSelectValue = couponSelect.value;
+            const couponInputValue = couponInput.value.trim();
+
+            // 쿠폰 적용 로직
+            if (couponSelectValue && couponSelectValue !== '직접입력') {
+                showNotification('쿠폰이 적용되었습니다.', 'success');
+            } else if (couponInputValue) {
+                const coupon = availableCoupons.find(c => c.code === couponInputValue);
+                if (coupon && coupon.applicableServices.includes('구독')) {
+                    showNotification('쿠폰이 적용되었습니다.', 'success');
+                } else {
+                    showNotification('유효하지 않은 쿠폰 코드입니다.', 'error');
+                    return;
+                }
+            }
+
+            applyButton.textContent = '쿠폰 적용됨';
+            applyButton.style.backgroundColor = '#28a745';
+
+            setTimeout(() => {
+                applyButton.textContent = '쿠폰 적용';
+                applyButton.style.backgroundColor = '#007bff';
+            }, 2000);
+
+            updateSubscriptionPrice();
+        }
+
+        // 쿠폰 관련 함수들
+        function showCouponsModal(type) {
+            currentCouponType = type;
+            updateCouponsModal();
+            document.getElementById('couponsModal').style.display = 'flex';
+        }
+
+        function updateCouponsModal() {
+            const couponsList = document.getElementById('availableCouponsList');
+            couponsList.innerHTML = '';
+
+            const userCoupons = [
+                { code: 'EXPERT2024', discount: 20, service: '추천', description: '추천 전문가 업그레이드 20% 할인', validUntil: '2024.12.31', used: false },
+                { code: 'LEARN30', discount: 30, service: '구독', description: '구독 서비스 30% 할인 (첫 3개월)', validUntil: '2024.11.30', used: false },
+                { code: 'WELCOME15', discount: 15, service: '전문가', description: '전문가 등록 15% 할인', validUntil: '2024.12.15', used: true },
+            ];
+
+            const filteredCoupons = userCoupons.filter(coupon =>
+                !coupon.used && (currentCouponType === 'all' || coupon.service === currentCouponType)
+            );
+
+            if (filteredCoupons.length === 0) {
+                couponsList.innerHTML = '<p style="text-align: center; color: #999;">사용 가능한 쿠폰이 없습니다.</p>';
+                return;
+            }
+
+            filteredCoupons.forEach(coupon => {
+                const couponElement = document.createElement('div');
+                couponElement.className = 'coupon-item';
+                couponElement.innerHTML = `
+                    <div class="coupon-info">
+                        <div class="coupon-code">${coupon.code}</div>
+                        <div class="coupon-description">${coupon.description}</div>
+                        <div class="coupon-discount">${coupon.discount}% 할인</div>
+                        <div class="coupon-valid">~ ${coupon.validUntil}</div>
+                    </div>
+                    <div class="coupon-actions">
+                        <button class="apply-coupon-btn" onclick="copyCouponCode('${coupon.code}')">
+                            코드 복사
+                        </button>
+                    </div>
+                `;
+                couponsList.appendChild(couponElement);
+            });
+        }
+
+        function copyCouponCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification(`쿠폰 코드 ${code}가 복사되었습니다.`, 'success');
+            }).catch(() => {
+                showNotification('쿠폰 코드 복사에 실패했습니다.', 'error');
+            });
+        }
+
+        function processSubscriptionPayment() {
+            const item = currentPaymentItem;
+            if (!item) return;
+
+            const couponSelect = document.getElementById('subscriptionCouponSelect');
+            const couponInput = document.getElementById('subscriptionCouponCode');
+            const paymentMethod = document.getElementById('subscriptionPaymentMethod').value;
+
+            let discount = 0;
+            let appliedCoupon = null;
+
+            if (couponSelect.value && couponSelect.value !== '직접입력') {
+                appliedCoupon = couponSelect.value;
+                const coupon = availableCoupons.find(c => `${c.discount}% 할인쿠폰` === appliedCoupon);
+                if (coupon) discount = coupon.discount;
+            } else if (couponInput.value.trim()) {
+                const enteredCode = couponInput.value.trim();
+                const coupon = availableCoupons.find(c => c.code === enteredCode);
+                if (coupon && coupon.applicableServices.includes('구독')) {
+                    appliedCoupon = coupon.code;
+                    discount = coupon.discount;
+                }
+            }
+
+            showProcessingModal();
+
+            setTimeout(() => {
+                document.getElementById('subscriptionPaymentModal').style.display = 'none';
+                showPaymentCompleteModal('구독', item.name, discount, appliedCoupon);
+                updateStatistics();
+            }, 2000);
+        }
+
+        // 결제 처리 공통 함수
+        function showProcessingModal() {
+            document.getElementById('processingModal').style.display = 'flex';
+        }
+
+        function showPaymentCompleteModal(serviceType, itemName, discount = 0, couponCode = null) {
+            const item = currentPaymentItem;
+            if (!item) return;
+
+            const completeItemName = document.getElementById('completeItemName');
+            const completeItemPrice = document.getElementById('completeItemPrice');
+            const completeDiscount = document.getElementById('completeDiscount');
+            const completePaymentMethod = document.getElementById('completePaymentMethod');
+            const completeCouponInfo = document.getElementById('completeCouponInfo');
+
+            completeItemName.textContent = itemName;
+            completeItemPrice.textContent = `${item.basePrice.toLocaleString()}원`;
+            completeDiscount.textContent = discount > 0 ? `-${discount.toLocaleString()}원` : '0원';
+            completePaymentMethod.textContent = getPaymentMethodText(document.getElementById('subscriptionPaymentMethod').value);
+
+            completeCouponInfo.textContent = couponCode ? `쿠폰 적용: ${couponCode}` : '쿠폰 미적용';
+
+            setTimeout(() => {
+                document.getElementById('processingModal').style.display = 'none';
+                document.getElementById('paymentCompleteModal').style.display = 'flex';
+            }, 1500);
+        }
+
+        function getPaymentMethodText(method) {
+            const methods = {
+                'card': '신용카드',
+                'kakao': '카카오페이',
+                'naver': '네이버페이',
+                'bank': '계좌이체'
+            };
+            return methods[method] || method;
+        }
+
+        function closeSubscriptionModal() {
+            document.getElementById('subscriptionPaymentModal').style.display = 'none';
+            currentPaymentItem = null;
+        }
+
+        function closePaymentCompleteModal() {
+            document.getElementById('paymentCompleteModal').style.display = 'none';
+        }
+
+        function closeCouponsModal() {
+            document.getElementById('couponsModal').style.display = 'none';
+        }
+
+        // 결제 완료 후 알림
+        function showPaymentCompleteNotification() {
+            showNotification('결제가 완료되었습니다. 마이페이지에서 확인해주세요.', 'success');
+        }
+
+        // 알림 함수
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007bff'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10001;
+                font-size: 14px;
+                font-weight: 500;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // 통계 업데이트 함수
+        function updateStatistics() {
+            const statsElements = {
+                monthlyPayment: document.querySelector('.stat-card:nth-child(1) .stat-value'),
+                savedAmount: document.querySelector('.stat-card:nth-child(2) .stat-value'),
+                activeServices: document.querySelector('.stat-card:nth-child(3) .stat-value'),
+                totalPayments: document.querySelector('.stat-card:nth-child(4) .stat-value')
+            };
+
+            // 통계 업데이트 로직 (예시)
+            if (statsElements.monthlyPayment) {
+                const currentValue = parseInt(statsElements.monthlyPayment.textContent.replace(/[^0-9]/g, ''));
+                statsElements.monthlyPayment.textContent = `₩${(currentValue + 30000).toLocaleString()}`;
+            }
+        }
+
+        // 구독 쿠폰 선택 변경 시
+        document.addEventListener('DOMContentLoaded', function() {
+            const subscriptionCouponSelect = document.getElementById('subscriptionCouponSelect');
+            if (subscriptionCouponSelect) {
+                subscriptionCouponSelect.addEventListener('change', function() {
+                    const couponInput = document.getElementById('subscriptionCouponInput');
+                    if (this.value === '직접입력') {
+                        couponInput.style.display = 'flex';
+                    } else {
+                        couponInput.style.display = 'none';
+                        updateSubscriptionPrice();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- 구독 결제 모달 -->
+    <div class="modal" id="subscriptionPaymentModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>구독 결제</h3>
+                <button class="modal-close" onclick="closeSubscriptionModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="payment-summary">
+                    <div class="payment-item">
+                        <div class="payment-info">
+                            <div class="payment-title" id="subscriptionItemName">구독 서비스</div>
+                            <div class="payment-date">월간 구독</div>
+                        </div>
+                        <div class="payment-amount" id="subscriptionBasePrice">₩30,000</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">쿠폰 적용</label>
+                    <select class="form-select" id="subscriptionCouponSelect" onchange="updateSubscriptionPrice()">
+                        <option value="">쿠폰 선택</option>
+                        <option value="30% 할인쿠폰">30% 할인쿠폰</option>
+                        <option value="20% 할인쿠폰">20% 할인쿠폰</option>
+                        <option value="15% 할인쿠폰">15% 할인쿠폰</option>
+                        <option value="직접입력">직접입력</option>
+                    </select>
+                    <div class="coupon-input-container" id="subscriptionCouponInput" style="display: none;">
+                        <input type="text" class="form-control" id="subscriptionCouponCode" placeholder="쿠폰 코드 입력">
+                        <button class="btn btn-primary" id="applySubscriptionCouponBtn" onclick="applySubscriptionCoupon()">쿠폰 적용</button>
+                    </div>
+                </div>
+
+                <div class="price-breakdown">
+                    <div class="price-row">
+                        <span>구독료</span>
+                        <span id="subscriptionBasePrice">₩30,000</span>
+                    </div>
+                    <div class="price-row discount">
+                        <span>할인</span>
+                        <span id="subscriptionDiscount">₩0</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>월 결제금액</span>
+                        <span id="subscriptionFinalPrice">₩30,000</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">결제 수단</label>
+                    <select class="form-select" id="subscriptionPaymentMethod">
+                        <option value="card">신용카드</option>
+                        <option value="kakao">카카오페이</option>
+                        <option value="naver">네이버페이</option>
+                        <option value="bank">계좌이체</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSubscriptionModal()">취소</button>
+                <button class="btn btn-success" onclick="processSubscriptionPayment()">구독 결제하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 쿠폰 모달 -->
+    <div class="modal" id="couponsModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>사용 가능한 쿠폰</h3>
+                <button class="modal-close" onclick="closeCouponsModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="coupon-filter">
+                    <button class="filter-btn active" onclick="filterCoupons('all')">전체</button>
+                    <button class="filter-btn" onclick="filterCoupons('전문가')">전문가 등록</button>
+                    <button class="filter-btn" onclick="filterCoupons('추천')">추천 전문가</button>
+                    <button class="filter-btn" onclick="filterCoupons('구독')">구독 서비스</button>
+                </div>
+
+                <div class="coupons-list" id="availableCouponsList">
+                    <!-- 쿠폰 목록이 동적으로 생성됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 결제 처리 중 모달 -->
+    <div class="modal" id="processingModal" style="display: none;">
+        <div class="modal-content" style="text-align: center; padding: 40px;">
+            <div class="spinner" style="margin: 0 auto 20px;"></div>
+            <h3>결제 처리 중</h3>
+            <p>안전하게 결제를 처리하고 있습니다. 잠시만 기다려주세요...</p>
+        </div>
+    </div>
+
+    <!-- 결제 완료 모달 -->
+    <div class="modal" id="paymentCompleteModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color: #28a745;">결제 완료</h3>
+            </div>
+
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 48px; color: #28a745; margin-bottom: 10px;">✓</div>
+                    <p style="font-size: 18px; font-weight: 600;">결제가 성공적으로 완료되었습니다!</p>
+                </div>
+
+                <div class="payment-summary">
+                    <div class="payment-item">
+                        <div class="payment-info">
+                            <div class="payment-title" id="completeItemName">서비스명</div>
+                            <div class="payment-date" id="completePaymentMethod">결제수단</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="price-breakdown">
+                    <div class="price-row">
+                        <span>결제금액</span>
+                        <span id="completeItemPrice">₩0</span>
+                    </div>
+                    <div class="price-row discount">
+                        <span>할인</span>
+                        <span id="completeDiscount">₩0</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>실결제금액</span>
+                        <span id="completeFinalPrice">₩0</span>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                    <p style="margin: 0; font-size: 14px; color: #6c757d;" id="completeCouponInfo">쿠폰 정보</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closePaymentCompleteModal()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* 추가 모달 스타일 */
+        .coupon-input-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .coupon-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: none;
+            background: #f8f9fa;
+            color: #6c757d;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .filter-btn:hover {
+            background: #e9ecef;
+        }
+
+        .filter-btn.active:hover {
+            background: #0056b3;
+        }
+
+        .coupons-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .coupon-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+        }
+
+        .coupon-info {
+            flex: 1;
+        }
+
+        .coupon-code {
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+
+        .coupon-description {
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 3px;
+        }
+
+        .coupon-discount {
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 3px;
+        }
+
+        .coupon-valid {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .apply-coupon-btn {
+            padding: 6px 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .apply-coupon-btn:hover {
+            background: #0056b3;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .price-breakdown {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .price-row:last-child {
+            border-bottom: none;
+        }
+
+        .price-row.discount {
+            color: #dc3545;
+        }
+
+        .price-row.total {
+            font-weight: bold;
+            font-size: 16px;
+            color: #007bff;
+            border-top: 2px solid #007bff;
+            margin-top: 10px;
+            padding-top: 15px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .payment-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</body>
+</html>

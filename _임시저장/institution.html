@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CertMatch - 교육 기관 프로필 등록</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066CC;
+            --success-green: #2EBD59;
+            --neutral-gray: #333333;
+            --light-gray: #F5F5F5;
+            --warm-orange: #FF8C42;
+            --alert-red: #E74C3C;
+            --calm-purple: #7B68EE;
+            --border-color: #E0E0E0;
+            --text-light: #666666;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--neutral-gray);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Progress Bar */
+        .progress-header {
+            background: linear-gradient(135deg, var(--primary-blue), #0052A3);
+            color: white;
+            padding: 30px 0;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .progress-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .step-circle.active {
+            background-color: white;
+            color: var(--primary-blue);
+        }
+
+        .step-circle.completed {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 14px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.3);
+            z-index: 1;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background-color: var(--success-green);
+            width: 25%;
+            transition: width 0.3s ease;
+        }
+
+        /* Form Container */
+        .form-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .form-subtitle {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        /* Profile Completion */
+        .profile-completion {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.05), rgba(46, 189, 89, 0.05));
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .completion-text {
+            flex: 1;
+        }
+
+        .completion-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .completion-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .completion-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--success-green));
+            width: 65%;
+            transition: width 0.3s ease;
+        }
+
+        .completion-percentage {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-left: 20px;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-blue);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--neutral-gray);
+        }
+
+        .required {
+            color: var(--alert-red);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Avatar Upload */
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .avatar-upload {
+            position: relative;
+        }
+
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 3px solid white;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-upload-btn:hover {
+            background-color: #0052A3;
+        }
+
+        .avatar-info {
+            flex: 1;
+        }
+
+        .avatar-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .avatar-description {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Course Tags */
+        .course-group {
+            margin-bottom: 25px;
+        }
+
+        .course-label {
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .course-tag {
+            background-color: var(--light-gray);
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .course-tag:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(0, 102, 204, 0.05);
+        }
+
+        .course-tag.selected {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        /* Certification Cards */
+        .certification-cards {
+            display: grid;
+            gap: 20px;
+        }
+
+        .certification-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.02), rgba(46, 189, 89, 0.02));
+        }
+
+        .certification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .certification-name-input {
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            background: transparent;
+            padding: 0;
+            flex: 1;
+        }
+
+        .certification-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            background: white;
+        }
+
+        .certification-status.valid {
+            background-color: var(--success-green);
+            color: white;
+            border-color: var(--success-green);
+        }
+
+        .certification-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .cert-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .cert-detail-item i {
+            color: var(--text-light);
+        }
+
+        .cert-detail-input {
+            border: none;
+            background: transparent;
+            padding: 0;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* File Upload */
+        .file-upload-section {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .file-upload-section:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(0, 102, 204, 0.02);
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-button {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-icon {
+            font-size: 20px;
+            color: var(--primary-blue);
+        }
+
+        .file-name {
+            font-weight: 500;
+        }
+
+        .file-size {
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .file-remove {
+            color: var(--alert-red);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Add Button */
+        .add-button {
+            width: 100%;
+            padding: 15px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .add-button:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            background-color: rgba(0, 102, 204, 0.02);
+        }
+
+        /* Help Text */
+        .help-text {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .error-text {
+            font-size: 13px;
+            color: var(--alert-red);
+            margin-top: 5px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background-color: rgba(0, 102, 204, 0.05);
+            border-left: 4px solid var(--primary-blue);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box-content {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0052A3;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-gray);
+            color: var(--neutral-gray);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #EEEEEE;
+        }
+
+        .btn-success {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #249A46;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .avatar-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .progress-steps {
+                flex-direction: column;
+                gap: 20px;
+                max-width: none;
+                margin: 0;
+            }
+            
+            .progress-step {
+                flex-direction: row;
+                align-items: center;
+                width: 100%;
+                text-align: left;
+                gap: 15px;
+            }
+            
+            .step-circle {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+            
+            .step-label {
+                text-align: left;
+                font-size: 16px;
+            }
+            
+            .progress-line {
+                display: none;
+            }
+            
+            /* Add vertical line for mobile */
+            .progress-steps::before {
+                content: '';
+                position: absolute;
+                left: 20px;
+                top: 40px;
+                bottom: 40px;
+                width: 2px;
+                background-color: rgba(255, 255, 255, 0.3);
+                z-index: 1;
+            }
+            
+            .progress-step.completed .step-circle {
+                position: relative;
+            }
+            
+            .progress-step.completed .step-circle::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 40px;
+                width: 2px;
+                height: calc(100% + 20px);
+                background-color: var(--success-green);
+                z-index: 1;
+            }
+            
+            .progress-step:last-child.completed .step-circle::after {
+                display: none;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .btn-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-container">
+                <div class="logo">
+                    <i class="fas fa-check-circle"></i>
+                    CertMatch
+                </div>
+                <div class="user-menu">
+                    <div class="user-profile">
+                        <img src="https://picsum.photos/seed/institution/40/40.jpg" alt="User Avatar" class="user-avatar">
+                        <span>교육 기관</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Progress Header -->
+    <div class="progress-header">
+        <div class="container">
+            <div class="progress-container">
+                <h1 class="progress-title">교육 기관 프로필 등록</h1>
+            </div>
+            <div class="progress-steps">
+                <div class="progress-line">
+                    <div class="progress-line-fill"></div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle active">1</div>
+                    <div class="step-label">기본 정보</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">교육 과정</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">자격 및 인증</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">서류 제출</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2 class="form-title">교육 기관 프로필 등록</h2>
+                <p class="form-subtitle">전문가와 기업을 연결하는 최적의 매칭 플랫폼입니다.</p>
+            </div>
+
+            <!-- Profile Completion -->
+            <div class="profile-completion">
+                <div class="completion-text">
+                    <div class="completion-title">
+                        <i class="fas fa-chart-pie"></i>
+                        프로필 완성도
+                    </div>
+                    <div class="help-text">프로필이 완성될수록 더 많은 기업에게 노출됩니다</div>
+                    <div class="completion-bar">
+                        <div class="completion-fill" id="completionBar"></div>
+                    </div>
+                </div>
+                <div class="completion-percentage" id="completionPercentage">65%</div>
+            </div>
+
+            <form id="institutionProfileForm">
+                <!-- 기본 정보 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-building"></i>
+                        기본 정보
+                    </h3>
+                    
+                    <div class="avatar-section">
+                        <div class="avatar-upload">
+                            <img src="https://picsum.photos/seed/defaultinstitution/120/120.jpg" alt="Profile" class="avatar-preview" id="avatarPreview">
+                            <div class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="updateAvatar(event)">
+                        </div>
+                        <div class="avatar-info">
+                            <div class="avatar-title">기관 로고</div>
+                            <div class="avatar-description">기관을 대표하는 로고 이미지를 업로드해주세요. (JPG, PNG, 최대 5MB)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="institutionName">기관명 <span class="required">*</span></label>
+                            <input type="text" id="institutionName" name="institutionName" required placeholder="CertMatch 교육원">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">이메일 <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="example@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">연락처 <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required placeholder="02-0000-0000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="establishDate">설립일 <span class="required">*</span></label>
+                            <input type="date" id="establishDate" name="establishDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="location">소재지 <span class="required">*</span></label>
+                            <select id="location" name="location" required>
+                                <option value="">선택해주세요</option>
+                                <option value="seoul">서울</option>
+                                <option value="gyeonggi">경기</option>
+                                <option value="incheon">인천</option>
+                                <option value="busan">부산</option>
+                                <option value="daegu">대구</option>
+                                <option value="gwangju">광주</option>
+                                <option value="daejeon">대전</option>
+                                <option value="ulsan">울산</option>
+                                <option value="sejong">세종</option>
+                                <option value="gangwon">강원</option>
+                                <option value="chungbuk">충북</option>
+                                <option value="chungnam">충남</option>
+                                <option value="jeonbuk">전북</option>
+                                <option value="jeonnam">전남</option>
+                                <option value="gyeongbuk">경북</option>
+                                <option value="gyeongnam">경남</option>
+                                <option value="jeju">제주</option>
+                                <option value="online">온라인</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="website">웹사이트</label>
+                            <input type="url" id="website" name="website" placeholder="https://www.example.com">
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="address">주소 <span class="required">*</span></label>
+                            <div class="input-group">
+                                <input type="text" id="postcode" name="postcode" placeholder="우편번호" readonly>
+                                <button type="button" class="btn btn-secondary" onclick="searchPostcode()">주소 찾기</button>
+                            </div>
+                            <input type="text" id="address" name="address" placeholder="기본 주소" style="margin-top: 10px;" required>
+                            <input type="text" id="detailAddress" name="detailAddress" placeholder="상세 주소" style="margin-top: 10px;">
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="bio">기관 소개 <span class="required">*</span></label>
+                            <textarea id="bio" name="bio" required placeholder="기관의 특징, 교육 철학, 주요 업적 등을 소개해주세요."></textarea>
+                            <div class="help-text">최소 100자 이상 작성해주세요.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 교육 과정 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        교육 과정
+                    </h3>
+                    
+                    <div class="info-box">
+                        <div class="info-box-title">
+                            <i class="fas fa-info-circle"></i>
+                            교육 과정 선택 가이드
+                        </div>
+                        <div class="info-box-content">
+                            실제 운영 중인 교육 과정을 선택해주세요. 다중 선택이 가능합니다.
+                        </div>
+                    </div>
+
+                    <div class="course-group">
+                        <div class="course-label">
+                            <i class="fas fa-book"></i>
+                            제공 교육 과정 <span class="required">*</span>
+                        </div>
+                        <div class="course-container">
+                            <div class="course-tag" onclick="toggleCourse(this)">ISMS-P</div>
+                            <div class="course-tag" onclick="toggleCourse(this)">ISMS</div>
+                            <div class="course-tag" onclick="toggleCourse(this)">ISO 27001</div>
+                            <div class="course-tag" onclick="toggleCourse(this)">ISO 27701</div>
+                            <div class="course-tag" onclick="toggleCourse(this)">GS 인증</div>
+                            <div class="course-tag" onclick="toggleCourse(this)">CPPG</div>
+                            <div class="course-tag" onclick="toggleCourse(this)">CSAP</div>
+                            <div class="course-tag" onclick="toggleCourse(this)">ESPM</div>
+                            <div class="course-tag" onclick="toggleCourse(this)">개인정보보호</div>
+                            <div class="course-tag" onclick="toggleCourse(this)">클라우드 보안</div>
+                        </div>
+                    </div>
+
+                    <!-- 교육 과정 카드 섹션 -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-list"></i>
+                            교육 과정 상세 정보
+                        </h4>
+                        
+                        <div class="certification-cards" id="courseCards">
+                            <div class="certification-card">
+                                <button type="button" class="remove-btn" onclick="removeCourse(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <div class="certification-header">
+                                    <input type="text" class="certification-name-input" placeholder="과정명" value="ISMS-P 전문가 양성 과정">
+                                    <select class="certification-status valid">
+                                        <option value="valid">운영 중</option>
+                                        <option value="planned">계획 중</option>
+                                        <option value="closed">종료</option>
+                                    </select>
+                                </div>
+                                <div class="certification-details">
+                                    <div class="cert-detail-item">
+                                        <i class="fas fa-clock"></i>
+                                        <input type="text" class="cert-detail-input" placeholder="교육 시간" value="40시간">
+                                    </div>
+                                    <div class="cert-detail-item">
+                                        <i class="fas fa-user-graduate"></i>
+                                        <input type="text" class="cert-detail-input" placeholder="수료자 수" value="250명">
+                                    </div>
+                                    <div class="cert-detail-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <input type="text" class="cert-detail-input" placeholder="개설일" value="2020.01">
+                                    </div>
+                                    <div class="cert-detail-item">
+                                        <i class="fas fa-certificate"></i>
+                                        <input type="text" class="cert-detail-input" placeholder="자격증명" value="정보보호전문가">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="add-button" onclick="addCourse()">
+                            <i class="fas fa-plus"></i>
+                            교육 과정 추가
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 자격 및 인증 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-certificate"></i>
+                        자격 및 인증
+                    </h3>
+                    
+                    <div class="info-box">
+                        <div class="info-box-title">
+                            <i class="fas fa-check-circle"></i>
+                            검증 안내
+                        </div>
+                        <div class="info-box-content">
+                            제출된 자격증은 3개월 내 수동 검증되며, 검증 완료 시 'Verified Institution' 배지가 표시됩니다.
+                        </div>
+                    </div>
+                    
+                    <div class="certification-cards" id="certificationCards">
+                        <div class="certification-card">
+                            <button type="button" class="remove-btn" onclick="removeCertification(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="certification-header">
+                                <input type="text" class="certification-name-input" placeholder="자격증명" value="교육 품질 인증">
+                                <select class="certification-status valid">
+                                    <option value="valid">유효</option>
+                                    <option value="expired">만료</option>
+                                    <option value="pending">갱신 중</option>
+                                </select>
+                            </div>
+                            <div class="certification-details">
+                                <div class="cert-detail-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <input type="text" class="cert-detail-input" placeholder="발급일" value="2018.05">
+                                </div>
+                                <div class="cert-detail-item">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <input type="text" class="cert-detail-input" placeholder="만료일" value="2025.05">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="add-button" onclick="addCertification()">
+                        <i class="fas fa-plus"></i>
+                        자격증 추가
+                    </button>
+                </div>
+
+                <!-- 교육 경력 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user-graduate"></i>
+                        교육 경력
+                    </h3>
+                    
+                    <div class="info-box">
+                        <div class="info-box-title">
+                            <i class="fas fa-info-circle"></i>
+                            교육 경력 안내
+                        </div>
+                        <div class="info-box-content">
+                            주요 강사진의 교육 경력을 추가해주세요. 이 정보는 기관의 신뢰도를 높이는 데 도움이 됩니다.
+                        </div>
+                    </div>
+                    
+                    <div class="certification-cards" id="careerCards">
+                        <div class="certification-card">
+                            <button type="button" class="remove-btn" onclick="removeCareer(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="certification-header">
+                                <input type="text" class="certification-name-input" placeholder="강사명" value="김전문">
+                            </div>
+                            <div class="certification-details">
+                                <div class="cert-detail-item">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <input type="text" class="cert-detail-input" placeholder="전문 분야" value="정보보호">
+                                </div>
+                                <div class="cert-detail-item">
+                                    <i class="fas fa-briefcase"></i>
+                                    <input type="text" class="cert-detail-input" placeholder="경력" value="10년">
+                                </div>
+                                <div class="cert-detail-item">
+                                    <i class="fas fa-building"></i>
+                                    <input type="text" class="cert-detail-input" placeholder="이전 근무처" value="대기업 보안팀">
+                                </div>
+                                <div class="cert-detail-item">
+                                    <i class="fas fa-award"></i>
+                                    <input type="text" class="cert-detail-input" placeholder="주요 자격증" value="CISSP, CISA">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="add-button" onclick="addCareer()">
+                        <i class="fas fa-plus"></i>
+                        교육 경력 추가
+                    </button>
+                </div>
+
+                <!-- 서류 제출 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-file-upload"></i>
+                        서류 제출
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>사업자등록증 <span class="required">*</span></label>
+                            <div class="file-upload-section" onclick="document.getElementById('bizRegFile').click()">
+                                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                <div class="file-upload-text">파일을 드래그하거나 클릭하여 업로드하세요</div>
+                                <button type="button" class="file-upload-button">파일 선택</button>
+                                <input type="file" id="bizRegFile" name="bizRegFile" accept=".pdf,.jpg,.png" style="display: none;" onchange="handleFileUpload(this, '사업자등록증')">
+                            </div>
+                            <div id="bizRegFileList" class="file-list"></div>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>교육 기관 등록증 <span class="required">*</span></label>
+                            <div class="file-upload-section" onclick="document.getElementById('institutionRegFile').click()">
+                                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                <div class="file-upload-text">파일을 드래그하거나 클릭하여 업로드하세요</div>
+                                <button type="button" class="file-upload-button">파일 선택</button>
+                                <input type="file" id="institutionRegFile" name="institutionRegFile" accept=".pdf,.jpg,.png" style="display: none;" onchange="handleFileUpload(this, '교육 기관 등록증')">
+                            </div>
+                            <div id="institutionRegFileList" class="file-list"></div>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>강사 자격증</label>
+                            <div class="file-upload-section" onclick="document.getElementById('instructorCertFiles').click()">
+                                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                <div class="file-upload-text">자격증 스캔본을 업로드하세요 (최대 5개)</div>
+                                <button type="button" class="file-upload-button">파일 선택</button>
+                                <input type="file" id="instructorCertFiles" name="instructorCertFiles" accept=".pdf,.jpg,.png" multiple style="display: none;" onchange="handleFileUpload(this, '강사 자격증')">
+                            </div>
+                            <div id="instructorCertFilesList" class="file-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                        <i class="fas fa-save"></i>
+                        임시 저장
+                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left"></i>
+                            이전
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i>
+                            프로필 등록 완료
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Profile completion tracking
+        function updateCompletion() {
+            const requiredFields = document.querySelectorAll('[required]');
+            const filledFields = Array.from(requiredFields).filter(field => field.value.trim() !== '');
+            const selectedCourses = document.querySelectorAll('.course-tag.selected');
+            
+            let completion = (filledFields.length / requiredFields.length) * 50;
+            completion += (selectedCourses.length > 0) ? 20 : 0;
+            completion += (document.querySelectorAll('.certification-card').length > 0) ? 15 : 0;
+            completion += (document.querySelectorAll('.file-item').length > 0) ? 15 : 0;
+            
+            completion = Math.min(100, Math.round(completion));
+            
+            document.getElementById('completionBar').style.width = completion + '%';
+            document.getElementById('completionPercentage').textContent = completion + '%';
+        }
+
+        // Avatar upload
+        function updateAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Toggle course
+        function toggleCourse(element) {
+            element.classList.toggle('selected');
+            updateCompletion();
+        }
+
+        // Add course
+        function addCourse() {
+            const container = document.getElementById('courseCards');
+            const courseCard = document.createElement('div');
+            courseCard.className = 'certification-card';
+            courseCard.innerHTML = `
+                <button type="button" class="remove-btn" onclick="removeCourse(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="certification-header">
+                    <input type="text" class="certification-name-input" placeholder="과정명">
+                    <select class="certification-status">
+                        <option value="valid">운영 중</option>
+                        <option value="planned">계획 중</option>
+                        <option value="closed">종료</option>
+                    </select>
+                </div>
+                <div class="certification-details">
+                    <div class="cert-detail-item">
+                        <i class="fas fa-clock"></i>
+                        <input type="text" class="cert-detail-input" placeholder="교육 시간">
+                    </div>
+                    <div class="cert-detail-item">
+                        <i class="fas fa-user-graduate"></i>
+                        <input type="text" class="cert-detail-input" placeholder="수료자 수">
+                    </div>
+                    <div class="cert-detail-item">
+                        <i class="fas fa-calendar"></i>
+                        <input type="text" class="cert-detail-input" placeholder="개설일">
+                    </div>
+                    <div class="cert-detail-item">
+                        <i class="fas fa-certificate"></i>
+                        <input type="text" class="cert-detail-input" placeholder="자격증명">
+                    </div>
+                </div>
+            `;
+            container.appendChild(courseCard);
+            updateCompletion();
+        }
+
+        // Remove course
+        function removeCourse(button) {
+            button.parentElement.remove();
+            updateCompletion();
+        }
+
+        // Add certification
+        function addCertification() {
+            const container = document.getElementById('certificationCards');
+            const certificationCard = document.createElement('div');
+            certificationCard.className = 'certification-card';
+            certificationCard.innerHTML = `
+                <button type="button" class="remove-btn" onclick="removeCertification(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="certification-header">
+                    <input type="text" class="certification-name-input" placeholder="자격증명">
+                    <select class="certification-status">
+                        <option value="valid">유효</option>
+                        <option value="expired">만료</option>
+                        <option value="pending">갱신 중</option>
+                    </select>
+                </div>
+                <div class="certification-details">
+                    <div class="cert-detail-item">
+                        <i class="fas fa-calendar"></i>
+                        <input type="text" class="cert-detail-input" placeholder="발급일">
+                    </div>
+                    <div class="cert-detail-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <input type="text" class="cert-detail-input" placeholder="만료일">
+                    </div>
+                </div>
+            `;
+            container.appendChild(certificationCard);
+            updateCompletion();
+        }
+
+        // Remove certification
+        function removeCertification(button) {
+            button.parentElement.remove();
+            updateCompletion();
+        }
+
+        // Add career
+        function addCareer() {
+            const container = document.getElementById('careerCards');
+            const careerCard = document.createElement('div');
+            careerCard.className = 'certification-card';
+            careerCard.innerHTML = `
+                <button type="button" class="remove-btn" onclick="removeCareer(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="certification-header">
+                    <input type="text" class="certification-name-input" placeholder="강사명">
+                </div>
+                <div class="certification-details">
+                    <div class="cert-detail-item">
+                        <i class="fas fa-graduation-cap"></i>
+                        <input type="text" class="cert-detail-input" placeholder="전문 분야">
+                    </div>
+                    <div class="cert-detail-item">
+                        <i class="fas fa-briefcase"></i>
+                        <input type="text" class="cert-detail-input" placeholder="경력">
+                    </div>
+                    <div class="cert-detail-item">
+                        <i class="fas fa-building"></i>
+                        <input type="text" class="cert-detail-input" placeholder="이전 근무처">
+                    </div>
+                    <div class="cert-detail-item">
+                        <i class="fas fa-award"></i>
+                        <input type="text" class="cert-detail-input" placeholder="주요 자격증">
+                    </div>
+                </div>
+            `;
+            container.appendChild(careerCard);
+            updateCompletion();
+        }
+
+        // Remove career
+        function removeCareer(button) {
+            button.parentElement.remove();
+            updateCompletion();
+        }
+
+        // File upload handling
+        function handleFileUpload(input, type) {
+            const files = input.files;
+            const fileListId = input.id + 'List';
+            const fileList = document.getElementById(fileListId);
+            
+            // Clear existing list for resume
+            if (type === '사업자등록증') {
+                fileList.innerHTML = '';
+            }
+            
+            for (let file of files) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                const fileInfo = document.createElement('div');
+                fileInfo.className = 'file-info';
+                
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-file-pdf file-icon';
+                
+                const fileName = document.createElement('span');
+                fileName.className = 'file-name';
+                fileName.textContent = file.name;
+                
+                const fileSize = document.createElement('span');
+                fileSize.className = 'file-size';
+                fileSize.textContent = formatFileSize(file.size);
+                
+                fileInfo.appendChild(icon);
+                fileInfo.appendChild(fileName);
+                fileInfo.appendChild(fileSize);
+                
+                const removeBtn = document.createElement('i');
+                removeBtn.className = 'fas fa-times file-remove';
+                removeBtn.onclick = function() {
+                    fileItem.remove();
+                };
+                
+                fileItem.appendChild(fileInfo);
+                fileItem.appendChild(removeBtn);
+                fileList.appendChild(fileItem);
+            }
+            
+            updateCompletion();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Postcode search (Daum API simulation)
+        function searchPostcode() {
+            // 실제로는 Daum 우편번호 API를 연동해야 합니다
+            alert('우편번호 검색 기능은 실제 서비스에서 Daum API를 연동해야 합니다.');
+        }
+
+        // Form validation and submission
+        document.getElementById('institutionProfileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Check required fields
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = 'var(--alert-red)';
+                } else {
+                    field.style.borderColor = 'var(--border-color)';
+                }
+            });
+            
+            // Check courses
+            const selectedCourses = document.querySelectorAll('.course-tag.selected');
+            if (selectedCourses.length === 0) {
+                isValid = false;
+                alert('최소 1개 이상의 교육 과정을 선택해주세요.');
+            }
+            
+            if (isValid) {
+                // Collect form data
+                const formData = new FormData(this);
+                const data = {};
+                
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+                
+                // Collect courses
+                data.courses = Array.from(selectedCourses).map(tag => tag.textContent);
+                
+                // Collect course details
+                data.courseDetails = [];
+                document.querySelectorAll('.certification-card').forEach(card => {
+                    data.courseDetails.push({
+                        name: card.querySelector('.certification-name-input').value,
+                        status: card.querySelector('.certification-status').value,
+                        duration: card.querySelectorAll('.cert-detail-input')[0].value,
+                        graduates: card.querySelectorAll('.cert-detail-input')[1].value,
+                        startDate: card.querySelectorAll('.cert-detail-input')[2].value,
+                        certificate: card.querySelectorAll('.cert-detail-input')[3].value
+                    });
+                });
+                
+                // Collect certifications
+                data.certifications = [];
+                document.querySelectorAll('.certification-card').forEach(card => {
+                    data.certifications.push({
+                        name: card.querySelector('.certification-name-input').value,
+                        status: card.querySelector('.certification-status').value,
+                        issueDate: card.querySelectorAll('.cert-detail-input')[0].value,
+                        expiryDate: card.querySelectorAll('.cert-detail-input')[1].value
+                    });
+                });
+                
+                console.log('Form Data:', data);
+                alert('프로필이 성공적으로 등록되었습니다! 검증 후 \'Verified Institution\' 배지가 부여됩니다.');
+                
+                // In real application, submit to server
+                // fetch('/api/institutions', { method: 'POST', body: JSON.stringify(data) });
+            } else {
+                alert('필수 항목을 모두 입력해주세요.');
+            }
+        });
+
+        // Save draft
+        function saveDraft() {
+            const formData = new FormData(document.getElementById('institutionProfileForm'));
+            const data = {};
+            
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            
+            // Save courses
+            data.courses = Array.from(document.querySelectorAll('.course-tag.selected')).map(tag => tag.textContent);
+            
+            localStorage.setItem('institutionProfileDraft', JSON.stringify(data));
+            alert('임시 저장되었습니다.');
+        }
+
+        // Load draft on page load
+        window.addEventListener('load', function() {
+            const draft = localStorage.getItem('institutionProfileDraft');
+            if (draft) {
+                const data = JSON.parse(draft);
+                const form = document.getElementById('institutionProfileForm');
+                
+                for (let key in data) {
+                    if (key !== 'courses') {
+                        const field = form.querySelector(`[name="${key}"]`);
+                        if (field) {
+                            field.value = data[key];
+                        }
+                    }
+                }
+                
+                // Load courses
+                if (data.courses) {
+                    data.courses.forEach(course => {
+                        document.querySelectorAll('.course-tag').forEach(tag => {
+                            if (tag.textContent === course) {
+                                tag.classList.add('selected');
+                            }
+                        });
+                    });
+                }
+                
+                updateCompletion();
+            }
+        });
+
+        // Update completion on input change
+        document.addEventListener('input', updateCompletion);
+        document.addEventListener('change', updateCompletion);
+    </script>
+</body>
+</html>

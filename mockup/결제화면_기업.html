@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>결제하기 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 80px;
+        }
+
+        /* --- Progress Indicator --- */
+        .progress-container {
+            padding: 20px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .step-number.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .step-number.completed {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .step-label.active {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 15px;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+            background-color: var(--light-color);
+            z-index: 1;
+        }
+
+        .progress-line.completed {
+            background-color: var(--success-color);
+        }
+
+        /* --- Payment Content --- */
+        .payment-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 992px) {
+            .payment-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .payment-section {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        /* --- Order Summary --- */
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .order-item-details {
+            flex-grow: 1;
+        }
+
+        .order-item-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .order-item-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .order-item-price {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* --- Form Elements --- */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        /* --- Payment Methods --- */
+        .payment-methods {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .payment-method.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        .payment-method i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .payment-method-content {
+            flex-grow: 1;
+        }
+
+        .payment-method-title {
+            font-weight: bold;
+        }
+
+        .payment-method-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Price Summary --- */
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .price-row.total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
+
+        .price-label {
+            color: var(--text-muted);
+        }
+
+        .price-value {
+            font-weight: 500;
+        }
+
+        .discount {
+            color: var(--success-color);
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-lg {
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+
+        /* --- Terms & Conditions --- */
+        .terms-section {
+            margin-top: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+
+        .checkbox-label {
+            font-size: 0.9rem;
+        }
+
+        /* --- Security Badge --- */
+        .security-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .security-section i {
+            margin-right: 5px;
+            color: var(--success-color);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 991px) {
+            .payment-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="backButton">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">결제하기</div>
+        <div class="header-icon">
+            <i class="fas fa-question-circle"></i>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-step">
+                    <div class="step-number completed">1</div>
+                    <div class="step-label">장바구니</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number active">2</div>
+                    <div class="step-label active">결제</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">완료</div>
+                </div>
+                <div class="progress-line completed" style="width: 50%;"></div>
+            </div>
+        </div>
+        
+        <!-- Payment Content -->
+        <div class="payment-container">
+            <div class="payment-grid">
+                <!-- Left Column -->
+                <div>
+                    <!-- Order Summary Section -->
+                    <div class="payment-section">
+                        <div class="section-title">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>주문 내역</span>
+                        </div>
+                        
+                        <div class="order-item">
+                            <img src="https://picsum.photos/seed/team1/60/60.jpg" alt="팀" class="order-item-image">
+                            <div class="order-item-details">
+                                <div class="order-item-title">보안 강화 프로젝트팀</div>
+                                <div class="order-item-description">김보안 전문가, 이클라우드 전문가, 박데이터 전문가 | 주 40시간</div>
+                                <div class="order-item-price">15,600,000원</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Billing Information Section -->
+                    <div class="payment-section">
+                        <div class="section-title">
+                            <i class="fas fa-file-invoice"></i>
+                            <span>결제 정보</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">회사명</label>
+                            <input type="text" class="form-control" value="㈜테크솔루션" readonly>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">사업자등록번호</label>
+                                    <input type="text" class="form-control" value="123-45-67890" readonly>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">담당자명</label>
+                                    <input type="text" class="form-control" value="홍길동" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">연락처</label>
+                            <input type="tel" class="form-control" value="010-1234-5678" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">이메일</label>
+                            <input type="email" class="form-control" value="hong@techsolution.co.kr" readonly>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Method Section -->
+                    <div class="payment-section">
+                        <div class="section-title">
+                            <i class="fas fa-credit-card"></i>
+                            <span>결제 수단</span>
+                        </div>
+                        
+                        <div class="payment-methods">
+                            <div class="payment-method selected">
+                                <i class="fas fa-credit-card"></i>
+                                <div class="payment-method-content">
+                                    <div class="payment-method-title">신용카드</div>
+                                    <div class="payment-method-description">안전한 카드 결제</div>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-method">
+                                <i class="fas fa-university"></i>
+                                <div class="payment-method-content">
+                                    <div class="payment-method-title">계좌이체</div>
+                                    <div class="payment-method-description">무통장 입금</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="credit-card-form">
+                            <div class="form-group">
+                                <label class="form-label">카드번호</label>
+                                <input type="text" class="form-control" placeholder="1234-5678-9012-3456" maxlength="19">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">유효기간</label>
+                                        <input type="text" class="form-control" placeholder="MM/YY" maxlength="5">
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">CVC</label>
+                                        <input type="text" class="form-control" placeholder="123" maxlength="3">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">카드 소유자명</label>
+                                <input type="text" class="form-control" placeholder="홍길동">
+                            </div>
+                        </div>
+                        
+                        <div id="bank-transfer-form" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">입금 은행</label>
+                                <select class="form-control">
+                                    <option>국민은행</option>
+                                    <option>신한은행</option>
+                                    <option>우리은행</option>
+                                    <option>하나은행</option>
+                                    <option>기타</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">계좌번호</label>
+                                <input type="text" class="form-control" value="123-456-789012" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">예금주</label>
+                                <input type="text" class="form-control" value="㈜전시" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Terms & Conditions Section -->
+                    <div class="payment-section terms-section">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms-all" checked>
+                            <label for="terms-all" class="checkbox-label">전체 동의</label>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms-service" checked>
+                            <label for="terms-service" class="checkbox-label">서비스 이용약관 동의</label>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms-privacy" checked>
+                            <label for="terms-privacy" class="checkbox-label">개인정보처리방침 동의</label>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms-refund" checked>
+                            <label for="terms-refund" class="checkbox-label">환불 정책 동의</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div>
+                    <!-- Price Summary Section -->
+                    <div class="payment-section">
+                        <div class="section-title">
+                            <i class="fas fa-calculator"></i>
+                            <span>결제 금액</span>
+                        </div>
+                        
+                        <div class="price-row">
+                            <span class="price-label">기본 금액</span>
+                            <span class="price-value">15,600,000원</span>
+                        </div>
+                        
+                        <div class="price-row">
+                            <span class="price-label">쿠폰 할인</span>
+                            <span class="price-value discount">-1,560,000원</span>
+                        </div>
+                        
+                        <div class="price-row">
+                            <span class="price-label">포인트 사용</span>
+                            <span class="price-value discount">-25,000원</span>
+                        </div>
+                        
+                        <div class="price-row total">
+                            <span class="price-label">총 결제 금액</span>
+                            <span class="price-value">14,015,000원</span>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-block btn-lg" id="payment-button">
+                            14,015,000원 결제하기
+                        </button>
+                        
+                        <div class="security-section">
+                            <i class="fas fa-lock"></i>
+                            <span>SSL 보안 결제 시스템으로 안전하게 보호됩니다.</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Tax Invoice Section -->
+                    <div class="payment-section">
+                        <div class="section-title">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <span>세금계산서</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">발행 이메일</label>
+                            <input type="email" class="form-control" value="hong@techsolution.co.kr">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">발행 시점</label>
+                            <select class="form-control">
+                                <option>결제 즉시 발행</option>
+                                <option>월말 일괄 발행</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Back button functionality
+        document.getElementById('backButton').addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', function() {
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                // Show/hide corresponding form
+                const methodTitle = this.querySelector('.payment-method-title').textContent;
+                
+                if (methodTitle === '신용카드') {
+                    document.getElementById('credit-card-form').style.display = 'block';
+                    document.getElementById('bank-transfer-form').style.display = 'none';
+                } else if (methodTitle === '계좌이체') {
+                    document.getElementById('credit-card-form').style.display = 'none';
+                    document.getElementById('bank-transfer-form').style.display = 'block';
+                }
+            });
+        });
+        
+        // Format card number input
+        document.querySelector('input[placeholder="1234-5678-9012-3456"]').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join('-') || value;
+            e.target.value = formattedValue;
+        });
+        
+        // Format expiry date input
+        document.querySelector('input[placeholder="MM/YY"]').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+        
+        // Terms and conditions
+        document.getElementById('terms-all').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.querySelectorAll('input[type="checkbox"]:not(#terms-all)').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+        });
+        
+        // Update "전체 동의" checkbox when individual checkboxes change
+        document.querySelectorAll('input[type="checkbox"]:not(#terms-all)').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const allChecked = Array.from(document.querySelectorAll('input[type="checkbox"]:not(#terms-all)')).every(cb => cb.checked);
+                document.getElementById('terms-all').checked = allChecked;
+            });
+        });
+        
+        // Process payment
+        document.getElementById('payment-button').addEventListener('click', function() {
+            // Basic validation
+            const paymentMethod = document.querySelector('.payment-method.selected .payment-method-title').textContent;
+            
+            if (paymentMethod === '신용카드') {
+                const cardNumber = document.querySelector('input[placeholder="1234-5678-9012-3456"]').value;
+                const expiryDate = document.querySelector('input[placeholder="MM/YY"]').value;
+                const cvc = document.querySelector('input[placeholder="123"]').value;
+                const cardholderName = document.querySelector('input[placeholder="홍길동"]').value;
+                
+                if (!cardNumber || !expiryDate || !cvc || !cardholderName) {
+                    alert('카드 정보를 모두 입력해주세요.');
+                    return;
+                }
+            }
+            
+            // Check if terms are agreed
+            const allTermsChecked = document.getElementById('terms-all').checked;
+            if (!allTermsChecked) {
+                alert('모든 약관에 동의해주세요.');
+                return;
+            }
+            
+            // Process payment
+            alert('결제가 완료되었습니다. 감사합니다.');
+            // In a real app, this would submit the form and process the payment
+        });
+    </script>
+</body>
+</html>

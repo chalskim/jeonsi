@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>내 프로필 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- Profile Page Styles --- */
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 80px; /* FAB 공간 확보 */
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .page-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* --- Service Card --- */
+        .service-list {
+            padding: 15px;
+        }
+
+        .service-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .service-icon.driving { background-color: var(--info-color); }
+        .service-icon.programming { background-color: var(--dark-color); }
+        .service-icon.security { background-color: var(--success-color); }
+
+        .service-details {
+            flex-grow: 1;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .service-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .service-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            background-color: var(--success-color);
+        }
+
+        .service-status.private {
+            background-color: var(--secondary-color);
+        }
+
+        .service-description {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .service-package {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+        
+        .service-package strong {
+            color: var(--primary-color);
+        }
+
+        .service-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--card-background);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--light-color);
+        }
+
+        .action-btn.primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .action-btn.primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .action-btn.danger {
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .action-btn.danger:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* --- Floating Action Button (FAB) --- */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .fab:hover {
+            transform: scale(1.05);
+            background-color: #0056b3;
+        }
+
+        /* --- Confirmation Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 400px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .modal-body {
+            margin-bottom: 25px;
+            color: var(--text-muted);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-btn.cancel {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .modal-btn.confirm {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <header class="profile-header">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="page-title">내 프로필</h1>
+            <div style="width: 40px;"></div> <!-- Spacer for centering title -->
+        </header>
+
+        <!-- Service List -->
+        <main class="service-list">
+            <!-- Service Card 1: Driving -->
+            <div class="service-card" data-service-id="1">
+                <div class="service-icon driving">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="service-details">
+                    <div class="service-header">
+                        <h2 class="service-title">개인 운전 서비스</h2>
+                        <span class="service-status">공개</span>
+                    </div>
+                    <p class="service-description">주말 및 심야 시간대에 개인 운전 서비스를 제공합니다. 안전 운전 10년 경력 보유.</p>
+                    <div class="service-package">시간 패키지: <strong>시간당 3만원</strong></div>
+                    <div class="service-footer">
+                        <button class="action-btn primary" onclick="editService(1)">수정</button>
+                        <button class="action-btn" onclick="toggleStatus(1, this)">비공개 전환</button>
+                        <button class="action-btn danger" onclick="openDeleteModal(1, '개인 운전 서비스')">삭제</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Card 2: Programming -->
+            <div class="service-card" data-service-id="2">
+                <div class="service-icon programming">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="service-details">
+                    <div class="service-header">
+                        <h2 class="service-title">웹 애플리케이션 개발</h2>
+                        <span class="service-status">공개</span>
+                    </div>
+                    <p class="service-description">React, Node.js 기반의 풀스택 웹 애플리케이션 개발을 지원합니다. 기획부터 배포까지.</p>
+                    <div class="service-package">시간 패키지: <strong>프로젝트별 협의</strong></div>
+                    <div class="service-footer">
+                        <button class="action-btn primary" onclick="editService(2)">수정</button>
+                        <button class="action-btn" onclick="toggleStatus(2, this)">비공개 전환</button>
+                        <button class="action-btn danger" onclick="openDeleteModal(2, '웹 애플리케이션 개발')">삭제</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Card 3: Security Consulting -->
+            <div class="service-card" data-service-id="3">
+                <div class="service-icon security">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="service-details">
+                    <div class="service-header">
+                        <h2 class="service-title">ISMS-P 인증 컨설팅</h2>
+                        <span class="service-status">공개</span>
+                    </div>
+                    <p class="service-description">중소기업 대상 ISMS-P 인증 획득을 위한 전 과정 컨설팅을 제공합니다. 문서화 및 심사 대응 지원.</p>
+                    <div class="service-package">시간 패키지: <strong>월 20시간 / 300만원</strong></div>
+                    <div class="service-footer">
+                        <button class="action-btn primary" onclick="editService(3)">수정</button>
+                        <button class="action-btn" onclick="toggleStatus(3, this)">비공개 전환</button>
+                        <button class="action-btn danger" onclick="openDeleteModal(3, 'ISMS-P 인증 컨설팅')">삭제</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="registerNewService()">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <h2 class="modal-title">정말 삭제하시겠습니까?</h2>
+            <p class="modal-body">(<span id="modalServiceTitle"></span>) 서비스를 삭제하면 되돌릴 수 없습니다.</p>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" onclick="closeModal()">취소</button>
+                <button class="modal-btn confirm" onclick="confirmDelete()">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let serviceIdToDelete = null;
+
+        // --- Action Functions (Mockup) ---
+        function goBack() {
+            window.history.back();
+        }
+
+        function registerNewService() {
+            alert('새로운 서비스 등록 페이지로 이동합니다.');
+        }
+
+        function editService(serviceId) {
+            alert(`서비스(ID: ${serviceId}) 수정 페이지로 이동합니다.`);
+        }
+
+        function toggleStatus(serviceId, button) {
+            const card = document.querySelector(`[data-service-id="${serviceId}"]`);
+            const statusBadge = card.querySelector('.service-status');
+            
+            if (statusBadge.classList.contains('private')) {
+                statusBadge.classList.remove('private');
+                statusBadge.textContent = '공개';
+                button.textContent = '비공개 전환';
+                alert('서비스가 공개로 전환되었습니다.');
+            } else {
+                statusBadge.classList.add('private');
+                statusBadge.textContent = '비공개';
+                button.textContent = '공개 전환';
+                alert('서비스가 비공개로 전환되었습니다.');
+            }
+        }
+
+        // --- Modal Functions ---
+        function openDeleteModal(serviceId, serviceTitle) {
+            serviceIdToDelete = serviceId;
+            document.getElementById('modalServiceTitle').textContent = serviceTitle;
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+            serviceIdToDelete = null;
+        }
+
+        function confirmDelete() {
+            if (serviceIdToDelete) {
+                const cardToDelete = document.querySelector(`[data-service-id="${serviceIdToDelete}"]`);
+                if (cardToDelete) {
+                    cardToDelete.remove();
+                    alert('서비스가 삭제되었습니다.');
+                }
+            }
+            closeModal();
+        }
+
+        // --- Card click navigation to expert profile detail ---
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('button') || e.target.closest('a')) return;
+                window.location.href = '/전문가%20프로필%20상세.html';
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>관리자 - 로그 기록</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding: 20px;
+        }
+
+        /* --- Side Menu --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--card-background);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .side-menu-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-type {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .side-menu-content {
+            padding: 10px 0;
+        }
+
+        .menu-category {
+            margin-bottom: 15px;
+        }
+
+        .menu-category-title {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .menu-category-title i {
+            margin-right: 10px;
+        }
+
+        .menu-items {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px 12px 35px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .menu-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .menu-item.active {
+            background-color: rgba(0,123,255,0.1);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 10px 0;
+        }
+
+        /* --- Overlay --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Page Content --- */
+        .page-header {
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .page-description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* --- Filters Section --- */
+        .filters-section {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .filters-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .filters-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-input, .filter-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .filter-date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* --- Log Table --- */
+        .log-table-container {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .log-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: var(--light-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .log-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .log-table tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .log-level {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .level-info {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+        }
+
+        .level-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .level-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .log-message {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .table-actions-cell {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
+        }
+
+        .action-btn.view {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+        }
+
+        /* --- Pagination --- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 20px 0;
+        }
+
+        .page-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--card-background);
+            color: var(--dark-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        /* --- Modal --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .log-detail-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            width: 150px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .detail-value {
+            flex: 1;
+        }
+
+        .code-block {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .log-type-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .type-user {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .type-admin {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .type-system {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--secondary-color);
+        }
+
+        .type-security {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .type-payment {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="app-title">관리자 - 로그 기록</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <div class="user-info">
+                <div class="user-name">관리자</div>
+                <div class="user-type">전시(專時) 관리자</div>
+            </div>
+        </div>
+
+        <div class="side-menu-content">
+            <!-- 관리자 메뉴 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-user-shield"></i>
+                    <span>관리자 메뉴</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-users-cog"></i>
+                        <span>사용자/콘텐츠 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-comments"></i>
+                        <span>Q&A 답변 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>공고 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-newspaper"></i>
+                        <span>공지 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-star"></i>
+                        <span>별점 평가 관리</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-ad"></i>
+                        <span>베너 광고 관리</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="menu-divider"></div>
+            
+            <!-- 시스템 관리 -->
+            <div class="menu-category">
+                <div class="menu-category-title">
+                    <i class="fas fa-cogs"></i>
+                    <span>시스템 관리</span>
+                </div>
+                <div class="menu-items">
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>환경 설정</span>
+                    </a>
+                    <a href="#" class="menu-item active">
+                        <i class="fas fa-history"></i>
+                        <span>로그 기록</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>시스템 상태</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-plug"></i>
+                        <span>연동 서비스 관리</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay for Side Menu -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">로그 기록</h1>
+            <p class="page-description">시스템에서 발생하는 모든 중요한 이벤트를 기록하고, 문제 발생 시 원인을 파악할 수 있습니다.</p>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filters-header">
+                <div class="filters-title">검색 필터</div>
+                <div class="filters-actions">
+                    <button class="btn btn-outline" id="resetFilters">초기화</button>
+                    <button class="btn btn-primary" id="applyFilters">적용</button>
+                    <button class="btn btn-primary" id="exportLogs">내보내기</button>
+                </div>
+            </div>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="filter-label">로그 유형</label>
+                    <select class="filter-select" id="logType">
+                        <option value="">전체</option>
+                        <option value="user">사용자 활동</option>
+                        <option value="admin">관리자 활동</option>
+                        <option value="system">시스템 이벤트</option>
+                        <option value="security">보안</option>
+                        <option value="payment">결제</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">로그 레벨</label>
+                    <select class="filter-select" id="logLevel">
+                        <option value="">전체</option>
+                        <option value="info">정보(Info)</option>
+                        <option value="warning">경고(Warning)</option>
+                        <option value="error">오류(Error)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">사용자/관리자</label>
+                    <input type="text" class="filter-input" id="userFilter" placeholder="사용자 ID 또는 이름">
+                </div>
+            </div>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="filter-label">기간</label>
+                    <div class="filter-date-range">
+                        <input type="date" class="filter-input" id="startDate">
+                        <span>~</span>
+                        <input type="date" class="filter-input" id="endDate">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">IP 주소</label>
+                    <input type="text" class="filter-input" id="ipFilter" placeholder="IP 주소">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">키워드</label>
+                    <input type="text" class="filter-input" id="keywordFilter" placeholder="로그 메시지 내용">
+                </div>
+            </div>
+        </div>
+
+        <!-- Log Table -->
+        <div class="log-table-container">
+            <div class="table-header">
+                <div class="table-title">로그 목록</div>
+                <div class="table-actions">
+                    <button class="btn btn-outline">새로고침</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>시간</th>
+                            <th>유형</th>
+                            <th>레벨</th>
+                            <th>사용자</th>
+                            <th>IP 주소</th>
+                            <th>메시지</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2023-11-20 14:32:15</td>
+                            <td><span class="log-type-badge type-admin">관리자 활동</span></td>
+                            <td><span class="log-level level-info">정보</span></td>
+                            <td>admin</td>
+                            <td>192.168.1.100</td>
+                            <td class="log-message">관리자(admin)이 공지사항 "신규 기능 안내"를 등록했습니다.</td>
+                            <td>
+                                <div class="table-actions-cell">
+                                    <button class="action-btn view" data-id="1">보기</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-20 14:28:42</td>
+                            <td><span class="log-type-badge type-user">사용자 활동</span></td>
+                            <td><span class="log-level level-info">정보</span></td>
+                            <td>김민수(user123)</td>
+                            <td>203.242.54.123</td>
+                            <td class="log-message">사용자(user123)가 로그인했습니다.</td>
+                            <td>
+                                <div class="table-actions-cell">
+                                    <button class="action-btn view" data-id="2">보기</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-20 14:15:33</td>
+                            <td><span class="log-type-badge type-system">시스템 이벤트</span></td>
+                            <td><span class="log-level level-warning">경고</span></td>
+                            <td>시스템</td>
+                            <td>127.0.0.1</td>
+                            <td class="log-message">데이터베이스 연결 풀 사용률이 80%를 초과했습니다.</td>
+                            <td>
+                                <div class="table-actions-cell">
+                                    <button class="action-btn view" data-id="3">보기</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-20 13:55:21</td>
+                            <td><span class="log-type-badge type-security">보안</span></td>
+                            <td><span class="log-level level-error">오류</span></td>
+                            <td>미인증 사용자</td>
+                            <td>185.220.101.45</td>
+                            <td class="log-message">관리자 페이지에 대한 무단 접근 시도가 감지되었습니다.</td>
+                            <td>
+                                <div class="table-actions-cell">
+                                    <button class="action-btn view" data-id="4">보기</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-20 13:42:18</td>
+                            <td><span class="log-type-badge type-payment">결제</span></td>
+                            <td><span class="log-level level-info">정보</span></td>
+                            <td>이지영(comp456)</td>
+                            <td>203.242.54.124</td>
+                            <td class="log-message">결제가 완료되었습니다. (주문번호: ORD-20231120-0012)</td>
+                            <td>
+                                <div class="table-actions-cell">
+                                    <button class="action-btn view" data-id="5">보기</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-20 13:30:05</td>
+                            <td><span class="log-type-badge type-admin">관리자 활동</span></td>
+                            <td><span class="log-level level-info">정보</span></td>
+                            <td>admin</td>
+                            <td>192.168.1.100</td>
+                            <td class="log-message">관리자(admin)이 사용자(user789)의 계정을 정지시켰습니다.</td>
+                            <td>
+                                <div class="table-actions-cell">
+                                    <button class="action-btn view" data-id="6">보기</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-20 12:15:33</td>
+                            <td><span class="log-type-badge type-system">시스템 이벤트</span></td>
+                            <td><span class="log-level level-error">오류</span></td>
+                            <td>시스템</td>
+                            <td>127.0.0.1</td>
+                            <td class="log-message">이메일 발송 큐 처리 중 오류가 발생했습니다.</td>
+                            <td>
+                                <div class="table-actions-cell">
+                                    <button class="action-btn view" data-id="7">보기</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-20 11:45:12</td>
+                            <td><span class="log-type-badge type-user">사용자 활동</span></td>
+                            <td><span class="log-level level-info">정보</span></td>
+                            <td>박상민(expert321)</td>
+                            <td>203.242.54.125</td>
+                            <td class="log-message">전문가(expert321)가 새로운 시간 패키지를 등록했습니다.</td>
+                            <td>
+                                <div class="table-actions-cell">
+                                    <button class="action-btn view" data-id="8">보기</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="page-btn" disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">5</button>
+            <button class="page-btn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Log Detail Modal -->
+    <div class="modal" id="logDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">로그 상세 정보</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="log-detail-section">
+                    <h3 class="section-title">기본 정보</h3>
+                    <div class="detail-row">
+                        <div class="detail-label">로그 ID:</div>
+                        <div class="detail-value">LOG-20231120-001</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">발생 시간:</div>
+                        <div class="detail-value">2023-11-20 14:32:15</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">로그 유형:</div>
+                        <div class="detail-value"><span class="log-type-badge type-admin">관리자 활동</span></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">로그 레벨:</div>
+                        <div class="detail-value"><span class="log-level level-info">정보</span></div>
+                    </div>
+                </div>
+
+                <div class="log-detail-section">
+                    <h3 class="section-title">사용자 정보</h3>
+                    <div class="detail-row">
+                        <div class="detail-label">사용자:</div>
+                        <div class="detail-value">admin</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">IP 주소:</div>
+                        <div class="detail-value">192.168.1.100</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">User-Agent:</div>
+                        <div class="detail-value">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36</div>
+                    </div>
+                </div>
+
+                <div class="log-detail-section">
+                    <h3 class="section-title">상세 내용</h3>
+                    <div class="detail-row">
+                        <div class="detail-label">메시지:</div>
+                        <div class="detail-value">관리자(admin)이 공지사항 "신규 기능 안내"를 등록했습니다.</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">관련 객체:</div>
+                        <div class="detail-value">공지사항 (ID: NTC-20231120-001)</div>
+                    </div>
+                </div>
+
+                <div class="log-detail-section">
+                    <h3 class="section-title">추가 정보</h3>
+                    <div class="detail-row">
+                        <div class="detail-label">요청 URL:</div>
+                        <div class="detail-value">/api/admin/notice/create</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">요청 방법:</div>
+                        <div class="detail-value">POST</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">요청 데이터:</div>
+                        <div class="detail-value">
+                            <div class="code-block">{
+  "title": "신규 기능 안내",
+  "content": "새로운 기능이 추가되었습니다...",
+  "is_active": true,
+  "start_date": "2023-11-20",
+  "end_date": "2023-12-20"
+}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="closeModalBtn">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Side Menu Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('overlay');
+
+        menuToggle.addEventListener('click', () => {
+            sideMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sideMenu.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Log Detail Modal
+        const viewButtons = document.querySelectorAll('.action-btn.view');
+        const logDetailModal = document.getElementById('logDetailModal');
+        const closeModal = document.getElementById('closeModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        viewButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                logDetailModal.classList.add('active');
+            });
+        });
+
+        closeModal.addEventListener('click', () => {
+            logDetailModal.classList.remove('active');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            logDetailModal.classList.remove('active');
+        });
+
+        // Filter Actions
+        document.getElementById('applyFilters').addEventListener('click', () => {
+            // Here you would typically apply filters and refresh the table
+            console.log('Filters applied');
+        });
+
+        document.getElementById('resetFilters').addEventListener('click', () => {
+            // Here you would typically reset the filters
+            document.getElementById('logType').value = '';
+            document.getElementById('logLevel').value = '';
+            document.getElementById('userFilter').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('ipFilter').value = '';
+            document.getElementById('keywordFilter').value = '';
+            console.log('Filters reset');
+        });
+
+        document.getElementById('exportLogs').addEventListener('click', () => {
+            // Here you would typically export the logs
+            console.log('Export logs');
+            alert('로그 내보내기가 시작되었습니다. 완료되면 알림을 받으실 수 있습니다.');
+        });
+    </script>
+</body>
+</html>

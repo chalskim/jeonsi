@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>포트폴리오 상세 - 전문가 시간 연결 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- App Header --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        /* --- Main Container --- */
+        .portfolio-detail-container {
+            max-width: 900px;
+            margin: 80px auto 40px;
+            padding: 0 20px;
+        }
+
+        .detail-card {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        /* --- Image Section --- */
+        .portfolio-image {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+        }
+
+        /* --- Content Section --- */
+        .portfolio-content {
+            padding: 40px;
+        }
+
+        .portfolio-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        .portfolio-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .portfolio-tag {
+            padding: 6px 15px;
+            border-radius: 20px;
+            background-color: var(--light-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        .portfolio-description {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-color);
+            margin-bottom: 30px;
+        }
+
+        .portfolio-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .portfolio-link:hover {
+            background-color: #0056b3;
+        }
+
+        /* --- Action Buttons --- */
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 40px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e6ea;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .portfolio-detail-container {
+                padding: 0 15px;
+            }
+
+            .portfolio-image {
+                height: 250px;
+            }
+
+            .portfolio-content {
+                padding: 25px;
+            }
+
+            .portfolio-title {
+                font-size: 1.6rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="backButton">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">포트폴리오 상세</div>
+        <div></div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="portfolio-detail-container">
+        <div class="detail-card">
+            <!-- Portfolio Image -->
+            <img src="https://picsum.photos/seed/startup-growth-strategy/900/450.jpg" alt="스타트업 성장 전략 컨설팅" class="portfolio-image">
+
+            <!-- Portfolio Content -->
+            <div class="portfolio-content">
+                <h1 class="portfolio-title">스타트업 성장 전략 컨설팅</h1>
+                
+                <div class="portfolio-tags">
+                    <span class="portfolio-tag">전략</span>
+                    <span class="portfolio-tag">성장</span>
+                    <span class="portfolio-tag">컨설팅</span>
+                    <span class="portfolio-tag">비즈니스 모델</span>
+                </div>
+
+                <h2 class="section-title">프로젝트 설명</h2>
+                <p class="portfolio-description">
+                    이 프로젝트는 초기 스타트업의 비즈니스 모델을 구체화하고, 지속 가능한 성장 전략을 수립하는 것을 목표로 진행된 6개월간의 컨설팅입니다. 시장 분석, 경쟁사 조사, 타겟 고객 정의를 통해 핵심 가치를 명확히 하고, 이를 바탕으로 제품 로드맵과 마케팅 전략을 수립했습니다. <br><br>
+                    
+                    주요 성과로는 컨설팅 이후 6개월 만에 월간 활성 사용자 수를 300% 증가시켰으며, 이를 바탕으로 시리즈 A 투자 유치에 성공했습니다. 또한, 데이터 기반의 성과 지표(KPI) 대시보드를 구축하여 경영진이 실시간으로 비즈니스 현황을 파악하고 신속한 의사결정을 내릴 수 있는 체계를 마련했습니다.
+                </p>
+
+                <h2 class="section-title">프로젝트 링크</h2>
+                <a href="#" class="portfolio-link" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    프로젝트 결과 보고서 보기
+                </a>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="listButton">목록으로</button>
+                <button class="btn btn-primary" id="editButton">수정하기</button>
+                <button class="btn btn-danger" id="deleteButton">삭제하기</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simple interaction for buttons
+            const backButton = document.getElementById('backButton');
+            const listButton = document.getElementById('listButton');
+            const editButton = document.getElementById('editButton');
+            const deleteButton = document.getElementById('deleteButton');
+
+            // Back button
+            backButton.addEventListener('click', () => {
+                // In a real app, this would navigate to the previous page
+                window.history.back();
+            });
+
+            // List button
+            listButton.addEventListener('click', () => {
+                alert('포트폴리오 목록 페이지로 이동합니다. (이것은 목업입니다)');
+            });
+
+            // Edit button
+            editButton.addEventListener('click', () => {
+                alert('포트폴리오 수정 페이지로 이동합니다. (이것은 목업입니다)');
+            });
+
+            // Delete button
+            deleteButton.addEventListener('click', () => {
+                if (confirm('정말로 이 포트폴리오를 삭제하시겠습니까?')) {
+                    alert('포트폴리오가 삭제되었습니다.');
+                    // In a real app, you would delete the item and redirect
+                }
+            });
+        });
+    </script>
+</body>
+</html>

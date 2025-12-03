@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>내가 등록한 의뢰 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- List Page Styles --- */
+        .list-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 80px; /* FAB 공간 확보 */
+        }
+
+        .list-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .page-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* --- Tab Navigation --- */
+        .tab-nav {
+            display: flex;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .tab-button.active {
+            font-weight: bold;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* --- Tab Content --- */
+        .tab-content {
+            padding: 15px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* --- Request Card --- */
+        .request-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .request-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .card-title-section {
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-meta-item i {
+            color: var(--primary-color);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-badge.recruiting {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .status-badge.in-progress {
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .status-badge.completed {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .card-action-btn {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--card-background);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .card-action-btn.primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .card-action-btn.primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .card-action-btn.danger {
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .card-action-btn.danger:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        /* --- No Data State --- */
+        .no-data-container {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .no-data-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-data-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .no-data-desc {
+            margin-bottom: 20px;
+        }
+
+        .no-data-action-btn {
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- Floating Action Button (FAB) --- */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .fab:hover {
+            transform: scale(1.05);
+            background-color: #0056b3;
+        }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 400px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .modal-body {
+            margin-bottom: 25px;
+            color: var(--text-muted);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-btn.cancel {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .modal-btn.confirm {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="list-container">
+        <!-- List Header -->
+        <header class="list-header">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="page-title">내가 등록한 의뢰</h1>
+            <div style="width: 40px;"></div> <!-- Spacer for centering title -->
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-nav">
+            <button class="tab-button active" data-tab="in-progress">진행중</button>
+            <button class="tab-button" data-tab="completed">완료/취소</button>
+        </nav>
+
+        <!-- Tab Content -->
+        <main class="tab-content">
+            <!-- 진행중 Tab -->
+            <div id="in-progress" class="tab-pane active">
+                <!-- Request Card 1 -->
+                <div class="request-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <h3 class="card-title">보안 진단 보고서 작성 (3일)</h3>
+                            <div class="card-meta">
+                                <span class="card-meta-item"><i class="fas fa-users"></i> 3명 지원</span>
+                                <span class="card-meta-item"><i class="fas fa-calendar-times"></i> 3일 남음</span>
+                            </div>
+                        </div>
+                        <span class="status-badge recruiting">모집중</span>
+                    </div>
+                    <div class="card-footer">
+                        <button class="card-action-btn primary" onclick="viewApplicants()">지원자 보기</button>
+                        <button class="card-action-btn" onclick="editRequest()">수정</button>
+                        <button class="card-action-btn danger" onclick="openCloseModal('보안 진단 보고서 작성 (3일)')">마감</button>
+                    </div>
+                </div>
+
+                <!-- Request Card 2 -->
+                <div class="request-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <h3 class="card-title">스타트업 IR 자료 작성 지원</h3>
+                            <div class="card-meta">
+                                <span class="card-meta-item"><i class="fas fa-user-check"></i> 1명 선정</span>
+                                <span class="card-meta-item"><i class="fas fa-calendar-check"></i> 계약 진행중</span>
+                            </div>
+                        </div>
+                        <span class="status-badge in-progress">진행중</span>
+                    </div>
+                    <div class="card-footer">
+                        <button class="card-action-btn primary" onclick="viewContract()">계약 보기</button>
+                        <button class="card-action-btn" onclick="viewMessages()">메시지</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 완료/취소 Tab -->
+            <div id="completed" class="tab-pane">
+                <!-- Request Card 3 -->
+                <div class="request-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <h3 class="card-title">클라우드 아키텍처 설계 (1주)</h3>
+                            <div class="card-meta">
+                                <span class="card-meta-item"><i class="fas fa-star"></i> 5.0 평점</span>
+                                <span class="card-meta-item"><i class="fas fa-calendar"></i> 2025-02-25 완료</span>
+                            </div>
+                        </div>
+                        <span class="status-badge completed">완료</span>
+                    </div>
+                    <div class="card-footer">
+                        <button class="card-action-btn primary" onclick="viewDetails()">상세보기</button>
+                        <button class="card-action-btn" onclick="repostRequest()">재등록</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="registerNewRequest()">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <h2 class="modal-title">정말 마감하시겠습니까?</h2>
+            <p class="modal-body">의뢰를 마감하면 더 이상 새로운 지원을 받을 수 없습니다. (<span id="modalRequestTitle"></span>)</p>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" onclick="closeModal()">취소</button>
+                <button class="modal-btn confirm" onclick="confirmCloseRequest()">마감하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- JavaScript Functionality ---
+
+        // Tab Switching
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and panes
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+
+                // Add active class to the clicked button and corresponding pane
+                button.classList.add('active');
+                const targetTabId = button.getAttribute('data-tab');
+                document.getElementById(targetTabId).classList.add('active');
+            });
+        });
+
+        // Modal Functions
+        function openCloseModal(requestTitle) {
+            document.getElementById('modalRequestTitle').textContent = requestTitle;
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+        }
+
+        // --- Action Functions (Mockup) ---
+        function goBack() {
+            window.history.back();
+        }
+
+        function registerNewRequest() {
+            window.location.href = '/단기%20의뢰%20상세%20등록화면.html';
+        }
+
+        function viewApplicants() {
+            window.location.href = '/단기%20의뢰%20상세_지원자목록.html';
+        }
+
+        function editRequest() {
+            alert('의뢰 수정 페이지로 이동합니다.');
+        }
+
+        function confirmCloseRequest() {
+            alert('의뢰가 성공적으로 마감되었습니다.');
+            closeModal();
+            // In a real app, you would also update the UI to reflect the change
+        }
+
+        function viewContract() {
+            alert('계약 상세 페이지로 이동합니다.');
+        }
+
+        function viewMessages() {
+            alert('해당 전문가와의 채팅방으로 이동합니다.');
+        }
+
+        function viewDetails() {
+            alert('완료된 의뢰의 상세 페이지로 이동합니다.');
+        }
+
+        function repostRequest() {
+            alert('이전 내용을 기반으로 새 의뢰 등록 페이지로 이동합니다.');
+        }
+
+        document.querySelectorAll('.request-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('button') || e.target.closest('a')) return;
+                window.location.href = '/단기%20의뢰%20상세.html';
+            });
+        });
+    </script>
+
+</body>
+</html>

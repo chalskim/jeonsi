@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>개인 장바구니 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 80px;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* --- Cart Header --- */
+        .cart-header {
+            padding: 20px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .cart-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- Cart Items --- */
+        .cart-items-container {
+            padding: 15px;
+        }
+
+        .cart-item {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            position: relative;
+        }
+
+        .cart-item-checkbox {
+            margin-right: 15px;
+            display: flex;
+            align-items: flex-start;
+            padding-top: 5px;
+        }
+
+        .cart-item-checkbox input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .cart-item-details {
+            flex-grow: 1;
+        }
+
+        .cart-item-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .cart-item-instructor {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .cart-item-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .cart-item-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cart-item-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-top: 8px;
+        }
+
+        .cart-item-remove {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* --- Cart Summary --- */
+        .cart-summary {
+            background-color: var(--card-background);
+            padding: 20px;
+            margin: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .summary-section {
+            margin-bottom: 20px;
+        }
+
+        .summary-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        /* --- Available Coupons --- */
+        .available-coupons {
+            margin-bottom: 15px;
+        }
+
+        .coupon-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .coupon-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        .coupon-item.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .coupon-item-radio {
+            margin-right: 12px;
+            margin-top: 2px;
+        }
+
+        .coupon-item-details {
+            flex-grow: 1;
+        }
+
+        .coupon-item-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .coupon-item-discount {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+
+        .coupon-item-expiry {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .coupon-separator {
+            text-align: center;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .coupon-separator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        .coupon-separator span {
+            background-color: var(--card-background);
+            padding: 0 10px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .promo-code-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .promo-code-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .promo-code-input button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .promo-applied {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            background-color: rgba(40, 167, 69, 0.1);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .promo-applied-name {
+            font-weight: 500;
+        }
+
+        .promo-applied-remove {
+            color: var(--danger-color);
+            cursor: pointer;
+        }
+
+        /* --- Points Section --- */
+        .points-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .points-available {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            flex-basis: 100%;
+        }
+
+        .points-input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .points-input {
+            width: 120px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: right;
+        }
+
+        .points-use-all {
+            background-color: var(--light-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .points-use-all:hover {
+            background-color: #e9ecef;
+        }
+
+        .price-breakdown {
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .price-row.total {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* --- Cart Actions --- */
+        .cart-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-background);
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-total {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-total-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .cart-total-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .checkout-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .checkout-button:disabled {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+        }
+
+        /* --- Empty Cart --- */
+        .empty-cart {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-cart-icon {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .empty-cart-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .empty-cart-text {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .browse-courses-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .cart-item {
+                flex-direction: column;
+            }
+
+            .cart-item-checkbox {
+                position: absolute;
+                top: 15px;
+                left: 15px;
+            }
+
+            .cart-item-image {
+                width: 100%;
+                height: 150px;
+                margin: 10px 0;
+            }
+
+            .cart-item-remove {
+                position: static;
+                align-self: flex-end;
+                margin-top: 10px;
+            }
+
+            .cart-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .cart-total {
+                align-self: flex-start;
+            }
+
+            .checkout-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="header-icon" id="backButton">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="app-title">개인 장바구니</div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Cart Header -->
+        <div class="cart-header">
+            <h1 class="cart-title">장바구니</h1>
+            <p class="cart-subtitle">관심 있는 교육 과정을 담아두고 결제할 수 있습니다</p>
+        </div>
+        
+        <!-- Cart Items Container -->
+        <div class="cart-items-container" id="cartItemsContainer">
+            <!-- Cart items will be dynamically added here -->
+        </div>
+        
+        <!-- Empty Cart (hidden by default) -->
+        <div class="empty-cart" id="emptyCart" style="display: none;">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h2 class="empty-cart-title">장바구니가 비어있습니다</h2>
+            <p class="empty-cart-text">관심 있는 교육 과정을 찾아보세요</p>
+            <button class="browse-courses-button" id="browseCoursesButton">교육 과정 둘러보기</button>
+        </div>
+        
+        <!-- Cart Summary -->
+        <div class="cart-summary" id="cartSummary" style="display: none;">
+            <!-- Promo Code Section -->
+            <div class="summary-section">
+                <h3 class="summary-title">프로모션 코드 / 쿠폰</h3>
+                
+                <!-- Available Coupons List -->
+                <div class="available-coupons" id="availableCouponsContainer">
+                    <!-- Coupons will be dynamically added here -->
+                </div>
+
+                <div class="coupon-separator" id="couponSeparator" style="display: none;">
+                    <span>또는 코드 직접 입력</span>
+                </div>
+
+                <!-- Promo Code Input -->
+                <div class="promo-code-input" id="promoCodeInput">
+                    <input type="text" placeholder="프로모션 코드를 입력하세요">
+                    <button id="applyPromoButton">적용</button>
+                </div>
+                
+                <div class="promo-applied" id="promoApplied" style="display: none;">
+                    <span class="promo-applied-name" id="promoAppliedName">친구 추천 쿠폰</span>
+                    <span class="promo-applied-remove" id="removePromoButton">삭제</span>
+                </div>
+            </div>
+            
+            <!-- Points Section -->
+            <div class="summary-section">
+                <h3 class="summary-title">포인트 사용</h3>
+                <div class="points-section">
+                    <div>
+                        <div class="points-available">사용 가능 포인트: <strong id="availablePointsText">5,000P</strong></div>
+                        <div class="points-input-container">
+                            <input type="number" class="points-input" id="pointsInput" value="0" min="0" max="5000">
+                            <button class="points-use-all" id="useAllPointsButton">전액 사용</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Price Breakdown -->
+            <div class="price-breakdown">
+                <div class="price-row">
+                    <span>총 상품 금액</span>
+                    <span id="subtotal">0원</span>
+                </div>
+                <div class="price-row" id="promoDiscountRow" style="display: none;">
+                    <span>프로모션 할인</span>
+                    <span id="promoDiscount">-0원</span>
+                </div>
+                <div class="price-row" id="pointsDiscountRow" style="display: none;">
+                    <span>포인트 사용</span>
+                    <span id="pointsDiscount">-0원</span>
+                </div>
+                <div class="price-row total">
+                    <span>최종 결제 금액</span>
+                    <span id="totalAmount">0원</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cart Actions -->
+    <div class="cart-actions" id="cartActions" style="display: none;">
+        <div class="cart-total">
+            <span class="cart-total-label">총 결제 금액</span>
+            <span class="cart-total-amount" id="cartTotalAmount">0원</span>
+        </div>
+        <button class="checkout-button" id="checkoutButton">결제하기</button>
+    </div>
+
+    <script>
+        // Sample cart items data
+        const cartItems = [
+            {
+                id: 1,
+                title: "마케팅 전략 기획 워크숍",
+                instructor: "김마케팅 전문가",
+                category: "마케팅",
+                duration: "4주",
+                format: "온라인",
+                price: 150000,
+                image: "https://picsum.photos/seed/marketing/80/80.jpg"
+            },
+            {
+                id: 2,
+                title: "데이터 분석을 위한 Python 기초",
+                instructor: "이데이터 전문가",
+                category: "데이터/AI",
+                duration: "6주",
+                format: "온라인",
+                price: 200000,
+                image: "https://picsum.photos/seed/python/80/80.jpg"
+            },
+            {
+                id: 3,
+                title: "스타트업 재무 관리 실무",
+                instructor: "박재무 전문가",
+                category: "재무/회계",
+                duration: "3주",
+                format: "온라인",
+                price: 180000,
+                image: "https://picsum.photos/seed/finance/80/80.jpg"
+            }
+        ];
+
+        // Sample available coupons data
+        const availableCoupons = [
+            {
+                id: 'c1',
+                name: '신규가입 감사 쿠폰',
+                discount: 10,
+                discountType: 'percentage',
+                expiryDate: '2024-12-31'
+            },
+            {
+                id: 'c2',
+                name: '주말 특별 5,000원 할인',
+                discount: 5000,
+                discountType: 'fixed',
+                expiryDate: '2024-11-30'
+            }
+        ];
+
+        // State
+        let selectedItems = new Set();
+        let appliedPromo = null;
+        let pointsToUse = 0;
+        const availablePoints = 5000;
+
+        // DOM Elements
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const emptyCart = document.getElementById('emptyCart');
+        const cartSummary = document.getElementById('cartSummary');
+        const cartActions = document.getElementById('cartActions');
+        const subtotalElement = document.getElementById('subtotal');
+        const promoDiscountRow = document.getElementById('promoDiscountRow');
+        const promoDiscountElement = document.getElementById('promoDiscount');
+        const pointsDiscountRow = document.getElementById('pointsDiscountRow');
+        const pointsDiscountElement = document.getElementById('pointsDiscount');
+        const totalAmountElement = document.getElementById('totalAmount');
+        const cartTotalAmountElement = document.getElementById('cartTotalAmount');
+        const availableCouponsContainer = document.getElementById('availableCouponsContainer');
+        const couponSeparator = document.getElementById('couponSeparator');
+        const promoCodeInput = document.getElementById('promoCodeInput');
+        const promoApplied = document.getElementById('promoApplied');
+        const promoAppliedName = document.getElementById('promoAppliedName');
+        const applyPromoButton = document.getElementById('applyPromoButton');
+        const removePromoButton = document.getElementById('removePromoButton');
+        const pointsInput = document.getElementById('pointsInput');
+        const useAllPointsButton = document.getElementById('useAllPointsButton');
+        const availablePointsText = document.getElementById('availablePointsText');
+        const checkoutButton = document.getElementById('checkoutButton');
+        const browseCoursesButton = document.getElementById('browseCoursesButton');
+        const backButton = document.getElementById('backButton');
+
+        // Initialize
+        function init() {
+            renderCartItems();
+            renderAvailableCoupons();
+            updateCartSummary();
+            
+            // Set max attribute for points input
+            pointsInput.max = availablePoints;
+            availablePointsText.textContent = `${formatNumber(availablePoints)}P`;
+            
+            // Event listeners
+            applyPromoButton.addEventListener('click', applyPromoCode);
+            removePromoButton.addEventListener('click', removePromoCode);
+            useAllPointsButton.addEventListener('click', setPointsToMax);
+            pointsInput.addEventListener('input', handlePointsInput);
+            checkoutButton.addEventListener('click', proceedToCheckout);
+            browseCoursesButton.addEventListener('click', () => {
+                window.location.href = '/교육%20등록%20목록.html';
+            });
+            backButton.addEventListener('click', () => {
+                window.history.back();
+            });
+        }
+
+        // Render available coupons
+        function renderAvailableCoupons() {
+            if (availableCoupons.length === 0) {
+                availableCouponsContainer.style.display = 'none';
+                couponSeparator.style.display = 'none';
+                return;
+            }
+            availableCouponsContainer.style.display = 'block';
+            couponSeparator.style.display = 'block';
+
+            availableCouponsContainer.innerHTML = '';
+            availableCoupons.forEach(coupon => {
+                const couponElement = document.createElement('div');
+                couponElement.className = 'coupon-item';
+                if (appliedPromo && appliedPromo.id === coupon.id) {
+                    couponElement.classList.add('selected');
+                }
+
+                const discountText = coupon.discountType === 'percentage'
+                    ? `${coupon.discount}% 할인`
+                    : `${formatPrice(coupon.discount)} 할인`;
+
+                couponElement.innerHTML = `
+                    <input type="radio" name="coupon" value="${coupon.id}" class="coupon-item-radio" 
+                        id="coupon-${coupon.id}" ${appliedPromo && appliedPromo.id === coupon.id ? 'checked' : ''}>
+                    <div class="coupon-item-details">
+                        <div class="coupon-item-name">${coupon.name}</div>
+                        <div class="coupon-item-discount">${discountText}</div>
+                        <div class="coupon-item-expiry">${coupon.expiryDate}까지</div>
+                    </div>
+                `;
+                
+                couponElement.addEventListener('click', () => {
+                    applyCoupon(coupon.id);
+                });
+
+                availableCouponsContainer.appendChild(couponElement);
+            });
+        }
+
+        // Apply coupon from list
+        function applyCoupon(couponId) {
+            const coupon = availableCoupons.find(c => c.id === couponId);
+            if (!coupon) return;
+
+            appliedPromo = coupon;
+            renderAvailableCoupons();
+            showAppliedPromoUI();
+            updateCartSummary();
+        }
+
+        // Apply promo code (from input)
+        function applyPromoCode() {
+            const input = promoCodeInput.querySelector('input');
+            const promoCode = input.value.trim();
+            
+            if (!promoCode) {
+                alert('프로모션 코드를 입력해주세요.');
+                return;
+            }
+            
+            appliedPromo = {
+                id: 'manual-' + Date.now(),
+                code: promoCode,
+                discount: 0.1,
+                discountType: 'percentage',
+                name: promoCode === 'FRIEND10' ? '친구 추천 쿠폰' : promoCode
+            };
+            
+            showAppliedPromoUI();
+            updateCartSummary();
+        }
+        
+        // Show UI for applied promo
+        function showAppliedPromoUI() {
+            promoAppliedName.textContent = appliedPromo.name;
+            promoCodeInput.style.display = 'none';
+            couponSeparator.style.display = 'none';
+            availableCouponsContainer.style.display = 'none';
+            promoApplied.style.display = 'flex';
+        }
+
+        // Remove promo code
+        function removePromoCode() {
+            appliedPromo = null;
+            promoCodeInput.style.display = 'flex';
+            promoApplied.style.display = 'none';
+            promoCodeInput.querySelector('input').value = '';
+            
+            renderAvailableCoupons();
+            updateCartSummary();
+        }
+
+        // Set points to maximum
+        function setPointsToMax() {
+            pointsInput.value = availablePoints;
+            handlePointsInput();
+        }
+
+        // Handle points input
+        function handlePointsInput() {
+            let value = parseInt(pointsInput.value) || 0;
+            // Ensure value is not negative and not more than available
+            value = Math.max(0, Math.min(value, availablePoints));
+            pointsToUse = value;
+            pointsInput.value = value; // Update input in case it was clamped
+            updateCartSummary();
+        }
+
+        // Render cart items
+        function renderCartItems() {
+            if (cartItems.length === 0) {
+                cartItemsContainer.style.display = 'none';
+                emptyCart.style.display = 'block';
+                cartSummary.style.display = 'none';
+                cartActions.style.display = 'none';
+                return;
+            }
+
+            cartItemsContainer.style.display = 'block';
+            emptyCart.style.display = 'none';
+            cartSummary.style.display = 'block';
+            cartActions.style.display = 'flex';
+
+            cartItemsContainer.innerHTML = '';
+            
+            cartItems.forEach(item => {
+                const cartItemElement = document.createElement('div');
+                cartItemElement.className = 'cart-item';
+                
+                cartItemElement.innerHTML = `
+                    <div class="cart-item-checkbox">
+                        <input type="checkbox" id="item-${item.id}" data-id="${item.id}" ${selectedItems.has(item.id) ? 'checked' : ''}>
+                    </div>
+                    <div class="cart-item-image">
+                        <img src="${item.image}" alt="${item.title}" width="80" height="80">
+                    </div>
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">${item.title}</h3>
+                        <p class="cart-item-instructor">${item.instructor}</p>
+                        <div class="cart-item-meta">
+                            <div class="cart-item-meta-item">
+                                <i class="fas fa-tag"></i>
+                                <span>${item.category}</span>
+                            </div>
+                            <div class="cart-item-meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>${item.duration}</span>
+                            </div>
+                            <div class="cart-item-meta-item">
+                                <i class="fas fa-laptop"></i>
+                                <span>${item.format}</span>
+                            </div>
+                        </div>
+                        <div class="cart-item-price">${formatPrice(item.price)}</div>
+                    </div>
+                    <div class="cart-item-remove" data-id="${item.id}">
+                        <i class="fas fa-times"></i>
+                    </div>
+                `;
+                
+                cartItemsContainer.appendChild(cartItemElement);
+                
+                // Add event listeners
+                const checkbox = cartItemElement.querySelector(`#item-${item.id}`);
+                checkbox.addEventListener('change', () => toggleItemSelection(item.id));
+                
+                const removeButton = cartItemElement.querySelector('.cart-item-remove');
+                removeButton.addEventListener('click', () => removeItem(item.id));
+            });
+        }
+
+        // Toggle item selection
+        function toggleItemSelection(itemId) {
+            if (selectedItems.has(itemId)) {
+                selectedItems.delete(itemId);
+            } else {
+                selectedItems.add(itemId);
+            }
+            updateCartSummary();
+        }
+
+        // Remove item from cart
+        function removeItem(itemId) {
+            const index = cartItems.findIndex(item => item.id === itemId);
+            if (index !== -1) {
+                cartItems.splice(index, 1);
+                selectedItems.delete(itemId);
+                renderCartItems();
+                updateCartSummary();
+            }
+        }
+
+        // Update cart summary
+        function updateCartSummary() {
+            let subtotal = 0;
+            
+            cartItems.forEach(item => {
+                if (selectedItems.has(item.id)) {
+                    subtotal += item.price;
+                }
+            });
+            
+            let promoDiscount = 0;
+            if (appliedPromo && selectedItems.size > 0) {
+                if (appliedPromo.discountType === 'percentage') {
+                    promoDiscount = Math.floor(subtotal * appliedPromo.discount);
+                } else {
+                    promoDiscount = Math.min(appliedPromo.discount, subtotal);
+                }
+            }
+            
+            const remainingAmount = subtotal - promoDiscount;
+            let pointsDiscount = 0;
+            if (pointsToUse > 0 && selectedItems.size > 0) {
+                pointsDiscount = Math.min(pointsToUse, remainingAmount);
+            }
+            
+            const total = subtotal - promoDiscount - pointsDiscount;
+            
+            // Update UI
+            subtotalElement.textContent = formatPrice(subtotal);
+            
+            if (promoDiscount > 0) {
+                promoDiscountRow.style.display = 'flex';
+                promoDiscountElement.textContent = `-${formatPrice(promoDiscount)}`;
+            } else {
+                promoDiscountRow.style.display = 'none';
+            }
+            
+            if (pointsDiscount > 0) {
+                pointsDiscountRow.style.display = 'flex';
+                pointsDiscountElement.textContent = `-${formatPrice(pointsDiscount)}`;
+            } else {
+                pointsDiscountRow.style.display = 'none';
+            }
+            
+            totalAmountElement.textContent = formatPrice(total);
+            cartTotalAmountElement.textContent = formatPrice(total);
+            
+            // Disable checkout button if no items selected
+            checkoutButton.disabled = selectedItems.size === 0;
+        }
+
+        // Proceed to checkout
+        function proceedToCheckout() {
+            if (selectedItems.size === 0) {
+                alert('결제할 상품을 선택해주세요.');
+                return;
+            }
+            
+            const selectedItemsList = cartItems.filter(item => selectedItems.has(item.id));
+            const itemsText = selectedItemsList.map(item => item.title).join(', ');
+            
+            alert(`결제 페이지로 이동합니다.\n선택된 상품: ${itemsText}\n최종 결제 금액: ${cartTotalAmountElement.textContent}`);
+            
+            // window.location.href = '/결제페이지.html';
+        }
+
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ko-KR', {
+                style: 'currency',
+                currency: 'KRW',
+                maximumFractionDigits: 0
+            }).format(price);
+        }
+        
+        // Format number with commas
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ko-KR').format(num);
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>

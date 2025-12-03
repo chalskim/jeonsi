@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 전문가 추천 | 전시(專時)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-common.css">
+    <link rel="stylesheet" href="expert-recommendation.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 사이드바 -->
+        <div class="sidebar">
+        </div>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <header class="header">
+                <h1><i class="fas fa-brain"></i> AI 전문가 추천</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openAIConfig()">
+                        <i class="fas fa-cog"></i> AI 설정
+                    </button>
+                    <button class="btn btn-success" onclick="trainAIModel()">
+                        <i class="fas fa-robot"></i> AI 학습
+                    </button>
+                    <button class="btn btn-info" onclick="refreshRecommendations()">
+                        <i class="fas fa-sync"></i> 새로고침
+                    </button>
+                </div>
+            </header>
+
+            <!-- AI 추천 통계 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>AI 추천 성공률</h3>
+                        <p class="stat-value">94.2%</p>
+                        <span class="stat-change positive">+2.3%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>추천 매칭 수</h3>
+                        <p class="stat-value">3,847</p>
+                        <span class="stat-change positive">+156</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>AI 학습 데이터</h3>
+                        <p class="stat-value">28.5K</p>
+                        <span class="stat-change positive">+1.2K</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>평균 추천 시간</h3>
+                        <p class="stat-value">0.8초</p>
+                        <span class="stat-change negative">-0.1초</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon yellow">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>추천 만족도</h3>
+                        <p class="stat-value">4.8</p>
+                        <span class="stat-change positive">+0.1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 추천 현황 -->
+            <div class="content-grid">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>실시간 추천 현황</h2>
+                        <div class="header-filters">
+                            <select id="recommendationFilter">
+                                <option value="">전체 추천</option>
+                                <option value="high">높은 신뢰도</option>
+                                <option value="medium">중간 신뢰도</option>
+                                <option value="low">낮은 신뢰도</option>
+                                <option value="pending">검토 중</option>
+                                <option value="confirmed">확정됨</option>
+                            </select>
+                            <select id="categoryFilter">
+                                <option value="">전체 카테고리</option>
+                                <option value="IT01">웹 개발</option>
+                                <option value="IT02">모바일 개발</option>
+                                <option value="DS01">데이터 분석</option>
+                                <option value="DS02">AI/ML</option>
+                                <option value="DS05">UI/UX 디자인</option>
+                                <option value="MK01">디지털 마케팅</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-list" id="recommendationList">
+                        <div class="recommendation-item high-confidence">
+                            <div class="recommendation-header">
+                                <span class="request-id">#REQ-2024-1291</span>
+                                <span class="confidence-badge high">신뢰도: 96%</span>
+                                <span class="time-ago">2분 전</span>
+                            </div>
+                            <div class="recommendation-content">
+                                <div class="request-info">
+                                    <div class="request-title">
+                                        <h4>React 기반 이커머스 플랫폼 개발</h4>
+                                        <p class="request-description">결제 시스템 연동, 상품 관리, 장바구니 기능 구현 필요</p>
+                                    </div>
+                                    <div class="request-requirements">
+                                        <span class="skill-tag">React</span>
+                                        <span class="skill-tag">Node.js</span>
+                                        <span class="skill-tag">MongoDB</span>
+                                        <span class="budget-tag">400-600만원</span>
+                                        <span class="duration-tag">4개월</span>
+                                    </div>
+                                </div>
+                                <div class="ai-analysis">
+                                    <div class="analysis-title">
+                                        <i class="fas fa-brain"></i> AI 분석 결과
+                                    </div>
+                                    <div class="analysis-factors">
+                                        <div class="factor">
+                                            <span class="factor-label">스킬 매칭</span>
+                                            <div class="factor-bar">
+                                                <div class="bar-fill" style="width: 98%"></div>
+                                                <span class="bar-value">98%</span>
+                                            </div>
+                                        </div>
+                                        <div class="factor">
+                                            <span class="factor-label">경험 일치도</span>
+                                            <div class="factor-bar">
+                                                <div class="bar-fill" style="width: 94%"></div>
+                                                <span class="bar-value">94%</span>
+                                            </div>
+                                        </div>
+                                        <div class="factor">
+                                            <span class="factor-label">과거 성공률</span>
+                                            <div class="factor-bar">
+                                                <div class="bar-fill" style="width: 92%"></div>
+                                                <span class="bar-value">92%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="recommended-experts">
+                                <div class="experts-header">
+                                    <span class="experts-title">추천 전문가</span>
+                                    <span class="experts-count">3명</span>
+                                </div>
+                                <div class="experts-list">
+                                    <div class="expert-item">
+                                        <div class="expert-avatar">KH</div>
+                                        <div class="expert-details">
+                                            <span class="expert-name">김현우</span>
+                                            <span class="expert-score">96점</span>
+                                        </div>
+                                        <span class="recommendation-match">매칭도: 98%</span>
+                                    </div>
+                                    <div class="expert-item">
+                                        <div class="expert-avatar">LS</div>
+                                        <div class="expert-details">
+                                            <span class="expert-name">이서진</span>
+                                            <span class="expert-score">94점</span>
+                                        </div>
+                                        <span class="recommendation-match">매칭도: 95%</span>
+                                    </div>
+                                    <div class="expert-item">
+                                        <div class="expert-avatar">PJ</div>
+                                        <div class="expert-details">
+                                            <span class="expert-name">박지민</span>
+                                            <span class="expert-score">91점</span>
+                                        </div>
+                                        <span class="recommendation-match">매칭도: 92%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="recommendation-actions">
+                                <button class="btn btn-sm btn-primary" onclick="viewRecommendationDetail('REQ-2024-1291')">
+                                    <i class="fas fa-eye"></i> 상세
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="confirmRecommendation('REQ-2024-1291')">
+                                    <i class="fas fa-check"></i> 확정
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="modifyRecommendation('REQ-2024-1291')">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="seeAlternativeExperts('REQ-2024-1291')">
+                                    <i class="fas fa-users"></i> 대안 보기
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="recommendation-item medium-confidence">
+                            <div class="recommendation-header">
+                                <span class="request-id">#REQ-2024-1290</span>
+                                <span class="confidence-badge medium">신뢰도: 78%</span>
+                                <span class="time-ago">15분 전</span>
+                            </div>
+                            <div class="recommendation-content">
+                                <div class="request-info">
+                                    <div class="request-title">
+                                        <h4>데이터 분석 및 시각화 대시보드</h4>
+                                        <p class="request-description">실시간 데이터 분석, 인터랙티브 대시보드 개발 필요</p>
+                                    </div>
+                                    <div class="request-requirements">
+                                        <span class="skill-tag">Python</span>
+                                        <span class="skill-tag">Pandas</span>
+                                        <span class="skill-tag">Tableau</span>
+                                        <span class="budget-tag">200-300만원</span>
+                                        <span class="duration-tag">2개월</span>
+                                    </div>
+                                </div>
+                                <div class="ai-analysis">
+                                    <div class="analysis-title">
+                                        <i class="fas fa-brain"></i> AI 분석 결과
+                                    </div>
+                                    <div class="analysis-factors">
+                                        <div class="factor">
+                                            <span class="factor-label">스킬 매칭</span>
+                                            <div class="factor-bar">
+                                                <div class="bar-fill medium" style="width: 82%"></div>
+                                                <span class="bar-value">82%</span>
+                                            </div>
+                                        </div>
+                                        <div class="factor">
+                                            <span class="factor-label">경험 일치도</span>
+                                            <div class="factor-bar">
+                                                <div class="bar-fill medium" style="width: 76%"></div>
+                                                <span class="bar-value">76%</span>
+                                            </div>
+                                        </div>
+                                        <div class="factor">
+                                            <span class="factor-label">과거 성공률</span>
+                                            <div class="factor-bar">
+                                                <div class="bar-fill medium" style="width: 75%"></div>
+                                                <span class="bar-value">75%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="recommended-experts">
+                                <div class="experts-header">
+                                    <span class="experts-title">추천 전문가</span>
+                                    <span class="experts-count">5명</span>
+                                </div>
+                                <div class="experts-list">
+                                    <div class="expert-item">
+                                        <div class="expert-avatar">CJ</div>
+                                        <div class="expert-details">
+                                            <span class="expert-name">최지우</span>
+                                            <span class="expert-score">84점</span>
+                                        </div>
+                                        <span class="recommendation-match">매칭도: 85%</span>
+                                    </div>
+                                    <div class="expert-item">
+                                        <div class="expert-avatar">SY</div>
+                                        <div class="expert-details">
+                                            <span class="expert-name">신유나</span>
+                                            <span class="expert-score">79점</span>
+                                        </div>
+                                        <span class="recommendation-match">매칭도: 80%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="recommendation-actions">
+                                <button class="btn btn-sm btn-primary" onclick="viewRecommendationDetail('REQ-2024-1290')">
+                                    <i class="fas fa-eye"></i> 상세
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="modifyRecommendation('REQ-2024-1290')">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="seeAlternativeExperts('REQ-2024-1290')">
+                                    <i class="fas fa-users"></i> 대안 보기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 페이징 -->
+                    <div class="pagination">
+                        <button class="pagination-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                        <button class="pagination-btn active">1</button>
+                        <button class="pagination-btn">2</button>
+                        <button class="pagination-btn">3</button>
+                        <button class="pagination-btn">...</button>
+                        <button class="pagination-btn">10</button>
+                        <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- AI 모델 성능 분석 -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>AI 모델 성능</h2>
+                        <div class="period-selector">
+                            <button class="period-btn active" data-period="week">이번 주</button>
+                            <button class="period-btn" data-period="month">이번 달</button>
+                            <button class="period-btn" data-period="quarter">이번 분기</button>
+                        </div>
+                    </div>
+
+                    <div class="ai-performance">
+                        <div class="performance-metric">
+                            <h4>추천 정확도</h4>
+                            <div class="metric-chart">
+                                <div class="circular-progress">
+                                    <div class="progress-circle" data-percentage="94.2">
+                                        <span class="percentage">94.2%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="metric-trend">
+                                <span class="trend-label">추세</span>
+                                <span class="trend-value positive">+2.3%</span>
+                            </div>
+                        </div>
+
+                        <div class="performance-metric">
+                            <h4>매칭 성공률</h4>
+                            <div class="metric-chart">
+                                <div class="circular-progress">
+                                    <div class="progress-circle" data-percentage="87.6">
+                                        <span class="percentage">87.6%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="metric-trend">
+                                <span class="trend-label">추세</span>
+                                <span class="trend-value positive">+1.8%</span>
+                            </div>
+                        </div>
+
+                        <div class="performance-metric">
+                            <h4>처리 속도</h4>
+                            <div class="metric-chart">
+                                <div class="speed-chart">
+                                    <div class="speed-bar">
+                                        <div class="speed-fill" style="width: 92%"></div>
+                                        <span class="speed-value">0.8초</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="metric-trend">
+                                <span class="trend-label">추세</span>
+                                <span class="trend-value negative">-0.1초</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI 모델 피처 중요도 -->
+                    <div class="feature-importance">
+                        <h4>AI 모델 피처 중요도</h4>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-name">스킬 매칭</span>
+                                <div class="feature-bar">
+                                    <div class="bar-fill" style="width: 85%"></div>
+                                    <span class="bar-value">35%</span>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-name">경험 연수</span>
+                                <div class="feature-bar">
+                                    <div class="bar-fill" style="width: 70%"></div>
+                                    <span class="bar-value">28%</span>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-name">과거 성공률</span>
+                                <div class="feature-bar">
+                                    <div class="bar-fill" style="width: 60%"></div>
+                                    <span class="bar-value">22%</span>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-name">고객 평점</span>
+                                <div class="feature-bar">
+                                    <div class="bar-fill" style="width: 45%"></div>
+                                    <span class="bar-value">10%</span>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-name">인증 상태</span>
+                                <div class="feature-bar">
+                                    <div class="bar-fill" style="width: 30%"></div>
+                                    <span class="bar-value">5%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI 설정 모달 -->
+    <div id="aiConfigModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>AI 추천 시스템 설정</h3>
+                <button class="close-btn" onclick="closeAIConfigModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-config-grid">
+                    <!-- 모델 설정 -->
+                    <div class="config-section">
+                        <h4>AI 모델 설정</h4>
+                        <div class="config-item">
+                            <label>모델 버전</label>
+                            <select class="config-select">
+                                <option>GPT-4 Turbo</option>
+                                <option>Claude-3 Sonnet</option>
+                                <option>Gemini Pro</option>
+                                <option>Custom Model v2.1</option>
+                            </select>
+                        </div>
+                        <div class="config-item">
+                            <label>학습 데이터 기간</label>
+                            <select class="config-select">
+                                <option>최근 6개월</option>
+                                <option>최근 1년</option>
+                                <option>전체 데이터</option>
+                            </select>
+                        </div>
+                        <div class="config-item">
+                            <label>재학습 주기</label>
+                            <select class="config-select">
+                                <option>매일</option>
+                                <option>매주</option>
+                                <option>격주</option>
+                                <option>매월</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 추천 가중치 -->
+                    <div class="config-section">
+                        <h4>추천 가중치 설정</h4>
+                        <div class="config-item">
+                            <label>스킬 매칭 가중치</label>
+                            <input type="range" min="0" max="100" value="35" class="config-slider">
+                            <span class="slider-value">35%</span>
+                        </div>
+                        <div class="config-item">
+                            <label>경험 가중치</label>
+                            <input type="range" min="0" max="100" value="28" class="config-slider">
+                            <span class="slider-value">28%</span>
+                        </div>
+                        <div class="config-item">
+                            <label>성공률 가중치</label>
+                            <input type="range" min="0" max="100" value="22" class="config-slider">
+                            <span class="slider-value">22%</span>
+                        </div>
+                        <div class="config-item">
+                            <label>평점 가중치</label>
+                            <input type="range" min="0" max="100" value="10" class="config-slider">
+                            <span class="slider-value">10%</span>
+                        </div>
+                    </div>
+
+                    <!-- 자동화 설정 -->
+                    <div class="config-section">
+                        <h4>자동화 설정</h4>
+                        <div class="config-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked>
+                                <span>자동 추천 활성화</span>
+                            </label>
+                        </div>
+                        <div class="config-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked>
+                                <span>실시간 학습 활성화</span>
+                            </label>
+                        </div>
+                        <div class="config-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox">
+                                <span>신뢰도 기반 자동 확정</span>
+                            </label>
+                        </div>
+                        <div class="config-item">
+                            <label>최소 신뢰도 임계치</label>
+                            <input type="number" min="0" max="100" value="75" class="config-input">
+                            <span>%</span>
+                        </div>
+                    </div>
+
+                    <!-- 알림 설정 -->
+                    <div class="config-section">
+                        <h4>알림 설정</h4>
+                        <div class="config-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked>
+                                <span>추천 결과 알림</span>
+                            </label>
+                        </div>
+                        <div class="config-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked>
+                                <span>성공률 저하 알림</span>
+                            </label>
+                        </div>
+                        <div class="config-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox">
+                                <span>AI 모델 재학습 필요 알림</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAIConfigModal()">취소</button>
+                <button class="btn btn-primary" onclick="saveAIConfig()">저장</button>
+                <button class="btn btn-success" onclick="testAIConfig()">테스트</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추천 상세 모달 -->
+    <div id="recommendationDetailModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>추천 상세 정보</h3>
+                <button class="close-btn" onclick="closeRecommendationDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="recommendation-detail" id="recommendationDetail">
+                    <!-- 동적으로 채워질 내용 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeRecommendationDetailModal()">닫기</button>
+                <button class="btn btn-primary" onclick="saveRecommendationChanges()">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="expert-recommendation.js"></script>
+</body>
+</html>

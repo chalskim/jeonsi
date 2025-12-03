@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>통계 보고 - 전시(專時) 관리자</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f39c12;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+            --light-color: #f8f9fa;
+            --dark-color: #2c3e50;
+            --border-color: #dee2e6;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 사이드바 스타일 (admin-sidebar.html 내용 포함) */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .sidebar-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .sidebar-menu {
+            padding: 10px 0;
+        }
+
+        .menu-section {
+            margin-bottom: 25px;
+        }
+
+        .menu-title {
+            padding: 15px 25px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px 15px 30px;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: #ffd700;
+        }
+
+        .menu-item.active {
+            background-color: rgba(255,255,255,0.2);
+            border-left-color: #ffd700;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            margin-right: 15px;
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .header h1 {
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* 통계 카드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .stat-change {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .change-positive {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+        }
+
+        .change-negative {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* 차트 컨테이너 */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* 섹션 제목 */
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        /* 테이블 스타일 */
+        .data-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table th {
+            background-color: var(--light-color);
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .table tr:hover {
+            background-color: rgba(74, 144, 226, 0.05);
+        }
+
+        /* 필터 및 검색 */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        /* 탭 */
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px 12px 0 0;
+            border-bottom: 2px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background-color: rgba(74, 144, 226, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 25px;
+            background: white;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">전시(專時)</div>
+                <div class="sidebar-subtitle">관리자 메뉴</div>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-title">대시보드</div>
+                    <a href="admin-dashboard.html" class="menu-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>전체 현황</span>
+                    </a>
+                    <a href="news-manage.html" class="menu-item">
+                        <i class="fas fa-newspaper"></i>
+                        <span>뉴스/공지</span>
+                    </a>
+                    <a href="inquiry-list.html" class="menu-item">
+                        <i class="fas fa-comments"></i>
+                        <span>문의 관리</span>
+                    </a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-title">사용자 관리</div>
+                    <a href="사용자_리스트_관리자.html" class="menu-item">
+                        <i class="fas fa-users"></i>
+                        <span>사용자 관리</span>
+                    </a>
+                    <a href="payment-manage.html" class="menu-item">
+                        <i class="fas fa-credit-card"></i>
+                        <span>사용자 결제관리</span>
+                    </a>
+                    <a href="user-post-manage.html" class="menu-item">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>사용자 공고 관리</span>
+                    </a>
+                    <a href="베너관리등록.html" class="menu-item">
+                        <i class="fas fa-image"></i>
+                        <span>배너 관리</span>
+                    </a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-title">평가/매칭</div>
+                    <a href="admin_star_manement.html" class="menu-item">
+                        <i class="fas fa-star"></i>
+                        <span>별점 평가</span>
+                    </a>
+                    <a href="skill-manage.html" class="menu-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>스킬 관리</span>
+                    </a>
+                    <a href="matching-dashboard.html" class="menu-item">
+                        <i class="fas fa-users-cog"></i>
+                        <span>매칭 관리</span>
+                    </a>
+                    <a href="matching-requests.html" class="menu-item">
+                        <i class="fas fa-handshake"></i>
+                        <span>매칭 요청</span>
+                    </a>
+                    <a href="expert-matching.html" class="menu-item">
+                        <i class="fas fa-search-plus"></i>
+                        <span>전문가 매칭</span>
+                    </a>
+                    <a href="matching-analytics.html" class="menu-item">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>매칭 분석</span>
+                    </a>
+                    <a href="matching-settings.html" class="menu-item">
+                        <i class="fas fa-cogs"></i>
+                        <span>매칭 설정</span>
+                    </a>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-title">시스템</div>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-cog"></i>
+                        <span>환경 설정</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>로그 기록</span>
+                    </a>
+                    <a href="admin-reports.html" class="menu-item active">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>통계 보고</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-chart-bar" style="color: var(--primary-color); margin-right: 10px;"></i>통계 보고</h1>
+                <p>전시(專時) 플랫폼의 종합적인 통계 데이터를 확인하고 분석할 수 있습니다.</p>
+            </div>
+
+            <!-- 탭 네비게이션 -->
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('overview')">개요</div>
+                <div class="tab" onclick="showTab('users')">사용자 현황</div>
+                <div class="tab" onclick="showTab('matching')">매칭 현황</div>
+                <div class="tab" onclick="showTab('revenue')">재정 현황</div>
+                <div class="tab" onclick="showTab('content')">콘텐츠 현황</div>
+                <div class="tab" onclick="showTab('behavior')">사용자 행동</div>
+                <div class="tab" onclick="showTab('trends')">트렌드 분석</div>
+            </div>
+
+            <!-- 개요 탭 -->
+            <div id="overview" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(74, 144, 226, 0.1); color: var(--primary-color);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-value">12,456</div>
+                        <div class="stat-label">총 가입자</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +15.3% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(39, 174, 96, 0.1); color: var(--success-color);">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="stat-value">3,842</div>
+                        <div class="stat-label">총 매칭 수</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +8.7% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(243, 156, 18, 0.1); color: var(--secondary-color);">
+                            <i class="fas fa-won-sign"></i>
+                        </div>
+                        <div class="stat-value">₩45.8M</div>
+                        <div class="stat-label">월 수익</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +22.1% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(231, 76, 60, 0.1); color: var(--danger-color);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-value">89.2%</div>
+                        <div class="stat-label">매칭 성공률</div>
+                        <div class="stat-change change-negative">
+                            <i class="fas fa-arrow-down"></i> -1.2% (전월 대비)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">월별 가입자 및 매칭 추세</h3>
+                            <div class="chart-actions">
+                                <button class="btn btn-secondary">월간</button>
+                                <button class="btn btn-primary">주간</button>
+                            </div>
+                        </div>
+                        <canvas id="overviewChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">사용자 유형 분포</h3>
+                            <div class="chart-actions">
+                                <button class="btn btn-secondary">상세보기</button>
+                            </div>
+                        </div>
+                        <canvas id="userTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 사용자 현황 탭 -->
+            <div id="users" class="tab-content">
+                <h2 class="section-title">1. 사용자 현황</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(52, 152, 219, 0.1); color: var(--info-color);">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="stat-value">486</div>
+                        <div class="stat-label">신규 가입자 (이번 달)</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +12.3% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(155, 89, 182, 0.1); color: #9b59b6;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-value">3,245</div>
+                        <div class="stat-label">월간 활성 사용자</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +5.8% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(26, 188, 156, 0.1); color: #1abc9c;">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-value">2,847</div>
+                        <div class="stat-label">전문가 수</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +9.2% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(230, 126, 34, 0.1); color: #e67e22;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="stat-value">9,609</div>
+                        <div class="stat-label">일반 사용자 수</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +18.7% (전월 대비)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card" style="margin-top: 25px;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">일간/주간/월간 활성 사용자</h3>
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label class="filter-label">기간</label>
+                                <select class="filter-select">
+                                    <option>최근 7일</option>
+                                    <option>최근 30일</option>
+                                    <option>최근 90일</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="userActivityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 매칭 현황 탭 -->
+            <div id="matching" class="tab-content">
+                <h2 class="section-title">2. 매칭 현황</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(46, 204, 113, 0.1); color: #2ecc71;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-value">89.2%</div>
+                        <div class="stat-label">매칭 성공률</div>
+                        <div class="stat-change change-negative">
+                            <i class="fas fa-arrow-down"></i> -1.2% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(241, 196, 15, 0.1); color: #f1c40f;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-value">24.5시간</div>
+                        <div class="stat-label">평균 매칭 시간</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> -2.3시간 (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(52, 73, 94, 0.1); color: #34495e;">
+                            <i class="fas fa-list-alt"></i>
+                        </div>
+                        <div class="stat-value">1,256</div>
+                        <div class="stat-label">이번 달 매칭 요청</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +8.7% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(231, 76, 60, 0.1); color: var(--danger-color);">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-value">134</div>
+                        <div class="stat-label">매칭 실패 건수</div>
+                        <div class="stat-change change-negative">
+                            <i class="fas fa-arrow-up"></i> +5.6% (전월 대비)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">카테고리별 매칭 성공률</h3>
+                        </div>
+                        <canvas id="categoryMatchingChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">매칭 처리 시간 분포</h3>
+                        </div>
+                        <canvas id="matchingTimeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 재정 현황 탭 -->
+            <div id="revenue" class="tab-content">
+                <h2 class="section-title">3. 재정 현황</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(39, 174, 96, 0.1); color: var(--success-color);">
+                            <i class="fas fa-won-sign"></i>
+                        </div>
+                        <div class="stat-value">₩45.8M</div>
+                        <div class="stat-label">월간 수익</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +22.1% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(52, 152, 219, 0.1); color: var(--info-color);">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="stat-value">96.8%</div>
+                        <div class="stat-label">결제 성공률</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +1.2% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(243, 156, 18, 0.1); color: var(--warning-color);">
+                            <i class="fas fa-undo"></i>
+                        </div>
+                        <div class="stat-value">₩2.3M</div>
+                        <div class="stat-label">환불 금액</div>
+                        <div class="stat-change change-negative">
+                            <i class="fas fa-arrow-up"></i> +8.4% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(155, 89, 182, 0.1); color: #9b59b6;">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="stat-value">₩43,567</div>
+                        <div class="stat-label">평균 거래 금액</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +3.2% (전월 대비)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card" style="margin-top: 25px;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">일간/주간/월간 수익 추세</h3>
+                        <div class="chart-actions">
+                            <button class="btn btn-secondary">수익보고서 내보내기</button>
+                        </div>
+                    </div>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 콘텐츠 현황 탭 -->
+            <div id="content" class="tab-content">
+                <h2 class="section-title">4. 콘텐츠 현황</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(41, 128, 185, 0.1); color: #2980b9;">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="stat-value">2,341</div>
+                        <div class="stat-label">등록된 공고 수</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +14.7% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(231, 76, 60, 0.1); color: var(--danger-color);">
+                            <i class="fas fa-archive"></i>
+                        </div>
+                        <div class="stat-value">487</div>
+                        <div class="stat-label">만료된 공고 수</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +8.9% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(243, 156, 18, 0.1); color: var(--secondary-color);">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">뉴스/공지 게시물 수</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +12.3% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(46, 204, 113, 0.1); color: #2ecc71;">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="stat-value">892</div>
+                        <div class="stat-label">문의 접수 건수</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +23.4% (전월 대비)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-table" style="margin-top: 25px;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>콘텐츠 유형</th>
+                                <th>총 게시물 수</th>
+                                <th>이번 달 신규</th>
+                                <th>평균 조회수</th>
+                                <th>삭제된 게시물</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>전문가 공고</td>
+                                <td>2,341</td>
+                                <td>342</td>
+                                <td>1,245</td>
+                                <td>487</td>
+                            </tr>
+                            <tr>
+                                <td>뉴스/공지</td>
+                                <td>156</td>
+                                <td>18</td>
+                                <td>3,892</td>
+                                <td>12</td>
+                            </tr>
+                            <tr>
+                                <td>사용자 문의</td>
+                                <td>892</td>
+                                <td>125</td>
+                                <td>-</td>
+                                <td>892 (처리완료)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 사용자 행동 탭 -->
+            <div id="behavior" class="tab-content">
+                <h2 class="section-title">5. 사용자 행동 분석</h2>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">페이지별 평균 체류시간</h3>
+                        </div>
+                        <canvas id="pageTimeChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">기능별 사용률</h3>
+                        </div>
+                        <canvas id="featureUsageChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card" style="margin-top: 25px;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">사용자 이탈률 분석 (퍼널 차트)</h3>
+                    </div>
+                    <canvas id="funnelChart"></canvas>
+                </div>
+
+                <div class="stats-grid" style="margin-top: 25px;">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(52, 152, 219, 0.1); color: var(--info-color);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-value">8.5분</div>
+                        <div class="stat-label">평균 세션 시간</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +1.2분 (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(231, 76, 60, 0.1); color: var(--danger-color);">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                        <div class="stat-value">32.4%</div>
+                        <div class="stat-label">이탈률</div>
+                        <div class="stat-change change-negative">
+                            <i class="fas fa-arrow-down"></i> -3.1% (전월 대비)
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(39, 174, 96, 0.1); color: var(--success-color);">
+                            <i class="fas fa-redo"></i>
+                        </div>
+                        <div class="stat-value">78.9%</div>
+                        <div class="stat-label">재방문율</div>
+                        <div class="stat-change change-positive">
+                            <i class="fas fa-arrow-up"></i> +5.6% (전월 대비)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 트렌드 분석 탭 -->
+            <div id="trends" class="tab-content">
+                <h2 class="section-title">6. 트렌드 분석 및 예측</h2>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">월별 성장 트렌드</h3>
+                        </div>
+                        <canvas id="growthTrendChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">미래 사용자 증가 예측</h3>
+                        </div>
+                        <canvas id="predictionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card" style="margin-top: 25px;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">경쟁사 대비 시장 점유율 추이</h3>
+                    </div>
+                    <canvas id="marketShareChart"></canvas>
+                </div>
+
+                <div class="data-table" style="margin-top: 25px;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">주요 성과 지표 예측 (향후 3개월)</h3>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>지표</th>
+                                <th>현재 값</th>
+                                <th>1개월 예측</th>
+                                <th>3개월 예측</th>
+                                <th>성장률</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>총 가입자 수</td>
+                                <td>12,456</td>
+                                <td>13,892</td>
+                                <td>17,234</td>
+                                <td style="color: var(--success-color);">+38.4%</td>
+                            </tr>
+                            <tr>
+                                <td>월간 수익</td>
+                                <td>₩45.8M</td>
+                                <td>₩52.3M</td>
+                                <td>₩68.7M</td>
+                                <td style="color: var(--success-color);">+50.0%</td>
+                            </tr>
+                            <tr>
+                                <td>매칭 성공률</td>
+                                <td>89.2%</td>
+                                <td>90.1%</td>
+                                <td>91.8%</td>
+                                <td style="color: var(--success-color);">+2.9%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 탭 기능
+        function showTab(tabName) {
+            // 모든 탭 콘텐츠 숨기기
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 모든 탭 버튼 비활성화
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 선택한 탭 활성화
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Chart.js 기본 설정
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+        // 개요 차트
+        const overviewCtx = document.getElementById('overviewChart').getContext('2d');
+        new Chart(overviewCtx, {
+            type: 'line',
+            data: {
+                labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+                datasets: [{
+                    label: '가입자',
+                    data: [890, 1234, 1567, 1890, 2345, 2890],
+                    borderColor: 'rgb(74, 144, 226)',
+                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                    yAxisID: 'y',
+                }, {
+                    label: '매칭',
+                    data: [245, 389, 456, 567, 689, 842],
+                    borderColor: 'rgb(39, 174, 96)',
+                    backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                    yAxisID: 'y1',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                    },
+                }
+            }
+        });
+
+        // 사용자 유형 차트
+        const userTypeCtx = document.getElementById('userTypeChart').getContext('2d');
+        new Chart(userTypeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['일반 사용자', '전문가', '관리자'],
+                datasets: [{
+                    data: [9609, 2847, 0],
+                    backgroundColor: [
+                        'rgba(74, 144, 226, 0.8)',
+                        'rgba(39, 174, 96, 0.8)',
+                        'rgba(243, 156, 18, 0.8)'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+
+        // 사용자 활동 차트
+        const userActivityCtx = document.getElementById('userActivityChart');
+        if (userActivityCtx) {
+            new Chart(userActivityCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'],
+                    datasets: [{
+                        label: '일간 활성 사용자',
+                        data: [2345, 2567, 2789, 2345, 2890, 1234, 987],
+                        backgroundColor: 'rgba(74, 144, 226, 0.8)',
+                    }, {
+                        label: '신규 방문자',
+                        data: [456, 523, 589, 456, 678, 234, 198],
+                        backgroundColor: 'rgba(39, 174, 96, 0.8)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        }
+
+        // 카테고리별 매칭 차트
+        const categoryMatchingCtx = document.getElementById('categoryMatchingChart');
+        if (categoryMatchingCtx) {
+            new Chart(categoryMatchingCtx.getContext('2d'), {
+                type: 'radar',
+                data: {
+                    labels: ['IT개발', '디자인', '마케팅', '번역', '법률', '교육'],
+                    datasets: [{
+                        label: '매칭 성공률 (%)',
+                        data: [92, 87, 85, 90, 88, 86],
+                        backgroundColor: 'rgba(74, 144, 226, 0.2)',
+                        borderColor: 'rgb(74, 144, 226)',
+                        pointBackgroundColor: 'rgb(74, 144, 226)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // 매칭 시간 차트
+        const matchingTimeCtx = document.getElementById('matchingTimeChart');
+        if (matchingTimeCtx) {
+            new Chart(matchingTimeCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['0-6시간', '6-12시간', '12-24시간', '24-48시간', '48시간+'],
+                    datasets: [{
+                        label: '매칭 건수',
+                        data: [234, 456, 789, 345, 123],
+                        backgroundColor: 'rgba(39, 174, 96, 0.8)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 수익 차트
+        const revenueCtx = document.getElementById('revenueChart');
+        if (revenueCtx) {
+            new Chart(revenueCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+                    datasets: [{
+                        label: '월간 수익 (백만원)',
+                        data: [28.5, 32.1, 35.8, 39.2, 42.6, 45.8],
+                        borderColor: 'rgb(39, 174, 96)',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 페이지 체류시간 차트
+        const pageTimeCtx = document.getElementById('pageTimeChart');
+        if (pageTimeCtx) {
+            new Chart(pageTimeCtx.getContext('2d'), {
+                type: 'horizontalBar',
+                data: {
+                    labels: ['대시보드', '매칭', '전문가 프로필', '공고', '결제'],
+                    datasets: [{
+                        label: '평균 체류시간 (분)',
+                        data: [8.5, 12.3, 15.7, 10.2, 5.6],
+                        backgroundColor: 'rgba(74, 144, 226, 0.8)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 기능 사용률 차트
+        const featureUsageCtx = document.getElementById('featureUsageChart');
+        if (featureUsageCtx) {
+            new Chart(featureUsageCtx.getContext('2d'), {
+                type: 'polarArea',
+                data: {
+                    labels: ['매칭', '검색', '프로필', '공고 등록', '리뷰', '결제'],
+                    datasets: [{
+                        data: [89, 76, 68, 54, 43, 32],
+                        backgroundColor: [
+                            'rgba(74, 144, 226, 0.8)',
+                            'rgba(39, 174, 96, 0.8)',
+                            'rgba(243, 156, 18, 0.8)',
+                            'rgba(231, 76, 60, 0.8)',
+                            'rgba(155, 89, 182, 0.8)',
+                            'rgba(52, 152, 219, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    }
+                }
+            });
+        }
+
+        // 퍼널 차트
+        const funnelCtx = document.getElementById('funnelChart');
+        if (funnelCtx) {
+            new Chart(funnelCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['방문', '회원가입', '매칭 요청', '결제', '재방문'],
+                    datasets: [{
+                        label: '전환율 (%)',
+                        data: [100, 45.6, 78.9, 67.8, 72.3],
+                        backgroundColor: [
+                            'rgba(74, 144, 226, 0.8)',
+                            'rgba(52, 152, 219, 0.8)',
+                            'rgba(39, 174, 96, 0.8)',
+                            'rgba(243, 156, 18, 0.8)',
+                            'rgba(155, 89, 182, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 성장 트렌드 차트
+        const growthTrendCtx = document.getElementById('growthTrendChart');
+        if (growthTrendCtx) {
+            new Chart(growthTrendCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+                    datasets: [{
+                        label: '가입자 증가율 (%)',
+                        data: [12.3, 15.6, 18.9, 22.1, 19.8, 24.5],
+                        borderColor: 'rgb(74, 144, 226)',
+                        backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: '수익 증가율 (%)',
+                        data: [8.9, 12.3, 15.6, 18.2, 20.4, 22.1],
+                        borderColor: 'rgb(39, 174, 96)',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        }
+
+        // 예측 차트
+        const predictionCtx = document.getElementById('predictionChart');
+        if (predictionCtx) {
+            new Chart(predictionCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['6월', '7월', '8월', '9월', '10월', '11월'],
+                    datasets: [{
+                        label: '실제 데이터',
+                        data: [12456, null, null, null, null, null],
+                        borderColor: 'rgb(74, 144, 226)',
+                        backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: '예측 데이터',
+                        data: [12456, 13892, 15234, 16890, 18567, 20234],
+                        borderColor: 'rgb(243, 156, 18)',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        borderDash: [5, 5],
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        }
+
+        // 시장 점유율 차트
+        const marketShareCtx = document.getElementById('marketShareChart');
+        if (marketShareCtx) {
+            new Chart(marketShareCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+                    datasets: [{
+                        label: '전시(專時)',
+                        data: [15.2, 16.8, 18.3, 19.7, 21.2, 22.8],
+                        borderColor: 'rgb(74, 144, 226)',
+                        backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: '경쟁사 A',
+                        data: [28.5, 27.8, 27.1, 26.4, 25.8, 25.2],
+                        borderColor: 'rgb(231, 76, 60)',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: '경쟁사 B',
+                        data: [22.1, 21.9, 21.5, 21.2, 20.8, 20.4],
+                        borderColor: 'rgb(243, 156, 18)',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

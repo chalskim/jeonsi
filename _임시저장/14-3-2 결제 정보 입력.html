@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 결제 정보 입력</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* App Header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f0f2f5;
+            color: #4a6cf7;
+            cursor: pointer;
+        }
+        
+        .app-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a6cf7;
+        }
+        
+        /* App Content */
+        .app-content {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e0e6ed;
+            color: #777;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .step.active .step-circle {
+            background-color: #4a6cf7;
+            color: white;
+        }
+        
+        .step.completed .step-circle {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+        }
+        
+        .step.active .step-label {
+            color: #4a6cf7;
+            font-weight: 600;
+        }
+        
+        /* Section Styles */
+        .section {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #4a6cf7;
+        }
+        
+        /* Order Info Box */
+        .order-info {
+            background-color: #f8f9fc;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 14px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            margin-right: 10px;
+            min-width: 80px;
+            color: #555;
+        }
+        
+        .info-value {
+            color: #333;
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .form-label .required {
+            color: #ff4757;
+            margin-left: 2px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        /* Payment Methods */
+        .payment-method {
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover {
+            border-color: #4a6cf7;
+        }
+        
+        .payment-method.selected {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.05);
+        }
+        
+        .payment-method-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .payment-method input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .payment-method-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .payment-method-desc {
+            font-size: 13px;
+            color: #777;
+            margin-left: 25px;
+        }
+        
+        /* Card Input Groups */
+        .card-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .card-input-group .form-group {
+            flex: 1;
+        }
+        
+        /* Payment Summary */
+        .payment-summary {
+            background-color: #f8f9fc;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .summary-row.divider {
+            border-top: 1px dashed #e0e6ed;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+        
+        .summary-row.total {
+            font-weight: 700;
+            font-size: 16px;
+            color: #4a6cf7;
+        }
+        
+        .summary-discount {
+            color: #4caf50;
+        }
+        
+        /* Coupon Section */
+        .coupon-section {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .coupon-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .coupon-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+        }
+        
+        .coupon-button {
+            padding: 10px 20px;
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .coupon-button:hover {
+            background-color: #e0a800;
+        }
+        
+        /* Points Section */
+        .points-section {
+            background-color: #e8f0fe;
+            border: 1px solid #4a6cf7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .points-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .points-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .points-input {
+            width: 120px;
+            padding: 8px;
+            border: 1px solid #4a6cf7;
+            border-radius: 6px;
+        }
+        
+        .use-all-button {
+            padding: 8px 15px;
+            background-color: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-input {
+            margin-right: 10px;
+            margin-top: 2px;
+        }
+        
+        .checkbox-label {
+            font-size: 14px;
+            flex: 1;
+        }
+        
+        .link-text {
+            color: #4a6cf7;
+            text-decoration: none;
+            font-size: 13px;
+            margin-left: 5px;
+        }
+        
+        /* Receipt Options */
+        .receipt-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .receipt-option {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e6ed;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .receipt-option:hover {
+            border-color: #4a6cf7;
+        }
+        
+        .receipt-option.selected {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.1);
+        }
+        
+        /* Notice Box */
+        .notice-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+        
+        .notice-box i {
+            color: #ffc107;
+            margin-right: 8px;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: block;
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background-color: #4a6cf7;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5bd9;
+        }
+        
+        .btn-large {
+            padding: 18px 20px;
+            font-size: 18px;
+        }
+        
+        /* Security Badge */
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #777;
+        }
+        
+        .security-badge i {
+            color: #4caf50;
+            margin-right: 5px;
+        }
+        
+        /* Easy Payment Options */
+        .easy-payment-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .easy-payment {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .easy-payment:hover {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.05);
+        }
+        
+        .easy-payment i {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #4a6cf7;
+        }
+        
+        .easy-payment-name {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #777;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item.active {
+            color: #4a6cf7;
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app-content {
+                padding: 15px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .receipt-options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">결제 정보 입력</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-headset"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <div class="step completed">
+                <div class="step-circle">✓</div>
+                <div class="step-label">상품 선택</div>
+            </div>
+            <div class="step active">
+                <div class="step-circle">2</div>
+                <div class="step-label">정보 입력</div>
+            </div>
+            <div class="step">
+                <div class="step-circle">3</div>
+                <div class="step-label">결제</div>
+            </div>
+            <div class="step">
+                <div class="step-circle">4</div>
+                <div class="step-label">완료</div>
+            </div>
+        </div>
+        
+        <!-- Order Information -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-shopping-cart"></i>
+                주문 정보
+            </h2>
+            <div class="order-info">
+                <div class="info-row">
+                    <span class="info-label">상품명:</span>
+                    <span class="info-value">개인 Professional 구독</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">상품 설명:</span>
+                    <span class="info-value">월간 구독 서비스</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">구매 수량:</span>
+                    <span class="info-value">1개월</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">단가:</span>
+                    <span class="info-value">₩100,000</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">총 상품 금액:</span>
+                    <span class="info-value">₩100,000</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">예상 혜택:</span>
+                    <span class="info-value">AI 매칭 가중치 +20%, 전담 매니저</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Buyer Information -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-user"></i>
+                구매자 정보
+            </h2>
+            
+            <div class="form-group">
+                <label class="form-label">이름 <span class="required">*</span></label>
+                <input type="text" class="form-input" placeholder="홍길동" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">이메일 <span class="required">*</span></label>
+                <input type="email" class="form-input" placeholder="example@email.com" required>
+                <div style="font-size: 12px; color: #777; margin-top: 5px;">
+                    수강증/계약서 발송용으로 사용됩니다
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">휴대폰 번호 <span class="required">*</span></label>
+                <input type="tel" class="form-input" placeholder="010-0000-0000" required>
+                <div style="font-size: 12px; color: #777; margin-top: 5px;">
+                    본인인증을 위해 필요합니다
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">생년월일 <span class="required">*</span></label>
+                <input type="text" class="form-input" placeholder="YYYY-MM-DD" required>
+                <div style="font-size: 12px; color: #777; margin-top: 5px;">
+                    본인인증을 위해 필요합니다
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">회사명 (선택)</label>
+                <input type="text" class="form-input" placeholder="(주)CertMatch">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">부서 (선택)</label>
+                    <input type="text" class="form-input" placeholder="정보보호팀">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">직급 (선택)</label>
+                    <input type="text" class="form-input" placeholder="팀장">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">주소 (선택)</label>
+                <input type="text" class="form-input" placeholder="수료증 우편 발송 시 필요">
+            </div>
+        </div>
+        
+        <!-- Amount Calculation -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-calculator"></i>
+                금액 계산
+            </h2>
+            
+            <div class="payment-summary">
+                <div class="summary-row">
+                    <span>상품 금액 (원가)</span>
+                    <span>₩100,000</span>
+                </div>
+                <div class="summary-row summary-discount">
+                    <span>조기 등록 할인 (-10%)</span>
+                    <span>-₩10,000</span>
+                </div>
+                <div class="summary-row summary-discount" id="couponDiscount" style="display: none;">
+                    <span>쿠폰 할인</span>
+                    <span>-₩0</span>
+                </div>
+                <div class="summary-row summary-discount" id="pointsDiscount" style="display: none;">
+                    <span>포인트 사용</span>
+                    <span>-₩0</span>
+                </div>
+                <div class="summary-row divider">
+                    <span>부가세 (10%)</span>
+                    <span>₩9,000</span>
+                </div>
+                <div class="summary-row total">
+                    <span>최종 결제 금액</span>
+                    <span id="finalAmount">₩99,000</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Discount and Benefits -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-tag"></i>
+                할인 및 혜택
+            </h2>
+            
+            <!-- Coupon Section -->
+            <div class="coupon-section">
+                <div style="font-weight: 600; margin-bottom: 5px;">
+                    <i class="fas fa-ticket-alt"></i> 쿠폰 할인
+                </div>
+                <div class="coupon-input-group">
+                    <input type="text" class="coupon-input" placeholder="쿠폰 코드 입력" id="couponCode">
+                    <button class="coupon-button" onclick="applyCoupon()">적용</button>
+                </div>
+                <div style="font-size: 12px; color: #856404; margin-top: 5px;">
+                    사용 가능한 쿠폰: 신규가입 10% 할인, 추천인 5% 할인
+                </div>
+            </div>
+            
+            <!-- Points Section -->
+            <div class="points-section">
+                <div style="font-weight: 600; margin-bottom: 10px;">
+                    <i class="fas fa-coins"></i> 포인트 사용
+                </div>
+                <div class="points-info">
+                    <span>보유 포인트: 5,000P</span>
+                    <span>사용: 0P</span>
+                </div>
+                <div class="points-input-group">
+                    <input type="number" class="points-input" placeholder="0" id="pointsInput" min="0" max="5000">
+                    <button class="use-all-button" onclick="useAllPoints()">전액 사용</button>
+                </div>
+                <div style="font-size: 13px; color: #4a6cf7; margin-top: 5px;">
+                    💡 이번 결제 후 990P 적립 예정
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Method Selection -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-credit-card"></i>
+                결제 수단 선택
+            </h2>
+            
+            <div class="payment-method selected">
+                <div class="payment-method-header">
+                    <input type="radio" name="paymentMethod" value="card" checked>
+                    <span class="payment-method-title">신용카드/체크카드</span>
+                </div>
+                <div class="payment-method-desc">
+                    - 모든 카드사 지원<br>
+                    - 무이자 할부 가능
+                </div>
+            </div>
+            
+            <div class="payment-method">
+                <div class="payment-method-header">
+                    <input type="radio" name="paymentMethod" value="easy">
+                    <span class="payment-method-title">간편결제</span>
+                </div>
+                <div class="payment-method-desc">
+                    - 카카오페이, 네이버페이, 토스, 페이코<br>
+                    - 빠르고 간편한 결제
+                </div>
+            </div>
+            
+            <div class="payment-method">
+                <div class="payment-method-header">
+                    <input type="radio" name="paymentMethod" value="transfer">
+                    <span class="payment-method-title">계좌이체</span>
+                </div>
+                <div class="payment-method-desc">
+                    - 실시간 계좌이체<br>
+                    - 즉시 확인 처리
+                </div>
+            </div>
+            
+            <div class="payment-method">
+                <div class="payment-method-header">
+                    <input type="radio" name="paymentMethod" value="virtual">
+                    <span class="payment-method-title">가상계좌</span>
+                </div>
+                <div class="payment-method-desc">
+                    - 입금 기한 24시간<br>
+                    - 무통장 입금 가능
+                </div>
+            </div>
+            
+            <div class="payment-method">
+                <div class="payment-method-header">
+                    <input type="radio" name="paymentMethod" value="mobile">
+                    <span class="payment-method-title">휴대폰 소액결제</span>
+                </div>
+                <div class="payment-method-desc">
+                    - 월 최대 30만원<br>
+                    - 통신사 인증 필요
+                </div>
+            </div>
+        </div>
+        
+        <!-- Card Information (shown when card is selected) -->
+        <div class="section" id="cardSection">
+            <h2 class="section-title">
+                <i class="fas fa-credit-card"></i>
+                카드 정보 입력
+            </h2>
+            
+            <div class="form-group">
+                <label class="form-label">카드번호</label>
+                <div class="card-input-group">
+                    <input type="text" class="form-input" placeholder="1234" maxlength="4">
+                    <input type="text" class="form-input" placeholder="5678" maxlength="4">
+                    <input type="text" class="form-input" placeholder="9012" maxlength="4">
+                    <input type="text" class="form-input" placeholder="3456" maxlength="4">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">유효기간</label>
+                    <div class="card-input-group">
+                        <input type="text" class="form-input" placeholder="MM" maxlength="2">
+                        <input type="text" class="form-input" placeholder="YY" maxlength="2">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CVC</label>
+                    <input type="text" class="form-input" placeholder="123" maxlength="3">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">카드 비밀번호 (앞 2자리)</label>
+                <input type="password" class="form-input" placeholder="●●" maxlength="2">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">할부 개월 선택</label>
+                <select class="form-input">
+                    <option>일시불</option>
+                    <option>2개월 (무이자)</option>
+                    <option>3개월 (무이자)</option>
+                    <option>6개월 (무이자)</option>
+                    <option>12개월 (유이자)</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Easy Payment Options (shown when easy payment is selected) -->
+        <div class="section" id="easySection" style="display: none;">
+            <h2 class="section-title">
+                <i class="fas fa-mobile-alt"></i>
+                간편결제 선택
+            </h2>
+            
+            <div class="easy-payment-options">
+                <div class="easy-payment">
+                    <i class="fas fa-comment"></i>
+                    <div class="easy-payment-name">카카오페이</div>
+                </div>
+                <div class="easy-payment">
+                    <i class="fab fa-naver"></i>
+                    <div class="easy-payment-name">네이버페이</div>
+                </div>
+                <div class="easy-payment">
+                    <i class="fas fa-wallet"></i>
+                    <div class="easy-payment-name">토스</div>
+                </div>
+                <div class="easy-payment">
+                    <i class="fas fa-credit-card"></i>
+                    <div class="easy-payment-name">페이코</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Receipt Issuance -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-receipt"></i>
+                영수증 발급
+            </h2>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="receiptRequest" class="checkbox-input">
+                <label for="receiptRequest" class="checkbox-label">현금영수증 신청</label>
+            </div>
+            
+            <div class="receipt-options" id="receiptOptions" style="display: none;">
+                <div class="receipt-option selected">
+                    <div>신청 안함</div>
+                </div>
+                <div class="receipt-option">
+                    <div>소득공제용</div>
+                </div>
+                <div class="receipt-option">
+                    <div>지출증빙용</div>
+                </div>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="taxInvoice" class="checkbox-input">
+                <label for="taxInvoice" class="checkbox-label">세금계산서 (법인 교육비인 경우)</label>
+            </div>
+            
+            <div id="taxInvoiceInfo" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">사업자등록번호</label>
+                    <input type="text" class="form-input" placeholder="123-45-67890">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">상호명</label>
+                    <input type="text" class="form-input" placeholder="(주)CertMatch">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">이메일 주소</label>
+                    <input type="email" class="form-input" placeholder="example@company.com">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Terms and Conditions -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-file-contract"></i>
+                약관 동의
+            </h2>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="terms" class="checkbox-input" required>
+                <label for="terms" class="checkbox-label">
+                    (필수) 서비스 이용약관 동의
+                    <a href="#" class="link-text">[전문 보기]</a>
+                </label>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="privacy" class="checkbox-input" required>
+                <label for="privacy" class="checkbox-label">
+                    (필수) 개인정보 수집·이용 동의
+                    <div style="font-size: 12px; color: #777; margin-top: 3px;">
+                        수집 항목: 이름, 연락처, 이메일<br>
+                        목적: 교육/서비스 제공, 본인 확인
+                    </div>
+                    <a href="#" class="link-text">[전문 보기]</a>
+                </label>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="pgTerms" class="checkbox-input" required>
+                <label for="pgTerms" class="checkbox-label">
+                    (필수) 결제 대행 서비스 이용약관
+                    <a href="#" class="link-text">[전문 보기]</a>
+                </label>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="refundPolicy" class="checkbox-input" required>
+                <label for="refundPolicy" class="checkbox-label">
+                    (필수) 환불 정책 동의
+                    <div style="font-size: 12px; color: #777; margin-top: 3px;">
+                        • 구독: 이용 전 100%, 이용 후 불가<br>
+                        • 교육: 개강 7일 전 100%, 3일 전 50%
+                    </div>
+                    <a href="#" class="link-text">[상세 정책 보기]</a>
+                </label>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="marketing" class="checkbox-input">
+                <label for="marketing" class="checkbox-label">
+                    (선택) 마케팅 정보 수신 동의
+                    <div style="font-size: 12px; color: #777; margin-top: 3px;">
+                        이메일 수신, SMS 수신, 푸시 알림
+                    </div>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Pre-payment Notice -->
+        <div class="notice-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>결제 전 확인사항</strong><br>
+            • 환불 정책: 이용 시작일 기준으로 적용됩니다<br>
+            • 이용 시작일: 결제 완료 즉시 시작됩니다<br>
+            • 고객센터: 1544-1234 (평일 09:00-18:00)<br>
+            • 예상 처리 시간: 카드 즉시, 계좌이체 5분 이내
+        </div>
+        
+        <!-- Payment Button -->
+        <button class="btn btn-primary btn-large" id="paymentBtn">
+            ₩99,000 결제하기
+        </button>
+        
+        <div class="security-badge">
+            <i class="fas fa-lock"></i>
+            안전한 결제 (SSL 암호화 / PG: KG이니시스)
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>홈</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-search"></i>
+            <span>검색</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-plus-circle"></i>
+            <span>등록</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-comments"></i>
+            <span>커뮤니티</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>MY</span>
+        </a>
+    </nav>
+    
+    <script>
+        // Payment method selection
+        const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+        const cardSection = document.getElementById('cardSection');
+        const easySection = document.getElementById('easySection');
+        
+        paymentMethods.forEach(method => {
+            method.addEventListener('change', function() {
+                cardSection.style.display = 'none';
+                easySection.style.display = 'none';
+                
+                if (this.value === 'card') {
+                    cardSection.style.display = 'block';
+                } else if (this.value === 'easy') {
+                    easySection.style.display = 'block';
+                }
+            });
+        });
+        
+        // Receipt options
+        const receiptRequest = document.getElementById('receiptRequest');
+        const receiptOptions = document.getElementById('receiptOptions');
+        
+        receiptRequest.addEventListener('change', function() {
+            receiptOptions.style.display = this.checked ? 'flex' : 'none';
+        });
+        
+        // Tax invoice
+        const taxInvoice = document.getElementById('taxInvoice');
+        const taxInvoiceInfo = document.getElementById('taxInvoiceInfo');
+        
+        taxInvoice.addEventListener('change', function() {
+            taxInvoiceInfo.style.display = this.checked ? 'block' : 'none';
+        });
+        
+        // Coupon application
+        function applyCoupon() {
+            const couponCode = document.getElementById('couponCode').value;
+            const couponDiscount = document.getElementById('couponDiscount');
+            
+            if (couponCode === 'NEW10') {
+                couponDiscount.style.display = 'flex';
+                couponDiscount.querySelector('span:last-child').textContent = '-₩10,000';
+                updateFinalAmount();
+                alert('쿠폰이 적용되었습니다.');
+            } else if (couponCode) {
+                alert('유효하지 않은 쿠폰 코드입니다.');
+            }
+        }
+        
+        // Points usage
+        function useAllPoints() {
+            document.getElementById('pointsInput').value = '5000';
+            applyPoints();
+        }
+        
+        function applyPoints() {
+            const pointsInput = document.getElementById('pointsInput');
+            const pointsDiscount = document.getElementById('pointsDiscount');
+            const points = parseInt(pointsInput.value) || 0;
+            
+            if (points > 0) {
+                pointsDiscount.style.display = 'flex';
+                pointsDiscount.querySelector('span:last-child').textContent = `-₩${points.toLocaleString()}`;
+                updateFinalAmount();
+            }
+        }
+        
+        // Update final amount
+        function updateFinalAmount() {
+            const baseAmount = 100000;
+            const taxAmount = 9000;
+            const couponDiscount = document.getElementById('couponDiscount').style.display !== 'none' ? 10000 : 0;
+            const pointsDiscount = document.getElementById('pointsDiscount').style.display !== 'none' ? 
+                parseInt(document.getElementById('pointsInput').value) || 0 : 0;
+            
+            const finalAmount = baseAmount - 10000 - couponDiscount - pointsDiscount + taxAmount;
+            document.getElementById('finalAmount').textContent = `₩${finalAmount.toLocaleString()}`;
+            document.getElementById('paymentBtn').textContent = `₩${finalAmount.toLocaleString()} 결제하기`;
+        }
+        
+        // Points input change
+        document.getElementById('pointsInput').addEventListener('input', applyPoints);
+        
+        // Payment button
+        document.getElementById('paymentBtn').addEventListener('click', function() {
+            // Validate required fields
+            const requiredFields = document.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.checked && field.type === 'checkbox') {
+                    isValid = false;
+                    alert('필수 약관에 모두 동의해주세요.');
+                    return;
+                }
+            });
+            
+            if (isValid) {
+                // Process payment
+                window.location.href = 'personal-payment-complete.html';
+            }
+        });
+        
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.history.back();
+        });
+    </script>
+</body>
+</html>

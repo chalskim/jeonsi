@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전문가 인증 | 전시(專時)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-common.css">
+    <link rel="stylesheet" href="expert-verification.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 사이드바 -->
+        <div class="sidebar">
+        </div>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <header class="header">
+                <h1><i class="fas fa-user-shield"></i> 전문가 인증</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openVerificationModal()">
+                        <i class="fas fa-plus"></i> 전문가 등록
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshVerificationList()">
+                        <i class="fas fa-sync"></i> 새로고침
+                    </button>
+                </div>
+            </header>
+
+            <!-- 인증 통계 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>전체 전문가</h3>
+                        <p class="stat-value">2,847</p>
+                        <span class="stat-change positive">+127</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>인증 완료</h3>
+                        <p class="stat-value">2,156</p>
+                        <span class="stat-change positive">+89</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>인증 대기</h3>
+                        <p class="stat-value">234</p>
+                        <span class="stat-change positive">+23</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>반려</h3>
+                        <p class="stat-value">45</p>
+                        <span class="stat-change negative">-5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 검색 및 필터 -->
+            <div class="search-section">
+                <div class="search-filters">
+                    <select id="verificationStatus" onchange="filterExperts()">
+                        <option value="">전체 상태</option>
+                        <option value="verified">인증 완료</option>
+                        <option value="pending">인증 대기</option>
+                        <option value="rejected">반려</option>
+                        <option value="suspended">정지</option>
+                    </select>
+                    <select id="expertCategory" onchange="filterExperts()">
+                        <option value="">전체 카테고리</option>
+                        <option value="IT01">웹 개발</option>
+                        <option value="IT02">모바일 개발</option>
+                        <option value="DS01">데이터 분석</option>
+                        <option value="DS05">UI/UX 디자인</option>
+                        <option value="MK01">디지털 마케팅</option>
+                    </select>
+                    <select id="verificationLevel" onchange="filterExperts()">
+                        <option value="">전체 등급</option>
+                        <option value="senior">시니어</option>
+                        <option value="expert">전문가</option>
+                        <option value="master">마스터</option>
+                    </select>
+                    <input type="text" id="expertSearch" placeholder="전문가 검색..." onkeyup="filterExperts()">
+                </div>
+            </div>
+
+            <!-- 전문가 목록 -->
+            <div class="experts-grid" id="expertsList">
+                <div class="expert-card verified">
+                    <div class="expert-header">
+                        <div class="expert-avatar">
+                            <img src="https://picsum.photos/100/100?random=1" alt="전문가" class="avatar-img">
+                            <div class="verification-badge verified">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                        <div class="expert-info">
+                            <h4>김현우</h4>
+                            <div class="expert-meta">
+                                <span class="expert-category">IT01 웹 개발</span>
+                                <span class="expert-level senior">시니어</span>
+                            </div>
+                        </div>
+                        <div class="expert-rating">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="rating-value">4.8</span>
+                        </div>
+                    </div>
+
+                    <div class="expert-details">
+                        <div class="expert-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">프로젝트</span>
+                                <span class="stat-value">127</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">경력</span>
+                                <span class="stat-value">8년</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">매칭률</span>
+                                <span class="stat-value">94%</span>
+                            </div>
+                        </div>
+
+                        <div class="expert-skills">
+                            <div class="skill-tags">
+                                <span class="skill-tag">React</span>
+                                <span class="skill-tag">Node.js</span>
+                                <span class="skill-tag">MongoDB</span>
+                                <span class="skill-tag">AWS</span>
+                            </div>
+                        </div>
+
+                        <div class="expert-actions">
+                            <button class="btn btn-sm btn-primary" onclick="viewExpertDetails('expert-001')">
+                                <i class="fas fa-eye"></i> 상세
+                            </button>
+                            <button class="btn btn-sm btn-success" onclick="editExpert('expert-001')">
+                                <i class="fas fa-edit"></i> 수정
+                            </button>
+                            <button class="btn btn-sm btn-warning" onclick="suspendExpert('expert-001')">
+                                <i class="fas fa-pause"></i> 정지
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-card pending">
+                    <div class="expert-header">
+                        <div class="expert-avatar">
+                            <img src="https://picsum.photos/100/100?random=2" alt="전문가" class="avatar-img">
+                            <div class="verification-badge pending">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="expert-info">
+                            <h4>이서진</h4>
+                            <div class="expert-meta">
+                                <span class="expert-category">DS05 UI/UX 디자인</span>
+                                <span class="expert-level expert">전문가</span>
+                            </div>
+                        </div>
+                        <div class="expert-rating">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="rating-value">4.0</span>
+                        </div>
+                    </div>
+
+                    <div class="expert-details">
+                        <div class="expert-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">프로젝트</span>
+                                <span class="stat-value">45</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">경력</span>
+                                <span class="stat-value">5년</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">신청일</span>
+                                <span class="stat-value">3일 전</span>
+                            </div>
+                        </div>
+
+                        <div class="expert-skills">
+                            <div class="skill-tags">
+                                <span class="skill-tag">Figma</span>
+                                <span class="skill-tag">Adobe XD</span>
+                                <span class="skill-tag">Prototyping</span>
+                            </div>
+                        </div>
+
+                        <div class="verification-actions">
+                            <button class="btn btn-sm btn-success" onclick="verifyExpert('expert-002')">
+                                <i class="fas fa-check"></i> 인증
+                            </button>
+                            <button class="btn btn-sm btn-warning" onclick="requestMoreInfo('expert-002')">
+                                <i class="fas fa-question"></i> 정보 요청
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="rejectExpert('expert-002')">
+                                <i class="fas fa-times"></i> 반려
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-card suspended">
+                    <div class="expert-header">
+                        <div class="expert-avatar">
+                            <img src="https://picsum.photos/100/100?random=3" alt="전문가" class="avatar-img">
+                            <div class="verification-badge suspended">
+                                <i class="fas fa-ban"></i>
+                            </div>
+                        </div>
+                        <div class="expert-info">
+                            <h4>박지민</h4>
+                            <div class="expert-meta">
+                                <span class="expert-category">MK01 디지털 마케팅</span>
+                                <span class="expert-level master">마스터</span>
+                            </div>
+                        </div>
+                        <div class="expert-rating">
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="rating-value">3.5</span>
+                        </div>
+                    </div>
+
+                    <div class="expert-details">
+                        <div class="expert-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">프로젝트</span>
+                                <span class="stat-value">89</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">경력</span>
+                                <span class="stat-value">12년</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">정지일</span>
+                                <span class="stat-value">7일 전</span>
+                            </div>
+                        </div>
+
+                        <div class="expert-skills">
+                            <div class="skill-tags">
+                                <span class="skill-tag">SEO</span>
+                                <span class="skill-tag">Google Ads</span>
+                                <span class="skill-tag">SNS Marketing</span>
+                            </div>
+                        </div>
+
+                        <div class="suspension-reason">
+                            <div class="reason-title">
+                                <i class="fas fa-exclamation-triangle"></i> 정지 사유
+                            </div>
+                            <p class="reason-text">고객 만족도 기준 미달로 인한 임시 정지 조치</p>
+                        </div>
+
+                        <div class="expert-actions">
+                            <button class="btn btn-sm btn-success" onclick="reactivateExpert('expert-003')">
+                                <i class="fas fa-check"></i> 재활성
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="permanentBan('expert-003')">
+                                <i class="fas fa-ban"></i> 영구 정지
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 페이징 -->
+            <div class="pagination">
+                <button class="pagination-btn disabled" onclick="changePage(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="pagination-btn active" onclick="goToPage(1)">1</button>
+                <button class="pagination-btn" onclick="goToPage(2)">2</button>
+                <button class="pagination-btn" onclick="goToPage(3)">3</button>
+                <span class="pagination-dots">...</span>
+                <button class="pagination-btn" onclick="goToPage(10)">10</button>
+                <button class="pagination-btn" onclick="changePage(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 전문가 상세 정보 모달 -->
+    <div id="expertDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>전문가 상세 정보</h3>
+                <button class="close-btn" onclick="closeExpertDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="expert-detail-content">
+                    <!-- 동적으로 채워질 내용 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeExpertDetailModal()">닫기</button>
+                <button class="btn btn-primary" onclick="editExpert()">수정</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 인증 심사 모달 -->
+    <div id="verificationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>전문가 인증</h3>
+                <button class="close-btn" onclick="closeVerificationModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="verification-form">
+                    <!-- 동적으로 채워질 내용 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeVerificationModal()">취소</button>
+                <button class="btn btn-success" onclick="submitVerification()">인증</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="expert-verification.js"></script>
+</body>
+</html>

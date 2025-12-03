@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 설정</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background-color: #1a1a2e;
+            color: #eee;
+        }
+        
+        /* App Header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode .app-header {
+            background-color: #16213e;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f0f2f5;
+            color: #4a6cf7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .header-icon {
+            background-color: #0f3460;
+            color: #5d8ef7;
+        }
+        
+        .app-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a6cf7;
+        }
+        
+        body.dark-mode .app-title {
+            color: #5d8ef7;
+        }
+        
+        /* App Content */
+        .app-content {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        body.dark-mode .page-title {
+            color: #eee;
+        }
+        
+        /* Settings Section */
+        .settings-section {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode .settings-section {
+            background-color: #16213e;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        body.dark-mode .section-title {
+            color: #eee;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #4a6cf7;
+        }
+        
+        body.dark-mode .section-title i {
+            color: #5d8ef7;
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        body.dark-mode .form-label {
+            color: #ccc;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            color: #333;
+        }
+        
+        body.dark-mode .form-input {
+            background-color: #0f3460;
+            border-color: #2c5282;
+            color: #eee;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+        }
+        
+        body.dark-mode .form-input:focus {
+            border-color: #5d8ef7;
+            box-shadow: 0 0 0 3px rgba(93, 142, 247, 0.2);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        /* Button */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: #4a6cf7;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5bd9;
+        }
+        
+        body.dark-mode .btn-primary {
+            background-color: #5d8ef7;
+        }
+        
+        body.dark-mode .btn-primary:hover {
+            background-color: #4a7de8;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #4a6cf7;
+            color: #4a6cf7;
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(74, 108, 247, 0.1);
+        }
+        
+        body.dark-mode .btn-outline {
+            border-color: #5d8ef7;
+            color: #5d8ef7;
+        }
+        
+        body.dark-mode .btn-outline:hover {
+            background-color: rgba(93, 142, 247, 0.1);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        
+        body.dark-mode .toggle-group {
+            border-bottom-color: #2c5282;
+        }
+        
+        .toggle-group:last-child {
+            border-bottom: none;
+        }
+        
+        .toggle-label {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .toggle-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .toggle-desc {
+            font-size: 13px;
+            color: #777;
+        }
+        
+        body.dark-mode .toggle-desc {
+            color: #aaa;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background-color: #ccc;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background-color: #4a6cf7;
+        }
+        
+        body.dark-mode .toggle-switch.active {
+            background-color: #5d8ef7;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active::after {
+            left: 26px;
+        }
+        
+        /* Select */
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .form-select {
+            background-color: #0f3460;
+            border-color: #2c5282;
+            color: #eee;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+        }
+        
+        body.dark-mode .form-select:focus {
+            border-color: #5d8ef7;
+            box-shadow: 0 0 0 3px rgba(93, 142, 247, 0.2);
+        }
+        
+        /* Theme Options */
+        .theme-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .theme-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .theme-option {
+            border-color: #2c5282;
+        }
+        
+        .theme-option:hover {
+            border-color: #4a6cf7;
+        }
+        
+        body.dark-mode .theme-option:hover {
+            border-color: #5d8ef7;
+        }
+        
+        .theme-option.selected {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.1);
+        }
+        
+        body.dark-mode .theme-option.selected {
+            border-color: #5d8ef7;
+            background-color: rgba(93, 142, 247, 0.1);
+        }
+        
+        .theme-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .theme-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        /* Language Options */
+        .language-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .language-option {
+            padding: 12px;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .language-option {
+            border-color: #2c5282;
+        }
+        
+        .language-option:hover {
+            border-color: #4a6cf7;
+        }
+        
+        body.dark-mode .language-option:hover {
+            border-color: #5d8ef7;
+        }
+        
+        .language-option.selected {
+            border-color: #4a6cf7;
+            background-color: rgba(74, 108, 247, 0.1);
+        }
+        
+        body.dark-mode .language-option.selected {
+            border-color: #5d8ef7;
+            background-color: rgba(93, 142, 247, 0.1);
+        }
+        
+        /* 2FA Setup */
+        .two-factor-setup {
+            padding: 15px;
+            background-color: #f8f9fc;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        body.dark-mode .two-factor-setup {
+            background-color: #0f3460;
+        }
+        
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            margin: 15px auto;
+            background-color: #fff;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #777;
+        }
+        
+        body.dark-mode .qr-code {
+            background-color: #16213e;
+            border-color: #2c5282;
+            color: #aaa;
+        }
+        
+        .backup-codes {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #e0e6ed;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        body.dark-mode .backup-codes {
+            background-color: #16213e;
+            border-color: #2c5282;
+        }
+        
+        /* Time Range */
+        .time-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .time-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e0e6ed;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        body.dark-mode .time-input {
+            background-color: #0f3460;
+            border-color: #2c5282;
+            color: #eee;
+        }
+        
+        /* Success Message */
+        .success-message {
+            padding: 15px;
+            background-color: #e8f5e9;
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            color: #2e7d32;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        body.dark-mode .success-message {
+            background-color: #1b3a1f;
+            border-color: #4caf50;
+            color: #81c784;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            z-index: 100;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode .bottom-nav {
+            background-color: #16213e;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #777;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item.active {
+            color: #4a6cf7;
+        }
+        
+        body.dark-mode .nav-item.active {
+            color: #5d8ef7;
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app-content {
+                padding: 15px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .language-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">설정</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <h1 class="page-title">설정</h1>
+        
+        <!-- 성공 메시지 -->
+        <div class="success-message" id="successMessage">
+            <i class="fas fa-check-circle"></i> 설정이 성공적으로 저장되었습니다.
+        </div>
+        
+        <!-- 계정 정보 수정 -->
+        <div class="settings-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-circle"></i>
+                계정 정보 수정
+            </h2>
+            
+            <div class="form-group">
+                <label class="form-label">이메일</label>
+                <input type="email" class="form-input" id="emailInput" value="honggildong@example.com">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">현재 비밀번호</label>
+                <input type="password" class="form-input" id="currentPassword" placeholder="현재 비밀번호 입력">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">새 비밀번호</label>
+                <input type="password" class="form-input" id="newPassword" placeholder="새 비밀번호 입력">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">새 비밀번호 확인</label>
+                <input type="password" class="form-input" id="confirmPassword" placeholder="새 비밀번호 재입력">
+            </div>
+            
+            <div class="form-group">
+                <div class="toggle-group">
+                    <div class="toggle-label">
+                        <div class="toggle-title">2단계 인증</div>
+                        <div class="toggle-desc">계정 보안을 위해 2단계 인증을 설정하세요</div>
+                    </div>
+                    <div class="toggle-switch" id="twoFactorToggle"></div>
+                </div>
+                
+                <div class="two-factor-setup" id="twoFactorSetup" style="display: none;">
+                    <p style="text-align: center; margin-bottom: 10px;">Google Authenticator 앱으로 QR코드를 스캔하세요</p>
+                    <div class="qr-code">
+                        <i class="fas fa-qrcode" style="font-size: 60px; color: #4a6cf7;"></i>
+                    </div>
+                    <div class="backup-codes">
+                        백업 코드: ABCD-1234-EFGH-5678
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary btn-block" id="saveAccountBtn">저장</button>
+        </div>
+        
+        <!-- 알림 설정 -->
+        <div class="settings-section">
+            <h2 class="section-title">
+                <i class="fas fa-bell"></i>
+                알림 설정
+            </h2>
+            
+            <div class="toggle-group">
+                <div class="toggle-label">
+                    <div class="toggle-title">푸시 알림</div>
+                    <div class="toggle-desc">앱 푸시 알림 수신 여부</div>
+                </div>
+                <div class="toggle-switch active" id="pushToggle"></div>
+            </div>
+            
+            <div class="toggle-group">
+                <div class="toggle-label">
+                    <div class="toggle-title">이메일 알림</div>
+                    <div class="toggle-desc">중요 공지사항 이메일 수신</div>
+                </div>
+                <div class="toggle-switch active" id="emailToggle"></div>
+            </div>
+            
+            <div class="toggle-group">
+                <div class="toggle-label">
+                    <div class="toggle-title">SMS 알림</div>
+                    <div class="toggle-desc">긴급 알림 SMS 수신</div>
+                </div>
+                <div class="toggle-switch" id="smsToggle"></div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">알림 시간대</label>
+                <div class="time-range">
+                    <input type="time" class="time-input" value="09:00" id="startTime">
+                    <span>~</span>
+                    <input type="time" class="time-input" value="18:00" id="endTime">
+                </div>
+            </div>
+            
+            <button class="btn btn-primary btn-block" id="saveNotificationBtn">저장</button>
+        </div>
+        
+        <!-- 언어 설정 -->
+        <div class="settings-section">
+            <h2 class="section-title">
+                <i class="fas fa-language"></i>
+                언어 설정
+            </h2>
+            
+            <div class="language-options">
+                <div class="language-option selected" data-lang="ko">
+                    <div>한국어</div>
+                </div>
+                <div class="language-option" data-lang="en">
+                    <div>English</div>
+                </div>
+                <div class="language-option" data-lang="zh">
+                    <div>中文</div>
+                </div>
+                <div class="language-option" data-lang="ja">
+                    <div>日本語</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary btn-block" id="saveLanguageBtn" style="margin-top: 20px;">저장</button>
+        </div>
+        
+        <!-- 테마 설정 -->
+        <div class="settings-section">
+            <h2 class="section-title">
+                <i class="fas fa-palette"></i>
+                테마 설정
+            </h2>
+            
+            <div class="theme-options">
+                <div class="theme-option selected" data-theme="light">
+                    <div class="theme-icon">☀️</div>
+                    <div class="theme-name">라이트 모드</div>
+                </div>
+                <div class="theme-option" data-theme="dark">
+                    <div class="theme-icon">🌙</div>
+                    <div class="theme-name">다크 모드</div>
+                </div>
+                <div class="theme-option" data-theme="auto">
+                    <div class="theme-icon">🌓</div>
+                    <div class="theme-name">자동</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary btn-block" id="saveThemeBtn" style="margin-top: 20px;">저장</button>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>홈</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user-plus"></i>
+            <span>전문가 등록</span>
+        </a>        
+        <a href="#" class="nav-item">
+            <i class="fas fa-clipboard-check"></i>
+            <span>심사 지원</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>일정관리</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>성공사례</span>
+        </a>
+    </nav>
+    
+    <script>
+        // 토글 스위치 기능
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+        
+        // 2단계 인증 토글
+        const twoFactorToggle = document.getElementById('twoFactorToggle');
+        const twoFactorSetup = document.getElementById('twoFactorSetup');
+        
+        twoFactorToggle.addEventListener('click', function() {
+            if (this.classList.contains('active')) {
+                twoFactorSetup.style.display = 'block';
+            } else {
+                twoFactorSetup.style.display = 'none';
+            }
+        });
+        
+        // 언어 선택
+        const languageOptions = document.querySelectorAll('.language-option');
+        languageOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                languageOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // 테마 선택
+        const themeOptions = document.querySelectorAll('.theme-option');
+        themeOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                themeOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const theme = this.getAttribute('data-theme');
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                } else if (theme === 'light') {
+                    document.body.classList.remove('dark-mode');
+                } else if (theme === 'auto') {
+                    // 시스템 테마 설정
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (prefersDark) {
+                        document.body.classList.add('dark-mode');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                    }
+                }
+            });
+        });
+        
+        // 성공 메시지 표시
+        function showSuccessMessage() {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.add('show');
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 계정 정보 저장
+        document.getElementById('saveAccountBtn').addEventListener('click', function() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword && newPassword !== confirmPassword) {
+                alert('새 비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            showSuccessMessage();
+        });
+        
+        // 알림 설정 저장
+        document.getElementById('saveNotificationBtn').addEventListener('click', function() {
+            showSuccessMessage();
+        });
+        
+        // 언어 설정 저장
+        document.getElementById('saveLanguageBtn').addEventListener('click', function() {
+            const selectedLang = document.querySelector('.language-option.selected').getAttribute('data-lang');
+            console.log('Selected language:', selectedLang);
+            showSuccessMessage();
+        });
+        
+        // 테마 설정 저장
+        document.getElementById('saveThemeBtn').addEventListener('click', function() {
+            const selectedTheme = document.querySelector('.theme-option.selected').getAttribute('data-theme');
+            localStorage.setItem('theme', selectedTheme);
+            showSuccessMessage();
+        });
+        
+        // 뒤로가기
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        // 페이지 로드 시 저장된 테마 적용
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.querySelector(`.theme-option[data-theme="${savedTheme}"]`).click();
+            }
+        });
+        
+        // 비밀번호 유효성 검사
+        document.getElementById('newPassword').addEventListener('input', function() {
+            const password = this.value;
+            const confirmPassword = document.getElementById('confirmPassword');
+            
+            if (password.length < 8) {
+                this.setCustomValidity('비밀번호는 최소 8자 이상이어야 합니다.');
+            } else {
+                this.setCustomValidity('');
+            }
+            
+            if (confirmPassword.value && password !== confirmPassword.value) {
+                confirmPassword.setCustomValidity('비밀번호가 일치하지 않습니다.');
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        });
+        
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const newPassword = document.getElementById('newPassword').value;
+            
+            if (this.value !== newPassword) {
+                this.setCustomValidity('비밀번호가 일치하지 않습니다.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+        
+        // 이메일 유효성 검사
+        document.getElementById('emailInput').addEventListener('input', function() {
+            const email = this.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(email)) {
+                this.setCustomValidity('유효한 이메일 주소를 입력하세요.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    </script>
+</body>
+</html>

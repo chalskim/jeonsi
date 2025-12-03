@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 광고 등록</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .ad-container {
+            padding: 15px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .ad-header {
+            margin-bottom: 20px;
+        }
+        
+        .ad-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .ad-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .ad-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .ad-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background-color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .ad-tab.active {
+            background-color: #4a6fdc;
+            color: white;
+        }
+        
+        .ad-form {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+        }
+        
+        .form-section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-section-title i {
+            margin-right: 8px;
+            color: #4a6fdc;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .product-card {
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .product-card:hover {
+            border-color: #4a6fdc;
+            background-color: #f8f9ff;
+        }
+        
+        .product-card.selected {
+            border-color: #4a6fdc;
+            background-color: #e7f1ff;
+        }
+        
+        .product-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #4a6fdc;
+        }
+        
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .product-desc {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .product-price {
+            font-size: 14px;
+            font-weight: bold;
+            color: #4a6fdc;
+            margin-top: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #4a6fdc;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #fafafa;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #4a6fdc;
+            background-color: #f8f9ff;
+        }
+        
+        .file-upload-icon {
+            font-size: 48px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .file-upload-text {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .uploaded-files {
+            margin-top: 15px;
+        }
+        
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .file-preview {
+            width: 50px;
+            height: 50px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            color: #6c757d;
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .file-size {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .file-remove {
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .targeting-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .targeting-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .target-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .target-option {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #fff;
+        }
+        
+        .target-option:hover {
+            border-color: #4a6fdc;
+        }
+        
+        .target-option.selected {
+            background-color: #4a6fdc;
+            color: white;
+            border-color: #4a6fdc;
+        }
+        
+        .date-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .date-picker input {
+            flex: 1;
+        }
+        
+        .ad-list {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .ad-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .ad-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ad-preview {
+            width: 80px;
+            height: 60px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-right: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #6c757d;
+        }
+        
+        .ad-info {
+            flex: 1;
+        }
+        
+        .ad-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .ad-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .ad-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-active {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .ad-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .ad-action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .btn-approve {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-reject {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-view {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .stats-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stats-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stats-title i {
+            margin-right: 8px;
+            color: #4a6fdc;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a6fdc;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .chart-container {
+            height: 200px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #6c757d;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #4a6fdc;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5fcd;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .performance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .performance-table th,
+        .performance-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        
+        .performance-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .performance-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: block;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            width: 500px;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .modal-btn-primary {
+            background-color: #4a6fdc;
+            color: white;
+        }
+        
+        .modal-btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .empty-text {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="backButton">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">광고 등록</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-list"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Ad Container -->
+    <div class="ad-container">
+        <!-- Ad Tabs -->
+        <div class="ad-tabs">
+            <button class="ad-tab active" data-tab="register">광고 등록</button>
+            <button class="ad-tab" data-tab="manage">광고 관리</button>
+            <button class="ad-tab" data-tab="performance">성과 조회</button>
+        </div>
+        
+        <!-- Ad Registration Tab -->
+        <div class="tab-content active" id="register">
+            <div class="ad-form">
+                <!-- Product Selection -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-box"></i>
+                        광고 상품 관리
+                    </div>
+                    <div class="product-grid">
+                        <div class="product-card selected" data-product="banner">
+                            <div class="product-icon">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <div class="product-name">배너 광고</div>
+                            <div class="product-desc">메인 배너 노출</div>
+                            <div class="product-price">₩500,000/주</div>
+                        </div>
+                        <div class="product-card" data-product="search">
+                            <div class="product-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="product-name">검색 상단 고정</div>
+                            <div class="product-desc">검색 결과 상단</div>
+                            <div class="product-price">₩300,000/주</div>
+                        </div>
+                        <div class="product-card" data-product="expert">
+                            <div class="product-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="product-name">추천 전문가</div>
+                            <div class="product-desc">전문가 목록 상단</div>
+                            <div class="product-price">₩200,000/주</div>
+                        </div>
+                        <div class="product-card" data-product="popup">
+                            <div class="product-icon">
+                                <i class="fas fa-window-restore"></i>
+                            </div>
+                            <div class="product-name">팝업 광고</div>
+                            <div class="product-desc">전면 팝업</div>
+                            <div class="product-price">₩400,000/주</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Advertiser Information -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-building"></i>
+                        광고주 정보 입력
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">회사명</label>
+                        <input type="text" class="form-input" placeholder="회사명을 입력하세요">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">담당자명</label>
+                            <input type="text" class="form-input" placeholder="담당자명을 입력하세요">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">연락처</label>
+                            <input type="tel" class="form-input" placeholder="연락처를 입력하세요">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">이메일</label>
+                        <input type="email" class="form-input" placeholder="이메일을 입력하세요">
+                    </div>
+                </div>
+                
+                <!-- Ad Material Upload -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-upload"></i>
+                        광고 소재 업로드
+                    </div>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div class="file-upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="file-upload-text">
+                            클릭하여 파일 업로드<br>
+                            <small>JPG, PNG, GIF (최대 5MB)</small>
+                        </div>
+                    </div>
+                    <div class="uploaded-files" id="uploadedFiles"></div>
+                </div>
+                
+                <!-- Publication Period -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        게재 기간 설정
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">시작일</label>
+                            <input type="date" class="form-input" id="startDate">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">종료일</label>
+                            <input type="date" class="form-input" id="endDate">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Targeting Settings -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-bullseye"></i>
+                        타겟팅 설정
+                    </div>
+                    
+                    <!-- Region Targeting -->
+                    <div class="targeting-section">
+                        <div class="targeting-title">지역</div>
+                        <div class="target-options">
+                            <div class="target-option selected">전국</div>
+                            <div class="target-option">서울</div>
+                            <div class="target-option">경기</div>
+                            <div class="target-option">인천</div>
+                            <div class="target-option">대전</div>
+                            <div class="target-option">대구</div>
+                            <div class="target-option">부산</div>
+                            <div class="target-option">광주</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Certification Type Targeting -->
+                    <div class="targeting-section">
+                        <div class="targeting-title">인증 종류</div>
+                        <div class="target-options">
+                            <div class="target-option selected">전체</div>
+                            <div class="target-option">ISMS-P</div>
+                            <div class="target-option">ISO 27001</div>
+                            <div class="target-option">CPPG</div>
+                            <div class="target-option">GS 인증</div>
+                            <div class="target-option">기타</div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Type Targeting -->
+                    <div class="targeting-section">
+                        <div class="targeting-title">사용자 유형</div>
+                        <div class="target-options">
+                            <div class="target-option selected">전체</div>
+                            <div class="target-option">개인</div>
+                            <div class="target-option">기업</div>
+                            <div class="target-option">교육기관</div>
+                            <div class="target-option">심사원</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="cancelBtn">취소</button>
+                    <button class="btn btn-primary" id="submitBtn">광고 신청</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ad Management Tab -->
+        <div class="tab-content" id="manage">
+            <div class="ad-list">
+                <div class="form-section-title">
+                    <i class="fas fa-list"></i>
+                    광고 승인/반려
+                </div>
+                
+                <!-- Pending Ad -->
+                <div class="ad-item">
+                    <div class="ad-preview">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="ad-info">
+                        <div class="ad-name">정보보호 컨설팅 프로모션</div>
+                        <div class="ad-meta">㈜테크솔루션 | 배너 광고 | 2025.01.20 - 2025.01.27</div>
+                        <div class="ad-status status-pending">승인 대기</div>
+                    </div>
+                    <div class="ad-actions">
+                        <button class="ad-action-btn btn-approve">승인</button>
+                        <button class="ad-action-btn btn-reject">반려</button>
+                        <button class="ad-action-btn btn-view">상세</button>
+                    </div>
+                </div>
+                
+                <!-- Approved Ad -->
+                <div class="ad-item">
+                    <div class="ad-preview">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="ad-info">
+                        <div class="ad-name">ISMS-P 교육과정 홍보</div>
+                        <div class="ad-meta">한국정보보호교육원 | 검색 상단 고정 | 2025.01.15 - 2025.01.22</div>
+                        <div class="ad-status status-approved">승인 완료</div>
+                    </div>
+                    <div class="ad-actions">
+                        <button class="ad-action-btn btn-view">상세</button>
+                    </div>
+                </div>
+                
+                <!-- Active Ad -->
+                <div class="ad-item">
+                    <div class="ad-preview">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="ad-info">
+                        <div class="ad-name">클라우드 보안 전문가</div>
+                        <div class="ad-meta">㈜클라우드테크 | 추천 전문가 | 2025.01.10 - 2025.01.24</div>
+                        <div class="ad-status status-active">진행 중</div>
+                    </div>
+                    <div class="ad-actions">
+                        <button class="ad-action-btn btn-view">상세</button>
+                    </div>
+                </div>
+                
+                <!-- Rejected Ad -->
+                <div class="ad-item">
+                    <div class="ad-preview">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="ad-info">
+                        <div class="ad-name">부적절한 광고</div>
+                        <div class="ad-meta">㈞테스트 | 배너 광고 | 2025.01.05 - 2025.01.12</div>
+                        <div class="ad-status status-rejected">반려됨</div>
+                    </div>
+                    <div class="ad-actions">
+                        <button class="ad-action-btn btn-view">상세</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Performance Tab -->
+        <div class="tab-content" id="performance">
+            <div class="stats-container">
+                <div class="stats-title">
+                    <i class="fas fa-chart-bar"></i>
+                    광고 성과 조회
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">45,231</div>
+                        <div class="stat-label">총 노출수</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1,234</div>
+                        <div class="stat-label">총 클릭수</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">2.73%</div>
+                        <div class="stat-label">전환율</div>
+                    </div>
+                </div>
+                
+                <table class="performance-table">
+                    <thead>
+                        <tr>
+                            <th>광고명</th>
+                            <th>기간</th>
+                            <th>노출수</th>
+                            <th>클릭수</th>
+                            <th>CTR</th>
+                            <th>전환율</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>정보보호 컨설팅 프로모션</td>
+                            <td>2025.01.10 - 2025.01.17</td>
+                            <td>15,234</td>
+                            <td>423</td>
+                            <td>2.78%</td>
+                            <td>3.2%</td>
+                        </tr>
+                        <tr>
+                            <td>ISMS-P 교육과정 홍보</td>
+                            <td>2025.01.05 - 2025.01.12</td>
+                            <td>12,456</td>
+                            <td>312</td>
+                            <td>2.51%</td>
+                            <td>2.8%</td>
+                        </tr>
+                        <tr>
+                            <td>클라우드 보안 전문가</td>
+                            <td>2025.01.01 - 2025.01.08</td>
+                            <td>17,541</td>
+                            <td>499</td>
+                            <td>2.84%</td>
+                            <td>3.5%</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="chart-container">
+                    <i class="fas fa-chart-line fa-3x"></i>
+                    <p>광고 성과 추이 차트</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">광고 신청 확인</div>
+            </div>
+            <div class="modal-body">
+                <p>광고를 신청하시겠습니까?</p>
+                <p>신청 후 관리자 승인을 거쳐 게시됩니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" id="modalCancel">취소</button>
+                <button class="modal-btn modal-btn-primary" id="modalConfirm">확인</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab Navigation
+        const adTabs = document.querySelectorAll('.ad-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        adTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and contents
+                adTabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                this.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Product Selection
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            card.addEventListener('click', function() {
+                productCards.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // Target Options
+        const targetOptions = document.querySelectorAll('.target-option');
+        targetOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const parent = this.parentElement;
+                const allSelected = parent.querySelectorAll('.target-option');
+                
+                if (this.textContent === '전체' || this.textContent === '전국') {
+                    allSelected.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                } else {
+                    parent.querySelector('[data-default="true"]')?.classList.remove('selected');
+                    this.classList.toggle('selected');
+                }
+            });
+        });
+        
+        // File Upload
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const uploadedFiles = document.getElementById('uploadedFiles');
+        let uploadedFilesList = [];
+        
+        fileUploadArea.addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.multiple = true;
+            input.addEventListener('change', function(e) {
+                handleFiles(e.target.files);
+            });
+            input.click();
+        });
+        
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('파일 크기는 5MB를 초과할 수 없습니다.');
+                    continue;
+                }
+                uploadedFilesList.push(file);
+                displayFile(file);
+            }
+        }
+        
+        function displayFile(file) {
+            const fileDiv = document.createElement('div');
+            fileDiv.className = 'uploaded-file';
+            fileDiv.innerHTML = `
+                <div class="file-preview">
+                    <i class="fas fa-image"></i>
+                </div>
+                <div class="file-info">
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-size">${(file.size / 1024).toFixed(2)} KB</div>
+                </div>
+                <div class="file-remove">
+                    <i class="fas fa-times"></i>
+                </div>
+            `;
+            uploadedFiles.appendChild(fileDiv);
+            
+            fileDiv.querySelector('.file-remove').addEventListener('click', function() {
+                uploadedFilesList = uploadedFilesList.filter(f => f.name !== file.name);
+                fileDiv.remove();
+            });
+        }
+        
+        // Form Submission
+        const submitBtn = document.getElementById('submitBtn');
+        const confirmModal = document.getElementById('confirmModal');
+        const modalCancel = document.getElementById('modalCancel');
+        const modalConfirm = document.getElementById('modalConfirm');
+        
+        submitBtn.addEventListener('click', function() {
+            if (validateForm()) {
+                confirmModal.classList.add('active');
+            }
+        });
+        
+        modalCancel.addEventListener('click', function() {
+            confirmModal.classList.remove('active');
+        });
+        
+        modalConfirm.addEventListener('click', function() {
+            alert('광고가 신청되었습니다. 승인 후 게시됩니다.');
+            confirmModal.classList.remove('active');
+            resetForm();
+        });
+        
+        // Cancel Button
+        const cancelBtn = document.getElementById('cancelBtn');
+        cancelBtn.addEventListener('click', function() {
+            if (confirm('광고 신청을 취소하시겠습니까?')) {
+                resetForm();
+            }
+        });
+        
+        // Back Button
+        const backButton = document.getElementById('backButton');
+        backButton.addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        // Ad Management Actions
+        const adActionBtns = document.querySelectorAll('.ad-action-btn');
+        adActionBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.textContent;
+                if (action === '승인') {
+                    if (confirm('광고를 승인하시겠습니까?')) {
+                        const statusBadge = this.closest('.ad-item').querySelector('.ad-status');
+                        statusBadge.textContent = '승인 완료';
+                        statusBadge.className = 'ad-status status-approved';
+                        this.style.display = 'none';
+                        this.nextElementSibling.style.display = 'none';
+                    }
+                } else if (action === '반려') {
+                    const reason = prompt('반려 사유를 입력하세요:');
+                    if (reason) {
+                        const statusBadge = this.closest('.ad-item').querySelector('.ad-status');
+                        statusBadge.textContent = '반려됨';
+                        statusBadge.className = 'ad-status status-rejected';
+                        this.style.display = 'none';
+                        this.previousElementSibling.style.display = 'none';
+                    }
+                } else if (action === '상세') {
+                    alert('광고 상세 정보 페이지로 이동합니다.');
+                }
+            });
+        });
+        
+        // Form Validation
+        function validateForm() {
+            const selectedProduct = document.querySelector('.product-card.selected');
+            if (!selectedProduct) {
+                alert('광고 상품을 선택해주세요.');
+                return false;
+            }
+            
+            const companyName = document.querySelector('input[placeholder="회사명을 입력하세요"]').value;
+            if (!companyName) {
+                alert('회사명을 입력해주세요.');
+                return false;
+            }
+            
+            if (uploadedFilesList.length === 0) {
+                alert('광고 소재를 업로드해주세요.');
+                return false;
+            }
+            
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (!startDate || !endDate) {
+                alert('게재 기간을 설정해주세요.');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Reset Form
+        function resetForm() {
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.value = '';
+            });
+            
+            productCards.forEach(card => card.classList.remove('selected'));
+            productCards[0].classList.add('selected');
+            
+            targetOptions.forEach(option => option.classList.remove('selected'));
+            document.querySelectorAll('.targeting-section').forEach(section => {
+                section.querySelector('.target-option').classList.add('selected');
+            });
+            
+            uploadedFilesList = [];
+            uploadedFiles.innerHTML = '';
+        }
+        
+        // Initialize
+        document.querySelectorAll('.targeting-section').forEach(section => {
+            section.querySelector('.target-option').setAttribute('data-default', 'true');
+        });
+    </script>
+</body>
+</html>

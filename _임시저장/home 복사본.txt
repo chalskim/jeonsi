@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CertMatch - 기업 대시보드</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+        background: #f5f6f8;
+        color: #333;
+    }
+
+    /* Header */
+    .header {
+        background: #0066CC;
+        color: white;
+        padding: 0 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .logo {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .user-menu {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .user-menu a {
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .notification-badge {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .notification-badge::after {
+        content: '3';
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #FF4444;
+        color: white;
+        border-radius: 10px;
+        padding: 2px 6px;
+        font-size: 11px;
+    }
+
+    /* Search Bar */
+    .search-section {
+        background: white;
+        padding: 30px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .search-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .search-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #0066CC;
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 15px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .search-button {
+        padding: 15px 40px;
+        background: #0066CC;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .search-button:hover {
+        background: #0052A3;
+    }
+
+    .quick-filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .filter-chip {
+        padding: 8px 16px;
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .filter-chip:hover, .filter-chip.active {
+        background: #0066CC;
+        color: white;
+        border-color: #0066CC;
+    }
+
+    /* Main Content */
+    .main-content {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 0 20px;
+    }
+
+    /* Stats Banner */
+    .stats-banner {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #0066CC;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* Section */
+    .section {
+        margin-bottom: 60px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .section-more {
+        color: #0066CC;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    /* Card Grid */
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .card-image {
+        width: 100%;
+        height: 160px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 48px;
+    }
+
+    .card-content {
+        padding: 20px;
+    }
+
+    .card-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background: #2EBD59;
+        color: white;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .card-badge.new {
+        background: #FF8C42;
+    }
+
+    .card-badge.hot {
+        background: #E74C3C;
+    }
+
+    .card-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .card-company {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 12px;
+    }
+
+    .card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .card-tag {
+        padding: 4px 10px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 12px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .card-price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #0066CC;
+    }
+
+    .card-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 14px;
+    }
+
+    .star {
+        color: #FFB800;
+    }
+
+    /* List Style Cards */
+    .list-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        display: flex;
+        gap: 20px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .list-card:hover {
+        transform: translateX(4px);
+    }
+
+    .list-card-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #0066CC, #2EBD59);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .list-card-content {
+        flex: 1;
+    }
+
+    .list-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .list-card-desc {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .list-card-meta {
+        display: flex;
+        gap: 15px;
+        font-size: 13px;
+        color: #999;
+    }
+
+    /* Banner */
+    .promo-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .promo-banner h2 {
+        font-size: 28px;
+        margin-bottom: 15px;
+    }
+
+    .promo-banner p {
+        font-size: 16px;
+        margin-bottom: 20px;
+        opacity: 0.9;
+    }
+
+    .promo-button {
+        padding: 12px 30px;
+        background: white;
+        color: #667eea;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-banner {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .search-bar {
+            flex-direction: column;
+        }
+    }
+</style>
+</head> <body> 
+<!-- Search Section -->
+<div class="search-section">
+    <div class="search-container">
+        <h1 class="search-title">인증도 스마트하게, CertMatch와 함께</h1>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="컨설턴트, 교육과정, 인증 검색...">
+            <button class="search-button">검색</button>
+        </div>
+        <div class="quick-filters">
+            <div class="filter-chip active">전체</div>
+            <div class="filter-chip">ISMS-P</div>
+            <div class="filter-chip">ISO 27001</div>
+            <div class="filter-chip">GS 인증</div>
+            <div class="filter-chip">CPPG</div>
+            <div class="filter-chip">정부지원</div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Promo Banner -->
+    <div class="promo-banner">
+        <h2>🎉 2025년 정부지원 인증 프로그램 신청 시작</h2>
+        <p>최대 70% 지원금으로 인증 비용 절감 혜택을 받으세요</p>
+        <button class="promo-button">자세히 보기</button>
+    </div>
+
+    <!-- 정부지원 정보 -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">🏛️ 정부지원 프로그램</h2>
+            <a href="#" class="section-more">더보기 →</a>
+        </div>
+        <div class="list-card">
+            <div class="list-card-icon">💰</div>
+            <div class="list-card-content">
+                <div class="list-card-title">중소기업 정보보호 인증 지원사업 (2025년 1차)</div>
+                <div class="list-card-desc">ISMS-P 인증 취득 비용 최대 70% 지원 (최대 3,000만원)</div>
+                <div class="list-card-meta">
+                    <span>📅 신청기간: 2025.01.15 ~ 03.31</span>
+                    <span>🏢 과학기술정보통신부</span>
+                    <span style="color: #E74C3C; font-weight: 600;">마감 90일 전</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🎁</div>
+            <div class="list-card-content">
+                <div class="list-card-title">금융권 정보보호 컨설팅 바우처</div>
+                <div class="list-card-desc">금융회사 대상 ISMS-P-FSI 컨설팅 비용 50% 지원</div>
+                <div class="list-card-meta">
+                    <span>📅 신청기간: 2025.02.01 ~ 05.31</span>
+                    <span>🏢 금융보안원</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🏆</div>
+            <div class="list-card-content">
+                <div class="list-card-title">스타트업 국제인증 취득 지원</div>
+                <div class="list-card-desc">ISO 27001 인증 취득 비용 60% 지원 (최대 2,000만원)</div>
+                <div class="list-card-meta">
+                    <span>📅 상시 모집</span>
+                    <span>🏢 중소벤처기업부</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 구직 정보 -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">💼 인증 전문가 채용</h2>
+            <a href="#" class="section-more">더보기 →</a>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge hot">급구</span>
+                    <div class="card-title">정보보호 담당자 (ISMS-P 경험 필수)</div>
+                    <div class="card-company">㈜테크솔루션 · 서울 강남구</div>
+                    <div class="card-tags">
+                        <span class="card-tag">경력 3년↑</span>
+                        <span class="card-tag">정규직</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">5,000만원~</div>
+                        <div style="font-size: 12px; color: #999;">~02.28</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge new">신규</span>
+                    <div class="card-title">ISO 27001 Lead Auditor 심사원</div>
+                    <div class="card-company">한국품질인증원 · 경기 성남시</div>
+                    <div class="card-tags">
+                        <span class="card-tag">경력무관</span>
+                        <span class="card-tag">계약직</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">협의</div>
+                        <div style="font-size: 12px; color: #999;">~03.15</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge">인기</span>
+                    <div class="card-title">정보보호 컨설턴트 (프리랜서)</div>
+                    <div class="card-company">㈜보안솔루션 · 서울 서초구</div>
+                    <div class="card-tags">
+                        <span class="card-tag">경력 5년↑</span>
+                        <span class="card-tag">프리랜서</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">일 300만원</div>
+                        <div style="font-size: 12px; color: #999;">~03.31</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge hot">급구</span>
+                    <div class="card-title">GS 인증 전문가 (소프트웨어 품질)</div>
+                    <div class="card-company">㈜디지털이노베이션 · 경기 판교</div>
+                    <div class="card-tags">
+                        <span class="card-tag">경력 2년↑</span>
+                        <span class="card-tag">정규직</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">4,200만원~</div>
+                        <div style="font-size: 12px; color: #999;">~02.15</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge new">신규</span>
+                    <div class="card-title">개인정보보호 담당자 (PIMS 경험자)</div>
+                    <div class="card-company">㈜핀테크코리아 · 서울 여의도</div>
+                    <div class="card-tags">
+                        <span class="card-tag">경력 4년↑</span>
+                        <span class="card-tag">정규직</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">5,500만원~</div>
+                        <div style="font-size: 12px; color: #999;">~03.10</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge">추천</span>
+                    <div class="card-title">클라우드 보안 전문가 (AWS/Azure)</div>
+                    <div class="card-company">㈜클라우드테크 · 서울 강남구</div>
+                    <div class="card-tags">
+                        <span class="card-tag">경력 3년↑</span>
+                        <span class="card-tag">정규직</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">6,000만원~</div>
+                        <div style="font-size: 12px; color: #999;">~02.25</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추천 컨설턴트 -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">🎯 당신을 위한 추천 컨설턴트</h2>
+            <a href="#" class="section-more">더보기 →</a>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-image">👨 💼</div>
+                <div class="card-content">
+                    <span class="card-badge">매칭률 95%</span>
+                    <div class="card-title">김민수 컨설턴트</div>
+                    <div class="card-company">ISMS-P 전문 · 15년 경력</div>
+                    <div class="card-tags">
+                        <span class="card-tag">금융권 특화</span>
+                        <span class="card-tag">빠른 인증</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">일 200만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.9 (47)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">👩 💼</div>
+                <div class="card-content">
+                    <span class="card-badge new">신규</span>
+                    <div class="card-title">박지영 컨설턴트</div>
+                    <div class="card-company">ISO 27001 전문 · 10년 경력</div>
+                    <div class="card-tags">
+                        <span class="card-tag">제조업</span>
+                        <span class="card-tag">비용절감</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">일 180만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.8 (32)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">👨 💻</div>
+                <div class="card-content">
+                    <span class="card-badge hot">인기</span>
+                    <div class="card-title">이준호 컨설턴트</div>
+                    <div class="card-company">ISMS + ISO 통합 · 12년 경력</div>
+                    <div class="card-tags">
+                        <span class="card-tag">IT/통신</span>
+                        <span class="card-tag">통합인증</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">일 220만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>5.0 (89)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">👩 🏫</div>
+                <div class="card-content">
+                    <span class="card-badge">베테랑</span>
+                    <div class="card-title">최서연 컨설턴트</div>
+                    <div class="card-company">GS 인증 전문 · 8년 경력</div>
+                    <div class="card-tags">
+                        <span class="card-tag">제품인증</span>
+                        <span class="card-tag">R&D</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">일 150만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.7 (28)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 컨설팅 서비스 -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">🔍 컨설팅 서비스</h2>
+            <a href="#" class="section-more">더보기 →</a>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge">추천</span>
+                    <div class="card-title">ISMS-P 인증 준비 패키지</div>
+                    <div class="card-company">한국컨설팅그룹 · 4개월 완성</div>
+                    <div class="card-tags">
+                        <span class="card-tag">문서작성</span>
+                        <span class="card-tag">심사대응</span>
+                        <span class="card-tag">교육포함</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">3,500만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.9 (67)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge new">신규</span>
+                    <div class="card-title">ISO 27001 갭 분석 서비스</div>
+                    <div class="card-company">글로벌인증컨설팅 · 2주 완료</div>
+                    <div class="card-tags">
+                        <span class="card-tag">현황분석</span>
+                        <span class="card-tag">개선방안</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">800만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.7 (23)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge hot">인기</span>
+                    <div class="card-title">정보보호 관리체계 구축</div>
+                    <div class="card-company">보안컨설팅파트너스 · 3개월</div>
+                    <div class="card-tags">
+                        <span class="card-tag">맞춤형</span>
+                        <span class="card-tag">사후관리</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">4,200만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>5.0 (94)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-badge">할인</span>
+                    <div class="card-title">GS 인증 신속 지원 서비스</div>
+                    <div class="card-company">㈜품질인증코리아 · 2개월</div>
+                    <div class="card-tags">
+                        <span class="card-tag">제품인증</span>
+                        <span class="card-tag">빠른진행</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">2,800만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.6 (41)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 인증 공고 -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">📢 최신 인증 공고</h2>
+            <a href="#" class="section-more">더보기 →</a>
+        </div>
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📋</div>
+            <div class="list-card-content">
+                <div class="list-card-title">2025년 상급종합병원 ISMS-P 의무인증 기한 안내</div>
+                <div class="list-card-desc">전국 47개 상급종합병원 대상 2025.08.31까지 인증 취득 필수</div>
+                <div class="list-card-meta">
+                    <span>📅 2025.01.10</span>
+                    <span>🏢 한국인터넷진흥원</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🔔</div>
+            <div class="list-card-content">
+                <div class="list-card-title">ISMS-P 간편인증 제도 시행 세부사항 공지</div>
+                <div class="list-card-desc">정보통신서비스 매출 300억 미만 기업 대상 간편인증 적용</div>
+                <div class="list-card-meta">
+                    <span>📅 2025.01.05</span>
+                    <span>🏢 과학기술정보통신부</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">📌</div>
+            <div class="list-card-content">
+                <div class="list-card-title">금융권 ISMS-P-FSI 갱신 심사 일정 안내</div>
+                <div class="list-card-desc">2025년 상반기 금융기관 대상 갱신 심사 일정 확정</div>
+                <div class="list-card-meta">
+                    <span>📅 2024.12.28</span>
+                    <span>🏢 금융보안원</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 교육 과정 -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">📚 추천 교육 과정</h2>
+            <a href="#" class="section-more">더보기 →</a>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📖</div>
+                <div class="card-content">
+                    <span class="card-badge new">신규</span>
+                    <div class="card-title">ISMS-P 심사원 기본과정</div>
+                    <div class="card-company">한국정보통신진흥협회 · 40시간</div>
+                    <div class="card-tags">
+                        <span class="card-tag">온라인</span>
+                        <span class="card-tag">자격증</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">350만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.8 (156)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🎓</div>
+                <div class="card-content">
+                    <span class="card-badge">인기</span>
+                    <div class="card-title">ISO 27001 Lead Auditor 과정</div>
+                    <div class="card-company">한국품질재단 · 5일 집중</div>
+                    <div class="card-tags">
+                        <span class="card-tag">오프라인</span>
+                        <span class="card-tag">국제자격</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">480만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.9 (203)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">💻</div>
+                <div class="card-content">
+                    <span class="card-badge">할인중</span>
+                    <div class="card-title">정보보호 실무자 양성과정</div>
+                    <div class="card-company">한국능률협회 · 3개월</div>
+                    <div class="card-tags">
+                        <span class="card-tag">혼합</span>
+                        <span class="card-tag">실무</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">250만원</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.7 (89)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🔐</div>
+                <div class="card-content">
+                    <span class="card-badge">무료</span>
+                    <div class="card-title">ISMS-P 기초 입문과정</div>
+                    <div class="card-company">한국인터넷진흥원 · 8시간</div>
+                    <div class="card-tags">
+                        <span class="card-tag">온라인</span>
+                        <span class="card-tag">입문</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-price">무료</div>
+                        <div class="card-rating">
+                            <span class="star">★</span>
+                            <span>4.6 (421)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 인증 심사 업체 -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">🏢 인증 심사 업체</h2>
+            <a href="#" class="section-more">더보기 →</a>
+        </div>
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">🎯</div>
+            <div class="list-card-content">
+                <div class="list-card-title">㈜보안컨설팅코리아</div>
+                <div class="list-card-desc">ISMS-P 전문 컨설팅 · 100% 인증 성공률 · 3개월 완성 프로그램</div>
+                <div class="list-card-meta">
+                    <span>⭐ 평점 4.9</span>
+                    <span>📊 연간 200+ 프로젝트</span>
+                    <span>💰 컨설팅 300-800만원</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">🛡️</div>
+            <div class="list-card-content">
+                <div class="list-card-title">㈜사이버시큐리티</div>
+                <div class="list-card-desc">인증 대행 전문 · 원스톱 서비스 · 사후관리 1년 무료</div>
+                <div class="list-card-meta">
+                    <span>⭐ 평점 4.8</span>
+                    <span>📊 연간 150+ 프로젝트</span>
+                    <span>💰 대행료 500-1,200만원</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">⚡</div>
+            <div class="list-card-content">
+                <div class="list-card-title">㈜디지털보안솔루션</div>
+                <div class="list-card-desc">솔루션 + 컨설팅 패키지 · 자동화 도구 제공 · 24/7 기술지원</div>
+                <div class="list-card-meta">
+                    <span>⭐ 평점 4.7</span>
+                    <span>📊 연간 100+ 프로젝트</span>
+                    <span>💰 패키지 800-1,500만원</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 성공 사례 -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">✨ 성공 사례</h2>
+            <a href="#" class="section-more">더보기 →</a>
+        </div>
+        
+        <!-- 게시판 스타일 성공 사례 리스트 -->
+        <div class="success-board">
+            <div class="board-header">
+                <div class="board-col-title">회사명</div>
+                <div class="board-col-cert">인증종류</div>
+                <div class="board-col-date">취득일</div>
+                <div class="board-col-industry">업종</div>
+                <div class="board-col-result">성과</div>
+            </div>
+            
+            <div class="board-row">
+                <div class="board-col-title">
+                    <span class="company-name">㈜에스테크</span>
+                    <span class="company-size">200명</span>
+                </div>
+                <div class="board-col-cert">
+                    <span class="cert-badge isms">ISMS-P</span>
+                </div>
+                <div class="board-col-date">2024.12.15</div>
+                <div class="board-col-industry">IT서비스</div>
+                <div class="board-col-result">
+                    <span class="result-tag">비용 45% 절감</span>
+                    <span class="result-tag">일정 30% 단축</span>
+                </div>
+            </div>
+            
+            <div class="board-row">
+                <div class="board-col-title">
+                    <span class="company-name">㈜핀테크이노</span>
+                    <span class="company-size">80명</span>
+                </div>
+                <div class="board-col-cert">
+                    <span class="cert-badge iso">ISO 27001</span>
+                </div>
+                <div class="board-col-date">2024.11.28</div>
+                <div class="board-col-industry">금융</div>
+                <div class="board-col-result">
+                    <span class="result-tag">첫 도전 성공</span>
+                    <span class="result-tag">Series A 달성</span>
+                </div>
+            </div>
+            
+            <div class="board-row">
+                <div class="board-col-title">
+                    <span class="company-name">㈜메디텍</span>
+                    <span class="company-size">150명</span>
+                </div>
+                <div class="board-col-cert">
+                    <span class="cert-badge isms">ISMS-P</span>
+                </div>
+                <div class="board-col-date">2024.11.10</div>
+                <div class="board-col-industry">의료</div>
+                <div class="board-col-result">
+                    <span class="result-tag">2주 빠른 매칭</span>
+                    <span class="result-tag">전문 컨설턴트</span>
+                </div>
+            </div>
+            
+            <div class="board-row">
+                <div class="board-col-title">
+                    <span class="company-name">㈜스마트로지스</span>
+                    <span class="company-size">50명</span>
+                </div>
+                <div class="board-col-cert">
+                    <span class="cert-badge isms">ISMS-P</span>
+                </div>
+                <div class="board-col-date">2024.10.22</div>
+                <div class="board-col-industry">물류</div>
+                <div class="board-col-result">
+                    <span class="result-tag">정부지원 70%</span>
+                    <span class="result-tag">비용 절반</span>
+                </div>
+            </div>
+            
+            <div class="board-row">
+                <div class="board-col-title">
+                    <span class="company-name">㈜클라우드시스</span>
+                    <span class="company-size">300명</span>
+                </div>
+                <div class="board-col-cert">
+                    <span class="cert-badge iso">ISO 27001</span>
+                </div>
+                <div class="board-col-date">2024.09.15</div>
+                <div class="board-col-industry">클라우드</div>
+                <div class="board-col-result">
+                    <span class="result-tag">글로벌 진출</span>
+                    <span class="result-tag">매출 200% 증가</span>
+                </div>
+            </div>
+            
+            <div class="board-row">
+                <div class="board-col-title">
+                    <span class="company-name">㈜바이오헬스</span>
+                    <span class="company-size">120명</span>
+                </div>
+                <div class="board-col-cert">
+                    <span class="cert-badge isms">ISMS-P</span>
+                </div>
+                <div class="board-col-date">2024.08.30</div>
+                <div class="board-col-industry">바이오</div>
+                <div class="board-col-result">
+                    <span class="result-tag">FDA 승인</span>
+                    <span class="result-tag">해외 수출</span>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+        .success-board {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .board-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
+            gap: 16px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-weight: 600;
+            font-size: 14px;
+            color: #495057;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .board-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
+            gap: 16px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s ease;
+        }
+        
+        .board-row:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .board-row:last-child {
+            border-bottom: none;
+        }
+        
+        .company-name {
+            font-weight: 600;
+            color: #212529;
+            margin-right: 8px;
+        }
+        
+        .company-size {
+            font-size: 12px;
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .cert-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .cert-badge.isms {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .cert-badge.iso {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .board-col-date {
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .board-col-industry {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .result-tag {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-right: 4px;
+            margin-bottom: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .board-header, .board-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .board-header div, .board-row div {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .board-header div:before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #495057;
+            }
+        }
+        </style>
+    </div>
+
+    <!-- FAQ 섹션 -->
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">❓ 자주 묻는 질문</h2>
+            <a href="#" class="section-more">더보기 →</a>
+        </div>
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">💡</div>
+            <div class="list-card-content">
+                <div class="list-card-title">ISMS-P 인증 준비 기간은 얼마나 걸리나요?</div>
+                <div class="list-card-desc">일반적으로 6-10개월이 소요되지만, CertMatch를 통한 전문 컨설턴트 매칭 시 3-6개월로 단축 가능합니다.</div>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">💰</div>
+            <div class="list-card-content">
+                <div class="list-card-title">인증 비용은 얼마나 드나요?</div>
+                <div class="list-card-desc">심사료 600-1,100만원 + 컨설팅 2,000-7,500만원이 일반적이며, 정부지원금을 통해 최대 70% 절감 가능합니다.</div>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <div class="list-card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🎯</div>
+            <div class="list-card-content">
+                <div class="list-card-title">CertMatch의 매칭 정확도는 어느 정도인가요?</div>
+                <div class="list-card-desc">AI 기반 알고리즘으로 90% 이상의 매칭 정확도를 자랑하며, 평균 72시간 내 최적의 전문가를 추천합니다.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer style="background: #333; color: white; padding: 40px 20px; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;">
+        <div>
+            <h3 style="margin-bottom: 15px;">CertMatch</h3>
+            <p style="font-size: 14px; line-height: 1.6; color: #ccc;">
+                인증도 스마트하게<br>
+                신뢰할 수 있는 파트너와 함께
+            </p>
+        </div>
+        <div>
+            <h4 style="margin-bottom: 15px;">서비스</h4>
+            <ul style="list-style: none; font-size: 14px; line-height: 2;">
+                <li><a href="#" style="color: #ccc; text-decoration: none;">컨설턴트 찾기</a></li>
+                <li><a href="#" style="color: #ccc; text-decoration: none;">교육 과정</a></li>
+                <li><a href="#" style="color: #ccc; text-decoration: none;">심사기관</a></li>
+                <li><a href="#" style="color: #ccc; text-decoration: none;">정부지원</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="margin-bottom: 15px;">회사</h4>
+            <ul style="list-style: none; font-size: 14px; line-height: 2;">
+                <li><a href="#" style="color: #ccc; text-decoration: none;">회사 소개</a></li>
+                <li><a href="#" style="color: #ccc; text-decoration: none;">공지사항</a></li>
+                <li><a href="#" style="color: #ccc; text-decoration: none;">채용</a></li>
+                <li><a href="#" style="color: #ccc; text-decoration: none;">파트너십</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="margin-bottom: 15px;">고객지원</h4>
+            <ul style="list-style: none; font-size: 14px; line-height: 2;">
+                <li><a href="#" style="color: #ccc; text-decoration: none;">자주 묻는 질문</a></li>
+                <li><a href="#" style="color: #ccc; text-decoration: none;">1:1 문의</a></li>
+                <li><a href="#" style="color: #ccc; text-decoration: none;">이용약관</a></li>
+                <li><a href="#" style="color: #ccc; text-decoration: none;">개인정보처리방침</a></li>
+            </ul>
+        </div>
+    </div>
+    <div style="max-width: 1200px; margin: 30px auto 0; padding-top: 30px; border-top: 1px solid #555; text-align: center; font-size: 13px; color: #999;">
+        © 2025 CertMatch. All rights reserved.
+    </div>
+</footer>
+
+<script>
+    // 필터 칩 클릭 이벤트
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // 카드 클릭 이벤트 (예시)
+    document.querySelectorAll('.card, .list-card').forEach(card => {
+        card.addEventListener('click', function() {
+            console.log('카드 클릭:', this.querySelector('.card-title, .list-card-title')?.textContent);
+        });
+    });
+</script>
+</body>
+</html>

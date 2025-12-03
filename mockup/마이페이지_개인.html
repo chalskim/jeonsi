@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>마이페이지 - 전문가 시간 연결 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 기존 스타일 유지 */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 앱 헤더 */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        /* 마이페이지 컨테이너 */
+        .mypage-container {
+            padding-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* 프로필 헤더 (사이드바에서 이동) */
+        .profile-header-main {
+            display: flex;
+            align-items: center;
+            padding: 25px 20px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-header-main .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 3px solid var(--primary-color);
+        }
+
+        .profile-header-main .profile-info {
+            flex: 1;
+        }
+
+        .profile-header-main .profile-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .profile-header-main .profile-role {
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .profile-header-main .profile-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        /* 퀵 액션 메뉴 (설정.html 스타일 목록 형태) */
+        .quick-actions {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .quick-action {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .quick-action:hover {
+            background-color: var(--light-color);
+        }
+
+        .quick-action:last-child {
+            border-bottom: none;
+        }
+
+        .quick-action.active {
+            background-color: rgba(0, 123, 255, 0.05);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .quick-action-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .quick-action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            background-color: #e3f2fd;
+            color: var(--primary-color);
+        }
+
+        .quick-action-content {
+            flex: 1;
+        }
+
+        .quick-action-text {
+            font-weight: 500;
+            margin-bottom: 2px;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .quick-action-status {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: left;
+        }
+
+        .quick-action.active .quick-action-status {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .quick-action-arrow {
+            color: var(--text-muted);
+            margin-left: 10px;
+        }
+
+        /* 메뉴 카드 */
+        .menu-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .menu-card.active {
+            background-color: rgba(0, 123, 255, 0.05);
+            border-left-color: var(--primary-color);
+        }
+
+        .menu-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .menu-card-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-card-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .menu-card-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background-color: var(--light-color);
+            color: var(--text-muted);
+        }
+
+        .menu-card.has-content .menu-card-status {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        /* 메인 콘텐츠 */
+        .mypage-content {
+            padding: 20px;
+        }
+
+        .content-header {
+            margin-bottom: 25px;
+        }
+
+        .content-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .content-subtitle {
+            color: var(--text-muted);
+        }
+
+        /* 대시보드 카드 */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* 프로필 섹션 */
+        .profile-section {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        /* 이력서 관리 섹션 */
+        .experience-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .experience-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .experience-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .experience-period {
+            color: var(--text-muted);
+        }
+        
+        .experience-company {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .experience-description {
+            margin-bottom: 15px;
+        }
+        
+        .experience-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* 포트폴리오 관리 섹션 */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .portfolio-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        
+        .portfolio-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .portfolio-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .portfolio-content {
+            padding: 20px;
+        }
+        
+        .portfolio-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .portfolio-description {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+        
+        .portfolio-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .portfolio-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .portfolio-tag {
+            padding: 3px 8px;
+            border-radius: 15px;
+            background-color: var(--light-color);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* 서비스 내역 섹션 */
+        .service-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .service-history-table th,
+        .service-history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .service-history-table th {
+            background-color: var(--light-color);
+            font-weight: 500;
+        }
+
+        .service-history-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .status-active {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-completed {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .status-cancelled {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* 리뷰 관리 섹션 */
+        .review-summary {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .review-rating {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .review-stars {
+            color: var(--warning-color);
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .review-count {
+            color: var(--text-muted);
+        }
+
+        .review-list {
+            margin-top: 20px;
+        }
+
+        .review-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .review-company {
+            font-weight: bold;
+        }
+
+        .review-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .review-rating-stars {
+            color: var(--warning-color);
+            margin-bottom: 10px;
+        }
+
+        .review-content {
+            margin-bottom: 15px;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+        
+        /* 결제수단 관리 섹션 */
+        .payment-method-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .payment-method-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        
+        .payment-method-card.default {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        
+        .payment-method-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .payment-method-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .payment-method-details .card-name {
+            font-weight: bold;
+        }
+        
+        .payment-method-details .card-number {
+            color: var(--text-muted);
+        }
+        
+        .payment-method-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* 결제 내역 섹션 */
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .payment-table th,
+        .payment-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .payment-table th {
+            background-color: var(--light-color);
+            font-weight: 500;
+        }
+
+        .payment-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        /* 1:1 문의 섹션 */
+        .inquiry-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .inquiry-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .inquiry-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .inquiry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .inquiry-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .inquiry-status {
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .inquiry-status.answered {
+            background-color: var(--success-color);
+        }
+        
+        .inquiry-preview {
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        
+        .inquiry-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: right;
+        }
+        
+        .inquiry-form {
+            margin-top: 30px;
+        }
+        
+        .inquiry-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .inquiry-form .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .inquiry-form .form-input,
+        .inquiry-form .form-textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        
+        .inquiry-form .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        /* 반응형 디자인 */
+        @media (max-width: 992px) {
+            .profile-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 앱 헤더 -->
+    <header class="app-header">
+        <div class="app-title">마이페이지</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- 마이페이지 컨테이너 -->
+    <div class="mypage-container">
+        <!-- 프로필 헤더 (사이드바에서 이동) -->
+        <div class="profile-header-main">
+            <img src="https://picsum.photos/seed/expert/200/200.jpg" alt="프로필 사진" class="user-avatar">
+            <div class="profile-info">
+                <div class="profile-name">김민수</div>
+                <div class="profile-role">PM / 마케팅 전문가</div>
+                <div class="profile-status">인증 전문가</div>
+            </div>
+        </div>
+
+        <!-- 퀵 액션 메뉴 -->
+        <div class="quick-actions">
+            <a href="/전문가%20프로필%20목록.html" class="quick-action active" data-section="profile">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-text">프로필 관리</div>
+                        <div class="quick-action-status">활성</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+
+            <a href="/전문가%20프로필%20등록.html" class="quick-action has-content">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-text">이력서 관리</div>
+                        <div class="quick-action-status">1개 등록</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+
+            <a href="/포트폴리오_리스트.html" class="quick-action has-content">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-text">포트폴리오</div>
+                        <div class="quick-action-status">1개 등록</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+
+            <a href="/서비스이용내역_개인.html" class="quick-action has-content">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-text">서비스 내역</div>
+                        <div class="quick-action-status">진행중 1건</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+
+            <a href="/리뷰관리.html" class="quick-action has-content">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-text">리뷰 관리</div>
+                        <div class="quick-action-status">4.8점 (23개)</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+
+            <a href="/일정관리_개인.html" class="quick-action has-content">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-text">일정 관리</div>
+                        <div class="quick-action-status">예약 2건, 희망 1건</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+
+            <a href="/결제수단관리.html" class="quick-action">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-text">결제수단</div>
+                        <div class="quick-action-status">1개 등록</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+
+            <a href="/결제내역리스트_개인.html" class="quick-action">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-won-sign"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-text">결제 내역</div>
+                        <div class="quick-action-status">전체 내역</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+
+            <a href="/1대1_문의리스트.html" class="quick-action">
+                <div class="quick-action-left">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-text">1:1 문의</div>
+                        <div class="quick-action-status">문의하기</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right quick-action-arrow"></i>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 첫 번째 버튼(프로필 관리)만 활성화 상태로 유지
+            const firstAction = document.querySelector('.quick-action[data-section="profile"]');
+            if (firstAction) {
+                firstAction.classList.add('active');
+            }
+
+            // 프로필 관리 섹션만 기본적으로 표시
+            const profileSection = document.getElementById('profile-section');
+            if (profileSection) {
+                profileSection.style.display = 'block';
+            }
+
+            // 다른 모든 섹션은 숨기기
+            const contentSections = document.querySelectorAll('.content-section');
+            contentSections.forEach(section => {
+                if (section.id !== 'profile-section') {
+                    section.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

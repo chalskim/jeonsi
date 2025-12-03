@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>어드민 홈 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --light-color: #f8f9fa;
+            --card-background: #ffffff;
+            --border-color: #dee2e6;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --background-color: #f4f7f6;
+            --dark-color: #343a40;
+            --sidebar-width: 280px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--background-color); color: var(--text-color); line-height: 1.6; overflow: hidden; }
+        .admin-container { display: flex; min-height: 100vh; }
+        .admin-sidebar { width: var(--sidebar-width); background-color: var(--card-background); position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 1000; }
+        .admin-main { flex: 1; margin-left: var(--sidebar-width); height: 100vh; }
+        .content-frame { width: 100%; height: 100vh; border: 0; }
+        @media (max-width: 768px) { .admin-sidebar { display: block; } .admin-main { margin-left: var(--sidebar-width); } .content-frame { height: 100vh; } }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var sidebarEl = document.getElementById('sidebar');
+            if (sidebarEl) {
+                fetch('mockup/admin-sidebar.html')
+                    .then(function(r){return r.text()})
+                    .then(function(html){
+                        sidebarEl.innerHTML = html;
+                        var activeLink = sidebarEl.querySelector("a[href$='admin-dashboard.html']");
+                        if (activeLink) activeLink.classList.add('active');
+                    })
+                    .catch(function(){});
+            }
+        });
+    </script>
+    </head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar" id="sidebar"></aside>
+        <main class="admin-main" id="mainContent">
+            <iframe class="content-frame" id="contentFrame" src="mockup/admin-dashboard.html?embed=1"></iframe>
+        </main>
+    </div>
+</body>
+</html>

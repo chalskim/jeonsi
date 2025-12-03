@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 교육과정 상세</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #4a6fdc;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        
+        .header-icon:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .app-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .app-content {
+            padding-top: 60px;
+            padding-bottom: 80px;
+        }
+        
+        .container {
+            padding: 20px;
+        }
+        
+        /* 탭 스타일 */
+        .detail-tabs {
+            display: flex;
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .detail-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 14px;
+            color: #666;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .detail-tab.active {
+            color: #4a6fdc;
+            font-weight: bold;
+            background-color: rgba(74, 111, 220, 0.1);
+        }
+        
+        .detail-tab i {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        /* 탭 콘텐츠 */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* 카드 스타일 */
+        .course-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .card-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-before { background-color: #e2e3e5; color: #383d41; }
+        .status-active { background-color: #d1ecf1; color: #0c5460; }
+        .status-full { background-color: #fff3cd; color: #856404; }
+        .status-completed { background-color: #d4edda; color: #155724; }
+        .status-extended { background-color: #d1ecf1; color: #0c5460; }
+        .status-early-closed { background-color: #f8d7da; color: #721c24; }
+        
+        .card-meta {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .card-meta-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-meta-item i {
+            margin-right: 5px;
+            color: #4a6fdc;
+        }
+        
+        /* 상태 변경 섹션 */
+        .status-change-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 8px;
+            color: #4a6fdc;
+        }
+        
+        .status-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .status-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .status-option:hover {
+            border-color: #4a6fdc;
+            background-color: rgba(74, 111, 220, 0.05);
+        }
+        
+        .status-option.selected {
+            border-color: #4a6fdc;
+            background-color: rgba(74, 111, 220, 0.1);
+        }
+        
+        .status-option input[type="radio"] {
+            margin-right: 12px;
+        }
+        
+        .status-option-label {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .status-option-desc {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+        
+        .status-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background-color: #4a6fdc;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        /* 수강생 목록 스타일 */
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .student-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+        
+        .student-info {
+            flex: 1;
+        }
+        
+        .student-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .student-email {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .student-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .attendance-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        /* 리뷰 스타일 */
+        .review-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .reviewer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #999;
+        }
+        
+        .reviewer-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .review-course {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .review-rating {
+            color: #ffc107;
+            font-size: 14px;
+        }
+        
+        .review-content {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .review-date {
+            font-size: 12px;
+            color: #999;
+            text-align: right;
+        }
+        
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .modal-body {
+            margin-bottom: 15px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn-success {
+            background-color: #51cf66;
+            color: white;
+        }
+        
+        /* 토스트 알림 */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1001;
+        }
+        
+        .toast.show {
+            display: block;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: #4a6fdc;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="backButton">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title" id="pageTitle">교육과정 상세</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-home" id="homeButton"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <div class="container">
+            <!-- 탭 네비게이션 -->
+            <div class="detail-tabs">
+                <button class="detail-tab active" data-tab="info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>정보</span>
+                </button>
+                <button class="detail-tab" data-tab="students">
+                    <i class="fas fa-users"></i>
+                    <span>수강생</span>
+                </button>
+                <button class="detail-tab" data-tab="evaluations">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>평가</span>
+                </button>
+                <button class="detail-tab" data-tab="reviews">
+                    <i class="fas fa-star"></i>
+                    <span>리뷰</span>
+                </button>
+            </div>
+            
+            <!-- 탭 콘텐츠 -->
+            <div class="tab-content active" id="info">
+                <!-- 과정 정보 -->
+            </div>
+            
+            <div class="tab-content" id="students">
+                <!-- 수강생 목록 -->
+            </div>
+            
+            <div class="tab-content" id="evaluations">
+                <!-- 평가 목록 -->
+            </div>
+            
+            <div class="tab-content" id="reviews">
+                <!-- 리뷰 목록 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 수료증 발급 버튼 -->
+    <button class="floating-btn" id="certificateBtn">
+        <i class="fas fa-certificate"></i>
+    </button>
+    
+    <!-- 수료증 발급 모달 -->
+    <div class="modal" id="certificateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">수료증 발급</h3>
+                <button class="modal-close" id="closeCertificateModal">&times;</button>
+            </div>
+            <div class="modal-body" id="certificateModalBody">
+                <!-- 동적으로 채워짐 -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="closeCertificateModalBtn">취소</button>
+                <button class="btn btn-success" id="confirmIssueCertificateBtn">발급하기</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // Mock 데이터
+        const mockData = {
+            courses: [
+                { id: 1, title: 'ISMS-P 심사원 기본과정', status: 'active', students: 25, capacity: 30, startDate: '2025-03-01', endDate: '2025-03-31', price: 3500000 },
+                { id: 2, title: 'ISO 27001 Lead Auditor 과정', status: 'full', students: 20, capacity: 20, startDate: '2025-03-10', endDate: '2025-03-14', price: 4800000 },
+                { id: 3, title: '정보보호 실무자 양성과정', status: 'completed', students: 15, capacity: 25, startDate: '2025-01-15', endDate: '2025-02-15', price: 2500000 },
+                { id: 4, title: '개인정보보호 관리자 과정', status: 'before', students: 0, capacity: 25, startDate: '2025-04-01', endDate: '2025-04-30', price: 2800000 },
+                { id: 5, title: '클라우드 보안 전문가 과정', status: 'active', students: 18, capacity: 30, startDate: '2025-03-15', endDate: '2025-04-15', price: 4200000 }
+            ],
+            students: [
+                { id: 1, courseId: 1, name: '김민수', email: 'kimms@example.com', attendance: true, completed: false },
+                { id: 2, courseId: 1, name: '이지영', email: 'leejy@example.com', attendance: false, completed: false },
+                { id: 3, courseId: 1, name: '박준호', email: 'parkjh@example.com', attendance: true, completed: false },
+                { id: 4, courseId: 2, name: '최서연', email: 'choisy@example.com', attendance: true, completed: false },
+                { id: 5, courseId: 2, name: '정민철', email: 'jeongmc@example.com', attendance: true, completed: false },
+                { id: 6, courseId: 3, name: '홍길동', email: 'honggd@example.com', attendance: true, completed: true },
+                { id: 7, courseId: 3, name: '김철수', email: 'kimcs@example.com', attendance: true, completed: true },
+                { id: 8, courseId: 4, name: '이영희', email: 'leeyh@example.com', attendance: false, completed: false },
+                { id: 9, courseId: 5, name: '박상민', email: 'parksm@example.com', attendance: true, completed: false },
+                { id: 10, courseId: 5, name: '최지아', email: 'choija@example.com', attendance: false, completed: false }
+            ],
+            evaluations: [
+                { id: 1, courseId: 1, title: '중간고사', date: '2025-03-15', status: 'scheduled' },
+                { id: 2, courseId: 1, title: '기말고사', date: '2025-03-29', status: 'scheduled' },
+                { id: 3, courseId: 3, title: '최종 평가', date: '2025-02-14', status: 'completed' },
+                { id: 4, courseId: 2, title: '실습 평가', date: '2025-03-12', status: 'completed' },
+                { id: 5, courseId: 5, title: '중간 평가', date: '2025-04-01', status: 'scheduled' }
+            ],
+            reviews: [
+                { id: 1, courseId: 3, studentName: '홍길동', courseName: '정보보호 실무자 양성과정', rating: 5, content: '실무에 바로 적용할 수 있는 유용한 내용이 많았습니다. 강사님의 설명도 명확해서 만족스러웠습니다.', date: '2025-02-20' },
+                { id: 2, courseId: 3, studentName: '김철수', courseName: '정보보호 실무자 양성과정', rating: 4, content: '전반적으로 좋은 교육이었으나, 실습 시간이 조금 더 많았으면 좋겠습니다.', date: '2025-02-18' },
+                { id: 3, courseId: 2, studentName: '최서연', courseName: 'ISO 27001 Lead Auditor 과정', rating: 5, content: '매우 전문적인 내용이었고, 실제 심사 시뮬레이션이 도움이 많이 되었습니다.', date: '2025-03-13' }
+            ]
+        };
+        
+        let currentCourseId = null;
+        let currentCourse = null;
+        let selectedStatus = null;
+        
+        // 토스트 메시지 표시 함수
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 탭 전환 함수
+        function showTab(tabName) {
+            document.querySelectorAll('.detail-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}`).classList.add('active');
+        }
+        
+        // 리뷰 카드 생성 함수
+        function createReviewCard(review) {
+            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            return `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar"><i class="fas fa-user"></i></div>
+                            <div>
+                                <div class="reviewer-name">${review.studentName}</div>
+                                <div class="review-course">${review.courseName}</div>
+                            </div>
+                        </div>
+                        <div class="review-rating">${stars}</div>
+                    </div>
+                    <div class="review-content">${review.content}</div>
+                    <div class="review-date">${review.date}</div>
+                </div>
+            `;
+        }
+        
+        // 과정 정보 렌더링
+        function renderCourseInfo() {
+            const statusClass = `status-${currentCourse.status}`;
+            const statusText = { 
+                before: '모집전', 
+                active: '모집중', 
+                full: '마감', 
+                completed: '완료',
+                extended: '모집연장',
+                earlyClosed: '조기마감'
+            }[currentCourse.status];
+            
+            document.getElementById('info').innerHTML = `
+                <div class="course-card">
+                    <div class="card-header">
+                        <div class="card-title">${currentCourse.title}</div>
+                        <div class="card-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="card-meta">
+                        <div class="card-meta-item">
+                            <i class="fas fa-users"></i>
+                            <span>수강생: ${currentCourse.students}/${currentCourse.capacity}명</span>
+                        </div>
+                        <div class="card-meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>${currentCourse.startDate} ~ ${currentCourse.endDate}</span>
+                        </div>
+                        <div class="card-meta-item">
+                            <i class="fas fa-won-sign"></i>
+                            <span>${currentCourse.price.toLocaleString()}원</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 상태 변경 섹션 -->
+                <div class="status-change-section">
+                    <div class="section-title">
+                        <i class="fas fa-edit"></i>
+                        모집 상태 변경
+                    </div>
+                    <div class="status-options">
+                        <div class="status-option" data-status="full">
+                            <input type="radio" name="status" value="full" id="status-full">
+                            <div class="status-option-label">
+                                <div>모집 마감</div>
+                                <div class="status-option-desc">정원이 모두 찼거나 모집을 마감합니다</div>
+                            </div>
+                        </div>
+                        <div class="status-option" data-status="extended">
+                            <input type="radio" name="status" value="extended" id="status-extended">
+                            <div class="status-option-label">
+                                <div>모집 연장</div>
+                                <div class="status-option-desc">모집 기간을 연장하여 추가 모집합니다</div>
+                            </div>
+                        </div>
+                        <div class="status-option" data-status="earlyClosed">
+                            <input type="radio" name="status" value="earlyClosed" id="status-early-closed">
+                            <div class="status-option-label">
+                                <div>조기 마감</div>
+                                <div class="status-option-desc">예정보다 일찍 모집을 마감합니다</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="status-actions">
+                        <button class="btn btn-secondary" id="cancelStatusChange">취소</button>
+                        <button class="btn btn-primary" id="confirmStatusChange">상태 변경</button>
+                    </div>
+                </div>
+            `;
+            
+            // 상태 변경 이벤트 리스너 추가
+            setupStatusChangeListeners();
+        }
+        
+        // 상태 변경 이벤트 리스너 설정
+        function setupStatusChangeListeners() {
+            // 상태 옵션 클릭 이벤트
+            document.querySelectorAll('.status-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // 모든 옵션에서 selected 클래스 제거
+                    document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('selected'));
+                    // 클릭한 옵션에 selected 클래스 추가
+                    this.classList.add('selected');
+                    // 라디오 버튼 선택
+                    this.querySelector('input[type="radio"]').checked = true;
+                    // 선택된 상태 저장
+                    selectedStatus = this.dataset.status;
+                });
+            });
+            
+            // 취소 버튼
+            document.getElementById('cancelStatusChange').addEventListener('click', function() {
+                // 선택 초기화
+                document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('selected'));
+                document.querySelectorAll('input[name="status"]').forEach(radio => radio.checked = false);
+                selectedStatus = null;
+            });
+            
+            // 확인 버튼
+            document.getElementById('confirmStatusChange').addEventListener('click', function() {
+                if (!selectedStatus) {
+                    showToast('상태를 선택해주세요.');
+                    return;
+                }
+                
+                // 상태 변경 확인
+                const statusText = {
+                    full: '모집 마감',
+                    extended: '모집 연장',
+                    earlyClosed: '조기 마감'
+                }[selectedStatus];
+                
+                // 과정 상태 업데이트
+                currentCourse.status = selectedStatus;
+                
+                // 상태 변경 알림
+                showToast(`과정 상태가 "${statusText}"(으)로 변경되었습니다.`);
+                
+                // 과정 정보 다시 렌더링
+                renderCourseInfo();
+            });
+        }
+        
+        // 수강생 목록 렌더링
+        function renderStudents() {
+            const students = mockData.students.filter(s => s.courseId === currentCourseId);
+            
+            document.getElementById('students').innerHTML = students.length > 0
+                ? students.map(student => `
+                    <div class="student-item">
+                        <div class="student-avatar"><i class="fas fa-user"></i></div>
+                        <div class="student-info">
+                            <div class="student-name">${student.name}</div>
+                            <div class="student-email">${student.email}</div>
+                        </div>
+                        <div class="student-status">
+                            <input type="checkbox" class="attendance-checkbox" ${student.attendance ? 'checked' : ''} 
+                                   onchange="updateAttendance(${student.id}, this.checked)">
+                            <span>${student.attendance ? '출석' : '결석'}</span>
+                        </div>
+                    </div>
+                `).join('')
+                : '<div class="empty-state"><i class="fas fa-users"></i><p>수강생이 없습니다.</p></div>';
+        }
+        
+        // 평가 목록 렌더링
+        function renderEvaluations() {
+            const evaluations = mockData.evaluations.filter(e => e.courseId === currentCourseId);
+            
+            document.getElementById('evaluations').innerHTML = evaluations.length > 0
+                ? evaluations.map(evaluation => `
+                    <div class="course-card">
+                        <div class="card-header">
+                            <div class="card-title">${evaluation.title}</div>
+                            <div class="card-status ${evaluation.status === 'completed' ? 'status-completed' : 'status-active'}">
+                                ${evaluation.status === 'completed' ? '완료' : '예정'}
+                            </div>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>평가일: ${evaluation.date}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')
+                : '<div class="empty-state"><i class="fas fa-clipboard-check"></i><p>등록된 평가가 없습니다.</p></div>';
+        }
+        
+        // 리뷰 목록 렌더링
+        function renderReviews() {
+            const reviews = mockData.reviews.filter(r => r.courseId === currentCourseId);
+            
+            document.getElementById('reviews').innerHTML = reviews.length > 0
+                ? reviews.map(review => createReviewCard(review)).join('')
+                : '<div class="empty-state"><i class="fas fa-star"></i><p>받은 리뷰가 없습니다.</p></div>';
+        }
+        
+        // 수료증 발급 모달 표시
+        function showCertificateModal() {
+            const students = mockData.students.filter(s => s.courseId === currentCourseId && !s.completed);
+            
+            const modalBody = document.getElementById('certificateModalBody');
+            modalBody.innerHTML = students.length > 0
+                ? `
+                    <p>수료증를 발급할 수강생을 선택하세요:</p>
+                    ${students.map(student => `
+                        <div class="student-item">
+                            <div class="student-avatar"><i class="fas fa-user"></i></div>
+                            <div class="student-info">
+                                <div class="student-name">${student.name}</div>
+                                <div class="student-email">${student.email}</div>
+                            </div>
+                            <input type="checkbox" id="cert_${student.id}" value="${student.id}">
+                        </div>
+                    `).join('')}
+                `
+                : '<p>수료증를 발급할 수강생이 없습니다.</p>';
+            
+            document.getElementById('certificateModal').classList.add('active');
+        }
+        
+        // 출석 업데이트
+        function updateAttendance(studentId, isPresent) {
+            const student = mockData.students.find(s => s.id === studentId);
+            if (student) {
+                student.attendance = isPresent;
+                showToast(`${student.name}님의 출석이 업데이트되었습니다.`);
+            }
+        }
+        
+        // 초기화 함수
+        function init() {
+            // localStorage에서 선택한 과정 ID 가져오기
+            currentCourseId = parseInt(localStorage.getItem('selectedCourseId'));
+            
+            if (!currentCourseId) {
+                showToast('과정 정보를 찾을 수 없습니다.');
+                window.location.href = 'course-list.html';
+                return;
+            }
+            
+            // 현재 과정 정보 가져오기
+            currentCourse = mockData.courses.find(c => c.id === currentCourseId);
+            
+            if (!currentCourse) {
+                showToast('과정 정보를 찾을 수 없습니다.');
+                window.location.href = 'course-list.html';
+                return;
+            }
+            
+            // 페이지 제목 설정
+            document.getElementById('pageTitle').textContent = currentCourse.title;
+            
+            // 각 탭 내용 렌더링
+            renderCourseInfo();
+            renderStudents();
+            renderEvaluations();
+            renderReviews();
+        }
+        
+        // 이벤트 리스너
+        document.addEventListener('DOMContentLoaded', function() {
+            // 초기화
+            init();
+            
+            // 탭 전환
+            document.querySelectorAll('.detail-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    showTab(this.dataset.tab);
+                });
+            });
+            
+            // 뒤로가기 버튼
+            document.getElementById('backButton').addEventListener('click', function() {
+                window.location.href = 'course-list.html';
+            });
+            
+            // 홈 버튼
+            document.getElementById('homeButton').addEventListener('click', function() {
+                window.location.href = 'apphome.html';
+            });
+            
+            // 수료증 발급 버튼
+            document.getElementById('certificateBtn').addEventListener('click', function() {
+                showCertificateModal();
+            });
+            
+            // 수료증 모달 닫기 버튼
+            document.getElementById('closeCertificateModal').addEventListener('click', function() {
+                document.getElementById('certificateModal').classList.remove('active');
+            });
+            
+            document.getElementById('closeCertificateModalBtn').addEventListener('click', function() {
+                document.getElementById('certificateModal').classList.remove('active');
+            });
+            
+            // 수료증 발급 확인 버튼
+            document.getElementById('confirmIssueCertificateBtn').addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('#certificateModalBody input[type="checkbox"]:checked');
+                if (checkboxes.length > 0) {
+                    checkboxes.forEach(checkbox => {
+                        const studentId = parseInt(checkbox.value);
+                        const student = mockData.students.find(s => s.id === studentId);
+                        if (student) {
+                            student.completed = true;
+                        }
+                    });
+                    showToast(`${checkboxes.length}명의 수료증가 발급되었습니다.`);
+                    document.getElementById('certificateModal').classList.remove('active');
+                } else {
+                    showToast('수강생을 선택해주세요.');
+                }
+            });
+            
+            // 모달 배경 클릭 시 닫기
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

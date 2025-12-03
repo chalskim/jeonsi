@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CertMatch - 인증 Q&A</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+        
+        .app-content {
+            padding: 20px;
+            padding-bottom: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* View Containers */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* App Header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #4a6fdc;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header-icon {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .app-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+        .header-icon {
+            position: relative;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 70px 0 20px;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .write-btn {
+            background-color: #4a6fdc;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+        .write-btn:hover {
+            background-color: #3a5fcd;
+        }
+
+        /* Q&A Type Toggle - Redesigned */
+        .qa-type-container {
+            margin-bottom: 25px;
+        }
+        .qa-type-toggle {
+            display: flex;
+            background-color: white;
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .qa-type-btn {
+            flex: 1;
+            padding: 14px 20px;
+            text-align: center;
+            border: none;
+            background: none;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            color: #666;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .qa-type-btn i {
+            font-size: 16px;
+        }
+        .qa-type-btn.active {
+            color: white;
+        }
+        .qa-type-indicator {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            height: calc(100% - 8px);
+            background: linear-gradient(135deg, #4a6fdc 0%, #3a5fcd 100%);
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(74, 111, 220, 0.3);
+        }
+        .qa-type-btn:nth-child(1).active ~ .qa-type-indicator {
+            width: calc(50% - 4px);
+        }
+        .qa-type-btn:nth-child(2).active ~ .qa-type-indicator {
+            width: calc(50% - 4px);
+            transform: translateX(calc(100% + 8px));
+        }
+
+        /* Sort Tabs - Redesigned */
+        .sort-container {
+            margin-bottom: 20px;
+        }
+        .sort-tabs {
+            display: flex;
+            background-color: white;
+            border-radius: 10px;
+            padding: 3px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .sort-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 7px;
+            color: #666;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .sort-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 20px;
+            height: 3px;
+            background: linear-gradient(90deg, #4a6fdc, #3a5fcd);
+            border-radius: 2px;
+            transition: transform 0.3s ease;
+        }
+        .sort-tab.active {
+            color: #4a6fdc;
+            background-color: rgba(74, 111, 220, 0.08);
+        }
+        .sort-tab.active::after {
+            transform: translateX(-50%) scaleX(1);
+        }
+        .sort-tab:hover:not(.active) {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        /* Q&A Item */
+        .qa-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .qa-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        .qa-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .qa-category {
+            background-color: #e8f0fe;
+            color: #4a6fdc;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .qa-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #999;
+        }
+        .qa-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .qa-content {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .qa-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #888;
+        }
+        .qa-author {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .qa-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .qa-actions button {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        .qa-actions button.liked {
+            color: #e74c3c;
+        }
+        .qa-actions button.bookmarked {
+            color: #f39c12;
+        }
+
+        /* 1:1 Q&A Item */
+        .private-qa-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid #9c27b0;
+        }
+        .private-qa-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        .private-qa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .private-badge {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(156, 39, 176, 0.3);
+        }
+        .expert-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+        .expert-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #9c27b0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-answered {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Sub Header */
+        .sub-header {
+            display: flex;
+            align-items: center;
+            margin: 70px 0 20px;
+            gap: 10px;
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #4a6fdc;
+        }
+        .sub-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Question Detail View */
+        .question-detail {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .question-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .question-body {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .question-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #888;
+        }
+
+        /* 1:1 Q&A Detail View - New Design */
+        .private-qa-detail {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 4px solid #9c27b0;
+        }
+        .private-qa-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .private-qa-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            flex: 1;
+        }
+        .private-qa-status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-answered-detail {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-pending-detail {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .question-section {
+            margin-bottom: 25px;
+        }
+        .section-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .question-content {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+        .expert-section {
+            margin-bottom: 25px;
+        }
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .expert-avatar-medium {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #9c27b0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .expert-info-medium {
+            flex: 1;
+        }
+        .expert-name-medium {
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+        .expert-title-medium {
+            font-size: 12px;
+            color: #666;
+        }
+        .answer-content {
+            background: linear-gradient(135deg, #f8f4ff 0%, #f3e8ff 100%);
+            padding: 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            border: 1px solid #e8d5ff;
+        }
+        .answer-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+        .no-answer {
+            background-color: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: #856404;
+            font-size: 14px;
+        }
+        .no-answer i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Additional Actions */
+        .additional-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .action-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #4a6fdc;
+            color: #4a6fdc;
+        }
+        .action-btn.primary {
+            background-color: #4a6fdc;
+            color: white;
+            border-color: #4a6fdc;
+        }
+        .action-btn.primary:hover {
+            background-color: #3a5fcd;
+        }
+
+        /* 1:1 Conversation View */
+        .conversation-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .conversation-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .expert-avatar-large {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #9c27b0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .expert-details {
+            flex: 1;
+        }
+        .expert-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+        .expert-title {
+            font-size: 13px;
+            color: #666;
+        }
+        .message-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .message {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+            flex-shrink: 0;
+        }
+        .message.expert .message-avatar {
+            background-color: #9c27b0;
+            color: white;
+        }
+        .message-content {
+            max-width: 70%;
+        }
+        .message-bubble {
+            padding: 12px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .message.user .message-bubble {
+            background-color: #4a6fdc;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        .message.expert .message-bubble {
+            background-color: #f1f1f1;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
+        }
+        .message.expert .message-time {
+            text-align: left;
+        }
+        .message-input-container {
+            display: flex;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .message-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+        .message-input:focus {
+            border-color: #4a6fdc;
+        }
+        .message-send-btn {
+            background-color: #4a6fdc;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .message-send-btn:hover {
+            background-color: #3a5fcd;
+        }
+
+        /* Answer Section */
+        .answer-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .answer-count {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .answer-card {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .answer-card:last-child {
+            border-bottom: none;
+        }
+        .answer-card.best {
+            border: 1px solid #28a745;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f8fff9;
+        }
+        .best-answer-badge {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .answer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .answer-author {
+            font-weight: 500;
+        }
+        .expert-badge {
+            background-color: #ffc107;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 5px;
+        }
+        .answer-body {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .answer-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #888;
+        }
+        .answer-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .comment-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .comment-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+            flex-shrink: 0;
+        }
+        .comment-content {
+            flex: 1;
+        }
+        .comment-author {
+            font-size: 12px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 3px;
+        }
+        .comment-text {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.4;
+        }
+        .comment-date {
+            font-size: 11px;
+            color: #999;
+            margin-top: 3px;
+        }
+        .comment-input-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .comment-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .comment-input:focus {
+            border-color: #4a6fdc;
+        }
+        .comment-submit-btn {
+            background-color: #4a6fdc;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .comment-submit-btn:hover {
+            background-color: #3a5fcd;
+        }
+
+        /* Write Answer Form */
+        .write-answer-form {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .btn-primary {
+            background-color: #4a6fdc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #3a5fcd;
+        }
+
+        /* Modal */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .modal-header h3 {
+            margin: 0;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="app-title">인증 Q&A</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- View 1: Public Q&A List -->
+        <div id="qaListView" class="view active">
+            <div class="page-header">
+                <h1 class="page-title">인증 Q&A</h1>
+                <button class="write-btn" onclick="showWriteModal()">
+                    <i class="fas fa-pen"></i> 질문하기
+                </button>
+            </div>
+
+            <div class="qa-type-container">
+                <div class="qa-type-toggle">
+                    <button class="qa-type-btn active" onclick="switchQAType('qaListView')">
+                        <i class="fas fa-users"></i>
+                        <span>전체 Q&A</span>
+                    </button>
+                    <button class="qa-type-btn" onclick="switchQAType('privateQAListView')">
+                        <i class="fas fa-user-secret"></i>
+                        <span>1:1 Q&A</span>
+                    </button>
+                    <div class="qa-type-indicator"></div>
+                </div>
+            </div>
+
+            <div class="sort-container">
+                <div class="sort-tabs">
+                    <button class="sort-tab active" onclick="sortQuestions('latest')">최신순</button>
+                    <button class="sort-tab" onclick="sortQuestions('popular')">인기순</button>
+                </div>
+            </div>
+
+            <div id="qaListContainer">
+                <!-- Q&A items will be dynamically generated here -->
+            </div>
+        </div>
+
+        <!-- View 2: 1:1 Q&A List -->
+        <div id="privateQAListView" class="view">
+            <div class="page-header">
+                <h1 class="page-title">1:1 Q&A</h1>
+                <button class="write-btn" onclick="showPrivateWriteModal()">
+                    <i class="fas fa-pen"></i> 1:1 질문하기
+                </button>
+            </div>
+
+            <div class="qa-type-container">
+                <div class="qa-type-toggle">
+                    <button class="qa-type-btn" onclick="switchQAType('qaListView')">
+                        <i class="fas fa-users"></i>
+                        <span>전체 Q&A</span>
+                    </button>
+                    <button class="qa-type-btn active" onclick="switchQAType('privateQAListView')">
+                        <i class="fas fa-user-secret"></i>
+                        <span>1:1 Q&A</span>
+                    </button>
+                    <div class="qa-type-indicator"></div>
+                </div>
+            </div>
+
+            <div id="privateQAListContainer">
+                <!-- 1:1 Q&A items will be dynamically generated here -->
+            </div>
+        </div>
+
+        <!-- View 3: Question Detail -->
+        <div id="questionDetailView" class="view">
+            <div class="sub-header">
+                <button class="back-btn" onclick="showView('qaListView')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="sub-title">질문 상세</h2>
+            </div>
+
+            <div id="questionDetailContainer">
+                <!-- Question detail will be dynamically generated here -->
+            </div>
+
+            <div id="answersContainer">
+                <!-- Answers will be dynamically generated here -->
+            </div>
+
+            <div class="write-answer-form">
+                <h3>답변 작성</h3>
+                <textarea class="form-control" rows="5" placeholder="답변을 입력하세요..."></textarea>
+                <button class="btn-primary" onclick="submitAnswer()">답변 등록</button>
+            </div>
+        </div>
+
+        <!-- View 4: 1:1 Q&A Detail View -->
+        <div id="privateQADetailView" class="view">
+            <div class="sub-header">
+                <button class="back-btn" onclick="showView('privateQAListView')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="sub-title">1:1 질문 상세</h2>
+            </div>
+
+            <div id="privateQADetailContainer">
+                <!-- 1:1 Q&A detail will be dynamically generated here -->
+            </div>
+
+            <div class="additional-actions">
+                <button class="action-btn" onclick="showConversationDetail(currentPrivateQAId)">
+                    <i class="fas fa-comments"></i>
+                    <span>대화하기</span>
+                </button>
+                <button class="action-btn" onclick="showPrivateWriteModal()">
+                    <i class="fas fa-plus"></i>
+                    <span>추가 질문</span>
+                </button>
+                <button class="action-btn primary" onclick="markAsResolved(currentPrivateQAId)">
+                    <i class="fas fa-check"></i>
+                    <span>해결 완료</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- View 5: 1:1 Conversation Detail -->
+        <div id="conversationDetailView" class="view">
+            <div class="sub-header">
+                <button class="back-btn" onclick="showView('privateQADetailView')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="sub-title">1:1 대화</h2>
+            </div>
+
+            <div id="conversationContainer">
+                <!-- Conversation will be dynamically generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Write Question Modal -->
+    <div id="writeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>질문 작성</h3>
+                <button class="close-btn" onclick="hideWriteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">카테고리</label>
+                    <select class="form-control" id="questionCategory">
+                        <option value="isms-p">ISMS-P</option>
+                        <option value="iso27001">ISO 27001</option>
+                        <option value="gs">GS 인증</option>
+                        <option value="general">기타</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">제목</label>
+                    <input type="text" class="form-control" id="questionTitle" placeholder="질문 제목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">내용</label>
+                    <textarea class="form-control" rows="8" id="questionContent" placeholder="궁금한 점을 상세히 설명해주세요"></textarea>
+                </div>
+                <button class="btn-primary" onclick="submitQuestion()">질문 등록</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Write 1:1 Question Modal -->
+    <div id="privateWriteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>1:1 질문 작성</h3>
+                <button class="close-btn" onclick="hidePrivateWriteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">전문가 선택</label>
+                    <select class="form-control" id="expertSelect">
+                        <option value="1">박컨설턴트 (ISMS-P 전문가)</option>
+                        <option value="2">김보안전문가 (ISO 27001 전문가)</option>
+                        <option value="3">GS인증전문가 (GS 인증 전문가)</option>
+                        <option value="4">법무전문가 (법률 전문가)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">제목</label>
+                    <input type="text" class="form-control" id="privateQuestionTitle" placeholder="질문 제목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">내용</label>
+                    <textarea class="form-control" rows="8" id="privateQuestionContent" placeholder="궁금한 점을 상세히 설명해주세요"></textarea>
+                </div>
+                <button class="btn-primary" onclick="submitPrivateQuestion()">질문 등록</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data - Public Q&A
+        let questions = [
+            {
+                id: 1,
+                category: 'ISMS-P',
+                title: 'ISMS-P 인증 심사 시, 가장 취약한 부분은 무엇인가요?',
+                content: '소규모 기업에서 ISMS-P 인증을 준비 중입니다. 심사 시 특히 많이 지적되는 취약 부분이나 준비하면서 어려움을 겪는 부분이 궁금합니다.',
+                author: '인증준비생',
+                date: '2024-02-15',
+                views: 150,
+                answers: 3,
+                likes: 12,
+                isLiked: false,
+                isBookmarked: false
+            },
+            {
+                id: 2,
+                category: 'ISO 27001',
+                title: 'ISO 27001과 ISMS-P의 차이점이 무엇인가요?',
+                content: '두 인증이 비슷해 보이는데, 어떤 차이가 있고 어떤 기업에 더 적합한지 궁금합니다.',
+                author: '김팀장',
+                date: '2024-02-14',
+                views: 320,
+                answers: 5,
+                likes: 25,
+                isLiked: true,
+                isBookmarked: false
+            },
+            {
+                id: 3,
+                category: 'GS 인증',
+                title: 'GS 인증 심사 시 제품 테스트는 어떻게 진행되나요?',
+                content: 'GS 인증을 준비 중인데, 제품 테스트 과정이 궁금합니다. 어떤 기관에서 테스트를 받아야 하고, 기간은 얼마나 걸리나요?',
+                author: '기업개발자',
+                date: '2024-02-13',
+                views: 210,
+                answers: 2,
+                likes: 8,
+                isLiked: false,
+                isBookmarked: true
+            }
+        ];
+
+        // Mock Data - 1:1 Q&A
+        let privateQAList = [
+            {
+                id: 101,
+                expertId: 1,
+                expertName: '박컨설턴트',
+                expertTitle: 'ISMS-P 전문가',
+                title: '소규모 기업 ISMS-P 인증 컨설팅 문의',
+                question: '안녕하세요, 소규모 기업(50명 미만) ISMS-P 인증 컨설팅 문의드립니다. 예산이 1,500만원 정도인데, 이 금액으로 컨설팅이 가능할지 궁금합니다.',
+                answer: '네, 소규모 기업에 맞춰 컨설팅이 가능합니다. 1,500만원이면 기본적인 ISMS-P 인증 준비는 충분합니다. 저희는 소규모 기업을 위한 맞춤형 컨설팅 패키지를 제공하고 있으며, 필수적인 항목 중심으로 효율적으로 준비할 수 있도록 도와드립니다.',
+                questionDate: '2024-02-15 10:00',
+                answerDate: '2024-02-15 16:30',
+                status: 'answered',
+                unreadCount: 0
+            },
+            {
+                id: 102,
+                expertId: 2,
+                expertName: '김보안전문가',
+                expertTitle: 'ISO 27001 전문가',
+                title: 'ISO 27001 재인증 준비 관련 문의',
+                question: 'ISO 27001 재인증이 3개월 후인데, 준비해야 할 사항이 있을까요? 지적된 사항들을 대부분 개선했는데, 추가로 필요한 서류가 있을까요?',
+                answer: '재인증 준비를 위해 이전 심사 때 지적된 사항들을 먼저 확인해보시는 것이 좋습니다. 재인증을 위한 준비 자료를 보내드리겠습니다. 주요 확인 사항으로는 내부 감사 실적, 경영검토 결과, 위험평가 업데이트, 자산목록 최신화 등이 있습니다.',
+                questionDate: '2024-02-14 09:00',
+                answerDate: '2024-02-14 14:20',
+                status: 'answered',
+                unreadCount: 0
+            },
+            {
+                id: 103,
+                expertId: 3,
+                expertName: 'GS인증전문가',
+                expertTitle: 'GS 인증 전문가',
+                title: '소프트웨어 GS 인증 기간 문의',
+                question: '안녕하세요, GS 인증 문의입니다. 소프트웨어 제품으로 GS 인증을 받으려면 보통 얼마나 걸리나요?',
+                questionDate: '2024-02-13 10:15',
+                answerDate: null,
+                status: 'pending',
+                unreadCount: 0
+            }
+        ];
+
+        // Mock Data - 1:1 Conversations
+        let conversations = {
+            101: [
+                {
+                    id: 1001,
+                    sender: 'user',
+                    text: '안녕하세요, 소규모 기업(50명 미만) ISMS-P 인증 컨설팅 문의드립니다.',
+                    time: '2024-02-15 10:00'
+                },
+                {
+                    id: 1002,
+                    sender: 'expert',
+                    text: '안녕하세요. 소규모 기업 ISMS-P 인증에 대해 문의주셨네요. 어떤 부분이 궁금하신가요?',
+                    time: '2024-02-15 10:30'
+                },
+                {
+                    id: 1003,
+                    sender: 'user',
+                    text: '예산이 1,500만원 정도인데, 이 금액으로 컨설팅이 가능할지 궁금합니다.',
+                    time: '2024-02-15 11:00'
+                },
+                {
+                    id: 1004,
+                    sender: 'expert',
+                    text: '네, 소규모 기업에 맞춰 컨설팅이 가능합니다. 1,500만원이면 기본적인 ISMS-P 인증 준비는 충분합니다.',
+                    time: '2024-02-15 14:00'
+                },
+                {
+                    id: 1005,
+                    sender: 'user',
+                    text: '정말요? 그럼 언제부터 시작할 수 있을까요?',
+                    time: '2024-02-15 15:00'
+                },
+                {
+                    id: 1006,
+                    sender: 'expert',
+                    text: '네, 소규모 기업에 맞춘 컨설팅이 가능합니다.',
+                    time: '2024-02-15 16:30'
+                }
+            ],
+            102: [
+                {
+                    id: 2001,
+                    sender: 'user',
+                    text: 'ISO 27001 재인증이 3개월 후인데, 준비해야 할 사항이 있을까요?',
+                    time: '2024-02-14 09:00'
+                },
+                {
+                    id: 2002,
+                    sender: 'expert',
+                    text: '재인증 준비를 위해 이전 심사 때 지적된 사항들을 먼저 확인해보시는 것이 좋습니다.',
+                    time: '2024-02-14 10:00'
+                },
+                {
+                    id: 2003,
+                    sender: 'user',
+                    text: '지적된 사항들을 대부분 개선했는데, 추가로 필요한 서류가 있을까요?',
+                    time: '2024-02-14 13:00'
+                },
+                {
+                    id: 2004,
+                    sender: 'expert',
+                    text: '재인증을 위한 준비 자료를 보내드리겠습니다.',
+                    time: '2024-02-14 14:20'
+                }
+            ],
+            103: [
+                {
+                    id: 3001,
+                    sender: 'user',
+                    text: '안녕하세요, GS 인증 문의입니다.',
+                    time: '2024-02-13 10:15'
+                }
+            ]
+        };
+
+        // Experts data
+        let experts = {
+            1: { name: '박컨설턴트', title: 'ISMS-P 전문가', initial: '박' },
+            2: { name: '김보안전문가', title: 'ISO 27001 전문가', initial: '김' },
+            3: { name: 'GS인증전문가', title: 'GS 인증 전문가', initial: 'G' },
+            4: { name: '법무전문가', title: '법률 전문가', initial: '법' }
+        };
+
+        let answers = {
+            1: [
+                {
+                    id: 101,
+                    author: '박컨설턴트',
+                    isExpert: true,
+                    content: '대부분의 기업에서 \'위험평가\' 및 \'처리계획\' 수립 단계에서 가장 많은 지적을 받습니다.',
+                    likes: 10,
+                    isBest: true
+                }
+            ],
+            2: [
+                {
+                    id: 201,
+                    author: '김보안전문가',
+                    isExpert: true,
+                    content: 'ISO 27001은 국제표준이고 ISMS-P는 국내 표준입니다.',
+                    likes: 15,
+                    isBest: true
+                }
+            ],
+            3: [
+                {
+                    id: 301,
+                    author: 'GS인증전문가',
+                    isExpert: true,
+                    content: 'GS 인증 제품 테스트는 TTA나 ETRI 등 지정 시험기관에서 진행해야 합니다.',
+                    likes: 8,
+                    isBest: true
+                }
+            ]
+        };
+
+        let comments = {
+            101: [
+                {
+                    id: 1001,
+                    author: '인증준비생',
+                    text: '위험평가 부분을 더 구체적으로 어떻게 준비해야 할까요?',
+                    date: '2024-02-15 14:30'
+                }
+            ]
+        };
+
+        let currentPrivateQAId = null;
+
+        // View Management - 수정된 부분
+        function showView(viewId) {
+            // 모든 뷰에서 active 클래스 제거
+            document.querySelectorAll('.view').forEach(view => {
+                if (view) view.classList.remove('active');
+            });
+            
+            // 요소가 존재하는지 확인 후 active 클래스 추가
+            const targetView = document.getElementById(viewId);
+            if (targetView) {
+                targetView.classList.add('active');
+            } else {
+                console.error(`View with ID ${viewId} not found`);
+            }
+        }
+
+        // Switch Q&A Type - 수정된 부분
+        function switchQAType(viewId) {
+            // Update toggle buttons
+            const buttons = document.querySelectorAll('.qa-type-btn');
+            const indicator = document.querySelector('.qa-type-indicator');
+            
+            if (!buttons || buttons.length < 2) {
+                console.error('QA type buttons not found');
+                return;
+            }
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (viewId === 'qaListView') {
+                buttons[0].classList.add('active');
+                showView('qaListView');
+            } else {
+                buttons[1].classList.add('active');
+                showView('privateQAListView');
+                renderPrivateQAList(); // Ensure list is rendered when switching to private view
+            }
+        }
+
+        // Render Public Q&A List
+        function renderQAList() {
+            const container = document.getElementById('qaListContainer');
+            if (!container) {
+                console.error('QA list container not found');
+                return;
+            }
+            
+            container.innerHTML = questions.map(q => `
+                <div class="qa-item" onclick="showQuestionDetail(${q.id})">
+                    <div class="qa-item-header">
+                        <span class="qa-category">${q.category}</span>
+                        <div class="qa-stats">
+                            <span><i class="fas fa-eye"></i> ${q.views}</span>
+                            <span><i class="fas fa-comment"></i> ${q.answers}</span>
+                        </div>
+                    </div>
+                    <h3 class="qa-title">${q.title}</h3>
+                    <p class="qa-content">${q.content}</p>
+                    <div class="qa-meta">
+                        <div class="qa-author">
+                            <i class="fas fa-user-circle"></i> ${q.author} · ${q.date}
+                        </div>
+                        <div class="qa-actions">
+                            <button class="${q.isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${q.id})">
+                                <i class="fas fa-heart"></i> ${q.likes}
+                            </button>
+                            <button class="${q.isBookmarked ? 'bookmarked' : ''}" onclick="event.stopPropagation(); toggleBookmark(${q.id})">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render 1:1 Q&A List - 수정된 부분
+        function renderPrivateQAList() {
+            const container = document.getElementById('privateQAListContainer');
+            if (!container) {
+                console.error('Private QA list container not found');
+                return;
+            }
+            
+            container.innerHTML = privateQAList.map(qa => `
+                <div class="private-qa-item" onclick="showPrivateQADetail(${qa.id})">
+                    <div class="private-qa-header">
+                        <span class="private-badge">1:1 질문</span>
+                        <span class="status-badge status-${qa.status}">
+                            ${qa.status === 'answered' ? '답변완료' : '답변대기'}
+                        </span>
+                    </div>
+                    <h3 class="qa-title">${qa.title}</h3>
+                    <p class="qa-content">${qa.answer ? qa.answer.substring(0, 100) + '...' : qa.question.substring(0, 100) + '...'}</p>
+                    <div class="qa-meta">
+                        <div class="expert-info">
+                            <div class="expert-avatar">${experts[qa.expertId].initial}</div>
+                            <span>${experts[qa.expertId].name} · ${qa.answer ? qa.answerDate : qa.questionDate}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show 1:1 Q&A Detail - 수정된 부분
+        function showPrivateQADetail(qaId) {
+            currentPrivateQAId = qaId;
+            const qa = privateQAList.find(q => q.id === qaId);
+            const expert = experts[qa.expertId];
+            
+            const container = document.getElementById('privateQADetailContainer');
+            if (!container) {
+                console.error('Private QA detail container not found');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="private-qa-detail">
+                    <div class="private-qa-detail-header">
+                        <h3 class="private-qa-title">${qa.title}</h3>
+                        <span class="private-qa-status status-${qa.status}-detail">
+                            ${qa.status === 'answered' ? '답변완료' : '답변대기'}
+                        </span>
+                    </div>
+                    
+                    <div class="question-section">
+                        <div class="section-label">
+                            <i class="fas fa-question-circle"></i>
+                            <span>질문 내용</span>
+                        </div>
+                        <div class="question-content">${qa.question}</div>
+                        <div class="question-meta">
+                            <span>작성일: ${qa.questionDate}</span>
+                            <span>상태: ${qa.status === 'answered' ? '답변완료' : '답변대기'}</span>
+                        </div>
+                    </div>
+                    
+                    ${qa.status === 'answered' ? `
+                        <div class="expert-section">
+                            <div class="section-label">
+                                <i class="fas fa-user-tie"></i>
+                                <span>전문가 답변</span>
+                            </div>
+                            <div class="expert-header">
+                                <div class="expert-avatar-medium">${expert.initial}</div>
+                                <div class="expert-info-medium">
+                                    <div class="expert-name-medium">${expert.name}</div>
+                                    <div class="expert-title-medium">${expert.title}</div>
+                                </div>
+                            </div>
+                            <div class="answer-content">${qa.answer}</div>
+                            <div class="answer-meta">
+                                <span>답변일: ${qa.answerDate}</span>
+                                <span>전문가: ${expert.name}</span>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="no-answer">
+                            <i class="fas fa-clock"></i>
+                            전문가의 답변을 기다리고 있습니다.
+                        </div>
+                    `}
+                </div>
+            `;
+
+            showView('privateQADetailView');
+        }
+
+        // Show Question Detail - 수정된 부분
+        function showQuestionDetail(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            const questionAnswers = answers[questionId] || [];
+            
+            const detailContainer = document.getElementById('questionDetailContainer');
+            const answersContainer = document.getElementById('answersContainer');
+            
+            if (!detailContainer || !answersContainer) {
+                console.error('Question detail containers not found');
+                return;
+            }
+
+            detailContainer.innerHTML = `
+                <div class="question-detail">
+                    <div class="qa-item-header">
+                        <span class="qa-category">${question.category}</span>
+                    </div>
+                    <h2 class="question-title">${question.title}</h2>
+                    <p class="question-body">${question.content}</p>
+                    <div class="question-footer">
+                        <div class="qa-author">
+                            <i class="fas fa-user-circle"></i> ${question.author} · ${question.date}
+                        </div>
+                        <div class="qa-actions">
+                            <button class="${question.isLiked ? 'liked' : ''}" onclick="toggleLike(${question.id})">
+                                <i class="fas fa-heart"></i> ${question.likes}
+                            </button>
+                            <button class="${question.isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark(${question.id})">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            answersContainer.innerHTML = `
+                <div class="answer-section">
+                    <div class="answer-count">${questionAnswers.length}개의 답변</div>
+                    ${questionAnswers.map(a => `
+                        <div class="answer-card ${a.isBest ? 'best' : ''}">
+                            ${a.isBest ? '<span class="best-answer-badge">베스트 답변</span>' : ''}
+                            <div class="answer-header">
+                                <span class="answer-author">${a.author}</span>
+                                ${a.isExpert ? '<span class="expert-badge">전문가</span>' : ''}
+                            </div>
+                            <p class="answer-body">${a.content}</p>
+                            <div class="answer-actions">
+                                <button><i class="fas fa-heart"></i> ${a.likes}</button>
+                                <button><i class="fas fa-comment"></i> 댓글</button>
+                            </div>
+                            
+                            <div class="comments-section">
+                                ${renderComments(a.id)}
+                                <div class="comment-input-container">
+                                    <input type="text" class="comment-input" id="comment-input-${a.id}" placeholder="댓글을 입력하세요..." onkeypress="handleCommentKeyPress(event, ${a.id})">
+                                    <button class="comment-submit-btn" onclick="submitComment(${a.id})">등록</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            showView('questionDetailView');
+        }
+
+        // Show 1:1 Conversation Detail - 수정된 부분
+        function showConversationDetail(conversationId) {
+            const conversation = privateQAList.find(qa => qa.id === conversationId);
+            const messages = conversations[conversationId] || [];
+            const expert = experts[conversation.expertId];
+            
+            const container = document.getElementById('conversationContainer');
+            if (!container) {
+                console.error('Conversation container not found');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="conversation-container">
+                    <div class="conversation-header">
+                        <div class="expert-avatar-large">${expert.initial}</div>
+                        <div class="expert-details">
+                            <div class="expert-name">${expert.name}</div>
+                            <div class="expert-title">${expert.title}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="message-list">
+                        ${messages.map(msg => `
+                            <div class="message ${msg.sender}">
+                                <div class="message-avatar">${msg.sender === 'user' ? '나' : expert.initial}</div>
+                                <div class="message-content">
+                                    <div class="message-bubble">${msg.text}</div>
+                                    <div class="message-time">${msg.time}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="message-input-container">
+                        <input type="text" class="message-input" id="message-input-${conversationId}" placeholder="메시지를 입력하세요..." onkeypress="handleMessageKeyPress(event, ${conversationId})">
+                        <button class="message-send-btn" onclick="sendMessage(${conversationId})">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            showView('conversationDetailView');
+        }
+
+        // Mark as resolved
+        function markAsResolved(qaId) {
+            const qa = privateQAList.find(q => q.id === qaId);
+            if (qa) {
+                qa.status = 'answered';
+                alert('해결 완료로 처리되었습니다.');
+                showPrivateQADetail(qaId);
+            }
+        }
+
+        // Send message in 1:1 conversation
+        function sendMessage(conversationId) {
+            const input = document.getElementById(`message-input-${conversationId}`);
+            if (!input) return;
+            
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            // Add new message
+            const newMessage = {
+                id: Date.now(),
+                sender: 'user',
+                text: text,
+                time: new Date().toLocaleString('ko-KR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                })
+            };
+            
+            conversations[conversationId].push(newMessage);
+            
+            // Update last message in list
+            const qa = privateQAList.find(q => q.id === conversationId);
+            qa.lastMessage = text;
+            qa.lastMessageTime = newMessage.time;
+            
+            // Clear input
+            input.value = '';
+            
+            // Re-render conversation
+            showConversationDetail(conversationId);
+        }
+
+        // Handle Enter key in message input
+        function handleMessageKeyPress(event, conversationId) {
+            if (event.key === 'Enter') {
+                sendMessage(conversationId);
+            }
+        }
+
+        // Render comments
+        function renderComments(answerId) {
+            const answerComments = comments[answerId] || [];
+            if (answerComments.length === 0) return '';
+            
+            return answerComments.map(c => `
+                <div class="comment-item">
+                    <div class="comment-avatar">${c.author.charAt(0)}</div>
+                    <div class="comment-content">
+                        <div class="comment-author">${c.author}</div>
+                        <div class="comment-text">${c.text}</div>
+                        <div class="comment-date">${c.date}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Submit comment
+        function submitComment(answerId) {
+            const input = document.getElementById(`comment-input-${answerId}`);
+            if (!input) return;
+            
+            const text = input.value.trim();
+            
+            if (!text) {
+                alert('댓글을 입력해주세요.');
+                return;
+            }
+            
+            if (!comments[answerId]) {
+                comments[answerId] = [];
+            }
+            
+            const newComment = {
+                id: Date.now(),
+                author: '현재사용자',
+                text: text,
+                date: new Date().toLocaleString('ko-KR', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }).replace(/\./g, '-').replace(/ /g, ' ')
+            };
+            
+            comments[answerId].push(newComment);
+            input.value = '';
+            
+            const currentQuestionId = document.querySelector('.question-detail').querySelector('.qa-category').textContent === 'ISMS-P' ? 1 : 
+                                     document.querySelector('.question-detail').querySelector('.qa-category').textContent === 'ISO 27001' ? 2 : 3;
+            showQuestionDetail(currentQuestionId);
+        }
+
+        // Handle Enter key in comment input
+        function handleCommentKeyPress(event, answerId) {
+            if (event.key === 'Enter') {
+                submitComment(answerId);
+            }
+        }
+        
+        // Modal Functions
+        function showWriteModal() {
+            document.getElementById('writeModal').style.display = 'block';
+        }
+
+        function hideWriteModal() {
+            document.getElementById('writeModal').style.display = 'none';
+        }
+
+        function showPrivateWriteModal() {
+            document.getElementById('privateWriteModal').style.display = 'block';
+        }
+
+        function hidePrivateWriteModal() {
+            document.getElementById('privateWriteModal').style.display = 'none';
+        }
+
+        // Submit Functions
+        function submitQuestion() {
+            const title = document.getElementById('questionTitle').value;
+            const content = document.getElementById('questionContent').value;
+            if (title && content) {
+                alert('질문이 등록되었습니다.');
+                hideWriteModal();
+            } else {
+                alert('제목과 내용을 모두 입력해주세요.');
+            }
+        }
+
+        function submitPrivateQuestion() {
+            const expertId = document.getElementById('expertSelect').value;
+            const title = document.getElementById('privateQuestionTitle').value;
+            const content = document.getElementById('privateQuestionContent').value;
+            
+            if (title && content) {
+                // Create new 1:1 Q&A
+                const newQA = {
+                    id: Date.now(),
+                    expertId: parseInt(expertId),
+                    expertName: experts[expertId].name,
+                    expertTitle: experts[expertId].title,
+                    title: title,
+                    question: content,
+                    answer: null,
+                    questionDate: new Date().toLocaleString('ko-KR', { 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    }).replace(/\./g, '-').replace(/ /g, ' '),
+                    answerDate: null,
+                    status: 'pending',
+                    unreadCount: 0
+                };
+                
+                // Create conversation
+                conversations[newQA.id] = [
+                    {
+                        id: Date.now(),
+                        sender: 'user',
+                        text: content,
+                        time: newQA.questionDate
+                    }
+                ];
+                
+                privateQAList.unshift(newQA);
+                
+                alert('1:1 질문이 등록되었습니다.');
+                hidePrivateWriteModal();
+                renderPrivateQAList();
+            } else {
+                alert('제목과 내용을 모두 입력해주세요.');
+            }
+        }
+
+        function submitAnswer() {
+            alert('답변이 등록되었습니다.');
+        }
+
+        // Interaction Functions
+        function toggleLike(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            question.isLiked = !question.isLiked;
+            question.likes += question.isLiked ? 1 : -1;
+            renderQAList();
+        }
+
+        function toggleBookmark(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            question.isBookmarked = !question.isBookmarked;
+            renderQAList();
+        }
+
+        function sortQuestions(type) {
+            if (type === 'latest') {
+                questions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            } else if (type === 'popular') {
+                questions.sort((a, b) => b.likes - a.likes);
+            }
+            renderQAList();
+            
+            document.querySelectorAll('.sort-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const writeModal = document.getElementById('writeModal');
+            const privateWriteModal = document.getElementById('privateWriteModal');
+            
+            if (event.target == writeModal) {
+                hideWriteModal();
+            }
+            if (event.target == privateWriteModal) {
+                hidePrivateWriteModal();
+            }
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQAList();
+        });
+    </script>
+</body>
+</html>

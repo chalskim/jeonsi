@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>전문가 프로필 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- Profile Page Styles --- */
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 80px; /* 하단 고정 버튼 공간 확보 */
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .page-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* --- Section Styles --- */
+        .section {
+            background-color: var(--card-background);
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        /* Profile Header Section */
+        .profile-header-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 25px 20px;
+        }
+
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #e9ecef;
+            flex-shrink: 0;
+        }
+
+        .profile-summary {
+            flex-grow: 1;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .profile-role {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .profile-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .profile-stats i {
+            color: var(--primary-color);
+        }
+
+        .profile-rating {
+            font-weight: bold;
+            color: var(--warning-color);
+        }
+
+        /* --- MODIFIED: Expertise Section Styles --- */
+        .expertise-info {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .expertise-info strong {
+            color: var(--dark-color);
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .skill-tag {
+            padding: 5px 15px;
+            background-color: var(--light-color);
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Experience Section */
+        .experience-item {
+            margin-bottom: 20px;
+        }
+
+        .experience-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .experience-company {
+            font-weight: bold;
+        }
+
+        .experience-duration {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .experience-role {
+            margin-bottom: 8px;
+        }
+
+        .experience-description {
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+
+        /* Portfolio Section */
+        .portfolio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .portfolio-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 4px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: background-color 0.2s;
+        }
+
+        .portfolio-link:hover {
+            background-color: #e9ecef;
+        }
+
+        .portfolio-link .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .portfolio-link i.fa-download {
+            color: var(--primary-color);
+        }
+
+        /* Time Package Section */
+        .package-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .package-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .package-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0,123,255,0.1);
+        }
+
+        .package-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .package-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .package-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .package-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .package-select-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .package-select-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Reviews Section */
+        .review-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .review-company {
+            font-weight: bold;
+        }
+
+        .review-rating {
+            color: var(--warning-color);
+        }
+
+        .review-project {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .review-comment {
+            font-size: 0.95rem;
+        }
+
+        /* --- Bottom Action Bar --- */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            background-color: var(--card-background);
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .action-bar button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .bookmark-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            margin-right: 5px;
+        }
+
+        .message-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .bookmark-btn.bookmarked {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <header class="profile-header">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="page-title">전문가 프로필</h1>
+            <div style="width: 40px;"></div> <!-- Spacer for centering title -->
+        </header>
+
+        <!-- Profile Summary Section -->
+        <section class="section profile-header-section">
+            <img src="https://via.placeholder.com/90x90.png?text=Expert" alt="전문가 프로필" class="profile-avatar">
+            <div class="profile-summary">
+                <h2 class="profile-name">김민준</h2>
+                <div class="profile-role">보안 컨설턴트</div>
+                <div class="profile-stats">
+                    <span class="profile-rating">★ 4.9</span>
+                    <span><i class="fas fa-comment-dots"></i> 23개 리뷰</span>
+                    <span><i class="fas fa-clock"></i> 평균 2시간 내 응답</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODIFIED: Expertise Section -->
+        <section class="section">
+            <h3 class="section-title">전문 분야</h3>
+            <div class="expertise-info">
+                <div><strong>대분류:</strong> 기술/개발</div>
+                <div><strong>중분류:</strong> 보안/인증 (SC02)</div>
+            </div>
+            <div class="skills-list">
+                <span class="skill-tag">웹 해킹</span>
+                <span class="skill-tag">보고서 작성</span>
+                <span class="skill-tag">ISMS-P</span>
+                <span class="skill-tag">코드 리뷰</span>
+                <span class="skill-tag">네트워크 보안</span>
+                <span class="skill-tag">침투 테스트</span>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section class="section">
+            <h3 class="section-title">경력</h3>
+            <div class="experience-item">
+                <div class="experience-header">
+                    <span class="experience-company">㈜사이버보안솔루션</span>
+                    <span class="experience-duration">2018.03 - 현재</span>
+                </div>
+                <div class="experience-role">수석 컨설턴트</div>
+                <p class="experience-description">금융 및 공공기관 대상 보안 컨설팅 및 ISMS-P 인증 지원. 주요 고객사의 보안 수준을 30% 이상 향상시킨 성과.</p>
+            </div>
+            <div class="experience-item">
+                <div class="experience-header">
+                    <span class="experience-company">㈜테크윈</span>
+                    <span class="experience-duration">2015.01 - 2018.02</span>
+                </div>
+                <div class="experience-role">보안 엔지니어</div>
+                <p class="experience-description">웹 및 모바일 애플리케이션 취약점 분석 및 보안 패치 개발. 주요 프로젝트 5건 성공적으로 완수.</p>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section class="section">
+            <h3 class="section-title">포트폴리오 (파일 다운로드)</h3>
+            <div class="portfolio-list">
+                <a href="#" class="portfolio-link" onclick="downloadFile('김민준_이력서.pdf')">
+                    <div class="file-info">
+                        <i class="fas fa-file-pdf" style="color: var(--danger-color);"></i>
+                        <span>김민준_이력서.pdf</span>
+                    </div>
+                    <i class="fas fa-download"></i>
+                </a>
+                <a href="#" class="portfolio-link" onclick="downloadFile('보안컨설팅_성과사례.zip')">
+                    <div class="file-info">
+                        <i class="fas fa-file-archive" style="color: var(--warning-color);"></i>
+                        <span>보안컨설팅_성과사례.zip</span>
+                    </div>
+                    <i class="fas fa-download"></i>
+                </a>
+                <a href="#" class="portfolio-link" onclick="downloadFile('웹취약점분석_샘플.pptx')">
+                    <div class="file-info">
+                        <i class="fas fa-file-powerpoint" style="color: var(--info-color);"></i>
+                        <span>웹취약점분석_샘플.pptx</span>
+                    </div>
+                    <i class="fas fa-download"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Time Package Section -->
+        <section class="section">
+            <h3 class="section-title">시간 패키지</h3>
+            <div class="package-list">
+                <div class="package-card">
+                    <div class="package-header">
+                        <span class="package-title">보안 진단 컨설팅 (주 10시간)</span>
+                        <span class="package-price">200만원/월</span>
+                    </div>
+                    <p class="package-description">정기적인 시스템 진단 및 보안 가이드라인 수립, 월 1회 보고서 제공</p>
+                    <button class="package-select-btn" onclick="selectPackage('보안 진단 컨설팅 (주 10시간)')">선택하기</button>
+                </div>
+                <div class="package-card">
+                    <div class="package-header">
+                        <span class="package-title">단기 보안 점검 (총 24시간)</span>
+                        <span class="package-price">150만원</span>
+                    </div>
+                    <p class="package-description">3일 내 집중적인 보안 점검 및 취약점 분석 보고서 작성</p>
+                    <button class="package-select-btn" onclick="selectPackage('단기 보안 점검 (총 24시간)')">선택하기</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="section">
+            <h3 class="section-title">리뷰 (23)</h3>
+            <div class="review-item">
+                <div class="review-header">
+                    <span class="review-company">㈜핀테크코리아</span>
+                    <span class="review-rating">★★★★★</span>
+                </div>
+                <div class="review-project">프로젝트: 보안 진단 보고서 작성 (3일)</div>
+                <p class="review-comment">전문성이 매우 뛰어나고, 소통도 원활했습니다. 복잡한 보안 이슈를 쉽게 설명해주어 큰 도움이 되었습니다.</p>
+            </div>
+            <div class="review-item">
+                <div class="review-header">
+                    <span class="review-company">㈜테크솔루션</span>
+                    <span class="review-rating">★★★★★</span>
+                </div>
+                <div class="review-project">프로젝트: ISMS-P 인증 컨설팅</div>
+                <p class="review-comment">경험이 풍부하여 예상치 못한 문제에도 신속하게 대처해주셨습니다. 덕분에 무사히 인증을 받을 수 있었습니다.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div class="action-bar">
+        <button class="bookmark-btn" id="bookmarkBtn" onclick="toggleBookmark()">
+            <i class="far fa-bookmark"></i> 북마크
+        </button>
+        <button class="message-btn" onclick="sendMessage()">
+            <i class="fas fa-comment-dots"></i> 메시지 보내기
+        </button>
+    </div>
+
+    <script>
+        // --- JavaScript Functionality ---
+
+        // 뒤로가기 기능
+        function goBack() {
+            window.history.back();
+        }
+
+        // 북마크 토글
+        function toggleBookmark() {
+            const bookmarkBtn = document.getElementById('bookmarkBtn');
+            const icon = bookmarkBtn.querySelector('i');
+            
+            if (bookmarkBtn.classList.contains('bookmarked')) {
+                bookmarkBtn.classList.remove('bookmarked');
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i> 북마크';
+                alert('북마크가 해제되었습니다.');
+            } else {
+                bookmarkBtn.classList.add('bookmarked');
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i> 북마크됨';
+                alert('북마크되었습니다.');
+            }
+        }
+
+        // 메시지 보내기
+        function sendMessage() {
+            alert('채팅 화면으로 이동합니다.');
+        }
+
+        // 패키지 선택
+        function selectPackage(packageName) {
+            alert(`'${packageName}' 패키지를 선택했습니다. 계약 페이지로 이동합니다.`);
+        }
+
+        // --- File Download Function ---
+        function downloadFile(fileName) {
+            alert(`${fileName} 파일을 다운로드합니다.`);
+        }
+    </script>
+
+</body>
+</html>

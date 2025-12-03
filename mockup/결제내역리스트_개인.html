@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>결제 내역 - 전시</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Layout --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding: 15px;
+            padding-bottom: 20px;
+        }
+
+        /* --- Filter Section --- */
+        .filter-section {
+            background-color: var(--card-background);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .filter-button {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background-color: var(--card-background);
+            cursor: pointer;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .filter-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .filter-button.sort {
+            margin-left: auto;
+        }
+
+        .date-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--light-color);
+            padding-top: 15px;
+        }
+        
+        .date-filter-container label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .date-filter-container input[type="date"] {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .date-filter-container button {
+            padding: 8px 15px;
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px;
+            background-color: var(--card-background);
+            color: var(--secondary-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .date-filter-container button:hover {
+            background-color: var(--light-color);
+        }
+
+        /* --- Payment List --- */
+        .payment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .payment-item {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .payment-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .payment-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .payment-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .payment-status.completed {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .payment-status.pending {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .payment-status.cancelled {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .payment-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-details {
+            flex-grow: 1;
+        }
+
+        .payment-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .payment-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .payment-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .action-button {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--card-background);
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-button:hover {
+            background-color: var(--light-color);
+        }
+
+        .action-button.primary {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .action-button:disabled {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+            border-color: var(--border-color);
+            cursor: not-allowed;
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* --- Modal for Details --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-body p {
+            margin-bottom: 10px;
+        }
+
+        .modal-body strong {
+            color: var(--dark-color);
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="header-icon" id="backButton">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="app-title">결제 내역</div>
+        </div>
+    </header>
+
+    <!-- App Content -->
+    <main class="app-content">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <button class="filter-button active" data-filter="all">전체</button>
+                <button class="filter-button" data-filter="completed">결제 완료</button>
+                <button class="filter-button" data-filter="pending">결제 대기</button>
+                <button class="filter-button" data-filter="cancelled">결제 취소</button>
+                <button class="filter-button sort" id="sortButton"><i class="fas fa-sort-amount-down"></i> 최신순</button>
+            </div>
+            
+            <div class="date-filter-container">
+                <label for="startDate">시작일</label>
+                <input type="date" id="startDate" name="startDate">
+                <label for="endDate">종료일</label>
+                <input type="date" id="endDate" name="endDate">
+                <button id="resetDateFilter">초기화</button>
+            </div>
+        </div>
+
+        <!-- Payment List Container -->
+        <div class="payment-list" id="paymentList">
+            <!-- Payment items will be dynamically added here -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-state-icon">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <h2 class="empty-state-title">결제 내역이 없습니다</h2>
+            <p>선택하신 필터에 해당하는 내역이 없습니다.</p>
+        </div>
+    </main>
+
+    <!-- Modal for Payment Details -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <div class="modal-header">결제 상세 정보</div>
+            <div class="modal-body" id="modalBody">
+                <!-- Details will be dynamically inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="action-button primary" id="downloadReceiptButton"><i class="fas fa-download"></i> 영수증 다운로드</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Mock Payment Data ---
+        const paymentHistory = [
+            {
+                id: 'P20240521001',
+                date: '2024-05-21',
+                items: ['마케팅 전략 기획 워크숍', '스타트업 재무 관리 실무'],
+                totalAmount: 292000,
+                method: '신용카드',
+                status: 'completed',
+                cardInfo: '국민카드 ****1234'
+            },
+            {
+                id: 'P20240520002',
+                date: '2024-05-20',
+                items: ['데이터 분석을 위한 Python 기초'],
+                totalAmount: 180000,
+                method: '계좌이체',
+                status: 'pending', // NEW STATUS
+                bankInfo: '국민은행'
+            },
+            {
+                id: 'P20240415003',
+                date: '2024-04-15',
+                items: ['UI/UX 디자인 실전 과정'],
+                totalAmount: 250000,
+                method: '신용카드',
+                status: 'cancelled',
+                cardInfo: '삼성카드 ****5678'
+            },
+            {
+                id: 'P20240310004',
+                date: '2024-03-10',
+                items: ['프로젝트 관리(PMP) 자격증 과정'],
+                totalAmount: 320000,
+                method: '신용카드',
+                status: 'completed',
+                cardInfo: '하나카드 ****9876'
+            }
+        ];
+
+        // --- State ---
+        let currentFilter = 'all';
+        let sortOrder = 'desc'; // 'desc' for newest, 'asc' for oldest
+        let dateFilter = { start: null, end: null };
+
+        // --- DOM Elements ---
+        const backButton = document.getElementById('backButton');
+        const paymentList = document.getElementById('paymentList');
+        const emptyState = document.getElementById('emptyState');
+        const filterButtons = document.querySelectorAll('.filter-button[data-filter]');
+        const sortButton = document.getElementById('sortButton');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const resetDateFilterButton = document.getElementById('resetDateFilter');
+        const detailsModal = document.getElementById('detailsModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalBody = document.getElementById('modalBody');
+        const downloadReceiptButton = document.getElementById('downloadReceiptButton');
+
+        // --- Functions ---
+        function renderPayments() {
+            let filteredPayments = paymentHistory;
+
+            // Apply status filter
+            if (currentFilter !== 'all') {
+                filteredPayments = filteredPayments.filter(p => p.status === currentFilter);
+            }
+
+            // Apply date filter
+            if (dateFilter.start) {
+                filteredPayments = filteredPayments.filter(p => new Date(p.date) >= new Date(dateFilter.start));
+            }
+            if (dateFilter.end) {
+                filteredPayments = filteredPayments.filter(p => new Date(p.date) <= new Date(dateFilter.end));
+            }
+
+            // Apply sort
+            filteredPayments.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                if (sortOrder === 'desc') {
+                    return dateB - dateA;
+                } else {
+                    return dateA - dateB;
+                }
+            });
+
+            // Clear list
+            paymentList.innerHTML = '';
+
+            if (filteredPayments.length === 0) {
+                paymentList.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            paymentList.style.display = 'flex';
+            emptyState.style.display = 'none';
+
+            // Render items
+            filteredPayments.forEach(payment => {
+                const paymentItem = document.createElement('div');
+                paymentItem.className = 'payment-item';
+                paymentItem.dataset.paymentId = payment.id;
+
+                const statusClass = payment.status === 'completed' ? 'completed' : payment.status === 'pending' ? 'pending' : 'cancelled';
+                const statusText = payment.status === 'completed' ? '결제 완료' : payment.status === 'pending' ? '결제 대기' : '결제 취소';
+                const methodIcon = payment.method === '신용카드' ? 'credit-card' : 'university';
+
+                paymentItem.innerHTML = `
+                    <div class="payment-header">
+                        <div class="payment-date">${formatDate(payment.date)}</div>
+                        <div class="payment-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="payment-body">
+                        <div class="payment-details">
+                            <div class="payment-title">${payment.items.join(', ')}</div>
+                            <div class="payment-method">
+                                <i class="fas fa-${methodIcon}"></i>
+                                <span>${payment.method} ${payment.cardInfo || payment.bankInfo || ''}</span>
+                            </div>
+                        </div>
+                        <div class="payment-amount">${formatPrice(payment.totalAmount)}</div>
+                    </div>
+                `;
+
+                // Add click event to show details
+                paymentItem.addEventListener('click', () => showPaymentDetails(payment));
+
+                paymentList.appendChild(paymentItem);
+            });
+        }
+
+        function showPaymentDetails(payment) {
+            const statusText = payment.status === 'completed' ? '결제 완료' : payment.status === 'pending' ? '결제 대기' : '결제 취소';
+            const methodInfo = payment.cardInfo || payment.bankInfo || '';
+            
+            modalBody.innerHTML = `
+                <p><strong>결제 번호:</strong> ${payment.id}</p>
+                <p><strong>결제 일시:</strong> ${formatDate(payment.date)}</p>
+                <p><strong>결제 상태:</strong> ${statusText}</p>
+                <p><strong>결제 수단:</strong> ${payment.method} ${methodInfo}</p>
+                <p><strong>결제 금액:</strong> ${formatPrice(payment.totalAmount)}</p>
+                <p><strong>상세 내역:</strong></p>
+                <ul>
+                    ${payment.items.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            `;
+            
+            // Update download button data
+            downloadReceiptButton.dataset.paymentId = payment.id;
+            // Disable download if not completed
+            downloadReceiptButton.disabled = payment.status !== 'completed';
+            
+            detailsModal.style.display = 'block';
+        }
+
+        function closeModal() {
+            detailsModal.style.display = 'none';
+        }
+
+        function downloadReceipt(paymentId) {
+            alert(`${paymentId}번 결제 영수증 다운로드를 시작합니다.`);
+        }
+        
+        function resetDateFilter() {
+            startDateInput.value = '';
+            endDateInput.value = '';
+            dateFilter = { start: null, end: null };
+            renderPayments();
+        }
+
+        // --- Event Listeners ---
+        backButton.addEventListener('click', () => window.history.back());
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                currentFilter = button.dataset.filter;
+                renderPayments();
+            });
+        });
+
+        sortButton.addEventListener('click', () => {
+            sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+            sortButton.innerHTML = sortOrder === 'desc' 
+                ? '<i class="fas fa-sort-amount-down"></i> 최신순' 
+                : '<i class="fas fa-sort-amount-up"></i> 과거순';
+            renderPayments();
+        });
+
+        startDateInput.addEventListener('change', (e) => {
+            dateFilter.start = e.target.value;
+            renderPayments();
+        });
+
+        endDateInput.addEventListener('change', (e) => {
+            dateFilter.end = e.target.value;
+            renderPayments();
+        });
+
+        resetDateFilterButton.addEventListener('click', resetDateFilter);
+
+        modalClose.addEventListener('click', closeModal);
+        window.addEventListener('click', (event) => {
+            if (event.target === detailsModal) {
+                closeModal();
+            }
+        });
+        
+        downloadReceiptButton.addEventListener('click', () => {
+            const paymentId = downloadReceiptButton.dataset.paymentId;
+            downloadReceipt(paymentId);
+        });
+
+        // --- Helper Functions ---
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('ko-KR', options);
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('ko-KR', {
+                style: 'currency',
+                currency: 'KRW',
+                maximumFractionDigits: 0
+            }).format(price);
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPayments();
+        });
+    </script>
+</body>
+</html>

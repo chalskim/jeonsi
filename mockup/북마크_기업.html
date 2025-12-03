@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전시 - 기업 북마크</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+            --text-muted: #6c757d;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+        
+        .header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--text-muted);
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            background-color: transparent;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .bookmark-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .bookmark-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .bookmark-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .bookmark-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .bookmark-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .bookmark-company-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .bookmark-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .bookmark-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .bookmark-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .bookmark-detail {
+            background-color: var(--light-bg);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .bookmark-detail i {
+            margin-right: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .bookmark-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .bookmark-date {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary-custom:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-outline-custom {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-outline-custom:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-delete {
+            background-color: transparent;
+            color: #dc3545;
+            border: none;
+        }
+        
+        .btn-delete:hover {
+            color: #a02633;
+        }
+        
+        .bookmark-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+        }
+        
+        .compare-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: none;
+        }
+        
+        .compare-section.active {
+            display: block;
+        }
+        
+        .education-card {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .trainee-card {
+            border-left: 4px solid #28a745;
+        }
+        
+        .rating {
+            color: #ffc107;
+        }
+        
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        
+        .custom-toast {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            min-width: 250px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .toast-icon {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .toast-success .toast-icon {
+            color: #28a745;
+        }
+        
+        .toast-info .toast-icon {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="logo">전시(專時)</div>
+                <div class="d-flex align-items-center">
+                    <div class="me-3">ABC 기업</div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">내 정보</a></li>
+                            <li><a class="dropdown-item" href="#">설정</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">로그아웃</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>북마크</h2>
+            <div class="d-flex">
+                <button class="btn btn-outline-custom btn-sm me-2" onclick="exportBookmarks()">
+                    <i class="bi bi-download"></i> 내보내기
+                </button>
+                <button class="btn btn-outline-custom btn-sm" onclick="importBookmarks()">
+                    <i class="bi bi-upload"></i> 가져오기
+                </button>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs" id="bookmarkTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="expert-tab" data-bs-toggle="tab" data-bs-target="#expert" type="button" role="tab">
+                    전문가 <span class="badge bg-secondary ms-1">12</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab">
+                    기업 <span class="badge bg-secondary ms-1">5</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab">
+                    교육 <span class="badge bg-secondary ms-1">8</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="trainee-tab" data-bs-toggle="tab" data-bs-target="#trainee" type="button" role="tab">
+                    교육생 <span class="badge bg-secondary ms-1">15</span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="compare-section" id="compareSection">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>선택한 항목 비교</h5>
+                <button class="btn btn-sm btn-outline-custom" onclick="closeCompare()">닫기</button>
+            </div>
+            <div id="compareContent">
+                <!-- 비교 내용이 동적으로 추가됩니다 -->
+            </div>
+        </div>
+
+        <div class="tab-content" id="bookmarkTabContent">
+            <!-- 전문가 북마크 -->
+            <div class="tab-pane fade show active" id="expert" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" id="selectAllExperts" class="form-check-input me-2">
+                        <label for="selectAllExperts" class="form-check-label">전체 선택</label>
+                    </div>
+                    <button class="btn btn-sm btn-primary-custom" onclick="compareExperts()">
+                        <i class="bi bi-arrow-left-right"></i> 선택 항목 비교
+                    </button>
+                </div>
+
+                <div class="bookmark-card">
+                    <div class="bookmark-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="bookmark-checkbox" data-id="expert1">
+                            <img src="https://picsum.photos/seed/expert1/60/60.jpg" alt="전문가" class="bookmark-avatar">
+                            <div>
+                                <div class="bookmark-title">김민수</div>
+                                <div class="bookmark-subtitle">프로덕트 매니저</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookmark-details">
+                        <div class="bookmark-detail">
+                            <i class="bi bi-briefcase"></i> IT/소프트웨어
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-star rating"></i> 4.8 (23개 리뷰)
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-clock"></i> 시간당 8만원
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <div class="bookmark-date">2023-05-15에 저장</div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-primary-custom" onclick="viewProfile('expert1')">프로필 보기</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendJobOffer('expert1')">채용 제안</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendProjectRequest('expert1')">프로젝트 의뢰</button>
+                            <button class="btn-action btn-delete" onclick="deleteBookmark('expert1')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookmark-card">
+                    <div class="bookmark-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="bookmark-checkbox" data-id="expert2">
+                            <img src="https://picsum.photos/seed/expert2/60/60.jpg" alt="전문가" class="bookmark-avatar">
+                            <div>
+                                <div class="bookmark-title">이영희</div>
+                                <div class="bookmark-subtitle">재무 전문가</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookmark-details">
+                        <div class="bookmark-detail">
+                            <i class="bi bi-briefcase"></i> 재무/회계
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-star rating"></i> 4.9 (15개 리뷰)
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-clock"></i> 시간당 10만원
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <div class="bookmark-date">2023-04-28에 저장</div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-primary-custom" onclick="viewProfile('expert2')">프로필 보기</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendJobOffer('expert2')">채용 제안</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendProjectRequest('expert2')">프로젝트 의뢰</button>
+                            <button class="btn-action btn-delete" onclick="deleteBookmark('expert2')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookmark-card">
+                    <div class="bookmark-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="bookmark-checkbox" data-id="expert3">
+                            <img src="https://picsum.photos/seed/expert3/60/60.jpg" alt="전문가" class="bookmark-avatar">
+                            <div>
+                                <div class="bookmark-title">박유진</div>
+                                <div class="bookmark-subtitle">마케팅 전문가</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookmark-details">
+                        <div class="bookmark-detail">
+                            <i class="bi bi-briefcase"></i> 디지털 마케팅
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-star rating"></i> 4.7 (31개 리뷰)
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-clock"></i> 시간당 7만원
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <div class="bookmark-date">2023-04-10에 저장</div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-primary-custom" onclick="viewProfile('expert3')">프로필 보기</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendJobOffer('expert3')">채용 제안</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendProjectRequest('expert3')">프로젝트 의뢰</button>
+                            <button class="btn-action btn-delete" onclick="deleteBookmark('expert3')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 기업 북마크 -->
+            <div class="tab-pane fade" id="company" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" id="selectAllCompanies" class="form-check-input me-2">
+                        <label for="selectAllCompanies" class="form-check-label">전체 선택</label>
+                    </div>
+                    <button class="btn btn-sm btn-primary-custom" onclick="compareCompanies()">
+                        <i class="bi bi-arrow-left-right"></i> 선택 항목 비교
+                    </button>
+                </div>
+
+                <div class="bookmark-card">
+                    <div class="bookmark-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="bookmark-checkbox" data-id="company1">
+                            <img src="https://picsum.photos/seed/company1/60/60.jpg" alt="기업" class="bookmark-company-logo">
+                            <div>
+                                <div class="bookmark-title">테크솔루션</div>
+                                <div class="bookmark-subtitle">IT 서비스</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookmark-details">
+                        <div class="bookmark-detail">
+                            <i class="bi bi-building"></i> IT/소프트웨어
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-people"></i> 50-100명
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <div class="bookmark-date">2023-05-20에 저장</div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-primary-custom" onclick="viewCompanyProfile('company1')">프로필 보기</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendCollaborationOffer('company1')">협업 제안</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendPartnershipOffer('company1')">파트너십 제안</button>
+                            <button class="btn-action btn-delete" onclick="deleteBookmark('company1')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookmark-card">
+                    <div class="bookmark-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="bookmark-checkbox" data-id="company2">
+                            <img src="https://picsum.photos/seed/company2/60/60.jpg" alt="기업" class="bookmark-company-logo">
+                            <div>
+                                <div class="bookmark-title">그린마켓</div>
+                                <div class="bookmark-subtitle">이커머스</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookmark-details">
+                        <div class="bookmark-detail">
+                            <i class="bi bi-building"></i> 유통/판매
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-people"></i> 30-50명
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <div class="bookmark-date">2023-05-15에 저장</div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-primary-custom" onclick="viewCompanyProfile('company2')">프로필 보기</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendCollaborationOffer('company2')">협업 제안</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendPartnershipOffer('company2')">파트너십 제안</button>
+                            <button class="btn-action btn-delete" onclick="deleteBookmark('company2')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 교육 북마크 -->
+            <div class="tab-pane fade" id="education" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" id="selectAllEducations" class="form-check-input me-2">
+                        <label for="selectAllEducations" class="form-check-label">전체 선택</label>
+                    </div>
+                    <button class="btn btn-sm btn-primary-custom" onclick="compareEducations()">
+                        <i class="bi bi-arrow-left-right"></i> 선택 항목 비교
+                    </button>
+                </div>
+
+                <div class="bookmark-card education-card">
+                    <div class="bookmark-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="bookmark-checkbox" data-id="edu1">
+                            <div>
+                                <div class="bookmark-title">프로덕트 매니저 양성 과정</div>
+                                <div class="bookmark-subtitle">PM 아카데미</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookmark-details">
+                        <div class="bookmark-detail">
+                            <i class="bi bi-currency-won"></i> 150만원
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-calendar"></i> 8주 (주 2회)
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-people"></i> 최대 20명
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <div class="bookmark-date">2023-05-10에 저장</div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-primary-custom" onclick="viewEducationDetails('edu1')">상세 보기</button>
+                            <button class="btn-action btn-outline-custom" onclick="applyGroupEducation('edu1')">단체 신청</button>
+                            <button class="btn-action btn-outline-custom" onclick="inquireInternalEducation('edu1')">사내 교육 문의</button>
+                            <button class="btn-action btn-delete" onclick="deleteBookmark('edu1')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookmark-card education-card">
+                    <div class="bookmark-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="bookmark-checkbox" data-id="edu2">
+                            <div>
+                                <div class="bookmark-title">데이터 분석 기초</div>
+                                <div class="bookmark-subtitle">데이터 스쿨</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookmark-details">
+                        <div class="bookmark-detail">
+                            <i class="bi bi-currency-won"></i> 80만원
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-calendar"></i> 4주 (주 1회)
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-people"></i> 최대 30명
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <div class="bookmark-date">2023-04-25에 저장</div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-primary-custom" onclick="viewEducationDetails('edu2')">상세 보기</button>
+                            <button class="btn-action btn-outline-custom" onclick="applyGroupEducation('edu2')">단체 신청</button>
+                            <button class="btn-action btn-outline-custom" onclick="inquireInternalEducation('edu2')">사내 교육 문의</button>
+                            <button class="btn-action btn-delete" onclick="deleteBookmark('edu2')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 교육생 북마크 -->
+            <div class="tab-pane fade" id="trainee" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" id="selectAllTrainees" class="form-check-input me-2">
+                        <label for="selectAllTrainees" class="form-check-label">전체 선택</label>
+                    </div>
+                    <button class="btn btn-sm btn-primary-custom" onclick="recommendEducation()">
+                        <i class="bi bi-send"></i> 선택 항목에 교육 추천
+                    </button>
+                </div>
+
+                <div class="bookmark-card trainee-card">
+                    <div class="bookmark-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="bookmark-checkbox" data-id="trainee1">
+                            <img src="https://picsum.photos/seed/trainee1/60/60.jpg" alt="교육생" class="bookmark-avatar">
+                            <div>
+                                <div class="bookmark-title">최준호</div>
+                                <div class="bookmark-subtitle">개발자</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookmark-details">
+                        <div class="bookmark-detail">
+                            <i class="bi bi-book"></i> 프론트엔드 개발
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-graph-up"></i> 중급 (3년 경력)
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-check-circle"></i> 3개 교육 이수
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-emoji-smile"></i> 만족도 4.6
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <div class="bookmark-date">2023-05-18에 저장</div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-primary-custom" onclick="viewTraineeProfile('trainee1')">프로필 보기</button>
+                            <button class="btn-action btn-outline-custom" onclick="recommendEducationToTrainee('trainee1')">교육 추천</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendCoupon('trainee1')">할인 쿠폰 발송</button>
+                            <button class="btn-action btn-delete" onclick="deleteBookmark('trainee1')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookmark-card trainee-card">
+                    <div class="bookmark-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="bookmark-checkbox" data-id="trainee2">
+                            <img src="https://picsum.photos/seed/trainee2/60/60.jpg" alt="교육생" class="bookmark-avatar">
+                            <div>
+                                <div class="bookmark-title">김지영</div>
+                                <div class="bookmark-subtitle">마케터</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookmark-details">
+                        <div class="bookmark-detail">
+                            <i class="bi bi-book"></i> 디지털 마케팅
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-graph-up"></i> 초급 (1년 경력)
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-check-circle"></i> 1개 교육 이수
+                        </div>
+                        <div class="bookmark-detail">
+                            <i class="bi bi-emoji-smile"></i> 만족도 4.8
+                        </div>
+                    </div>
+                    <div class="bookmark-actions">
+                        <div class="bookmark-date">2023-05-12에 저장</div>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-primary-custom" onclick="viewTraineeProfile('trainee2')">프로필 보기</button>
+                            <button class="btn-action btn-outline-custom" onclick="recommendEducationToTrainee('trainee2')">교육 추천</button>
+                            <button class="btn-action btn-outline-custom" onclick="sendCoupon('trainee2')">할인 쿠폰 발송</button>
+                            <button class="btn-action btn-delete" onclick="deleteBookmark('trainee2')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination-container">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">이전</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">다음</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 전체 선택 기능
+        document.getElementById('selectAllExperts').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('#expert .bookmark-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        document.getElementById('selectAllCompanies').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('#company .bookmark-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        document.getElementById('selectAllEducations').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('#education .bookmark-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        document.getElementById('selectAllTrainees').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('#trainee .bookmark-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // 토스트 알림 함수
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `custom-toast toast-${type}`;
+            
+            let icon = '';
+            if (type === 'success') {
+                icon = '<i class="bi bi-check-circle-fill toast-icon"></i>';
+            } else if (type === 'info') {
+                icon = '<i class="bi bi-info-circle-fill toast-icon"></i>';
+            }
+            
+            toast.innerHTML = `
+                ${icon}
+                <div>${message}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toastContainer.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // 전문가 관련 함수
+        function viewProfile(id) {
+            showToast(`전문가 프로필을 확인합니다. (ID: ${id})`, 'info');
+        }
+
+        function sendJobOffer(id) {
+            showToast(`채용 제안을 보냅니다. (ID: ${id})`, 'success');
+        }
+
+        function sendProjectRequest(id) {
+            showToast(`프로젝트 의뢰를 보냅니다. (ID: ${id})`, 'success');
+        }
+
+        function compareExperts() {
+            const selectedExperts = [];
+            document.querySelectorAll('#expert .bookmark-checkbox:checked').forEach(checkbox => {
+                selectedExperts.push(checkbox.dataset.id);
+            });
+            
+            if (selectedExperts.length < 2) {
+                showToast('비교할 항목을 2개 이상 선택해주세요.', 'info');
+                return;
+            }
+            
+            const compareSection = document.getElementById('compareSection');
+            const compareContent = document.getElementById('compareContent');
+            
+            compareContent.innerHTML = `
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>항목</th>
+                                <th>전문가 1</th>
+                                <th>전문가 2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>이름</td>
+                                <td>김민수</td>
+                                <td>이영희</td>
+                            </tr>
+                            <tr>
+                                <td>직무</td>
+                                <td>프로덕트 매니저</td>
+                                <td>재무 전문가</td>
+                            </tr>
+                            <tr>
+                                <td>전문 분야</td>
+                                <td>IT/소프트웨어</td>
+                                <td>재무/회계</td>
+                            </tr>
+                            <tr>
+                                <td>평점</td>
+                                <td>4.8 (23개 리뷰)</td>
+                                <td>4.9 (15개 리뷰)</td>
+                            </tr>
+                            <tr>
+                                <td>시간당 비용</td>
+                                <td>8만원</td>
+                                <td>10만원</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            compareSection.classList.add('active');
+            showToast('선택한 전문가들을 비교합니다.', 'info');
+        }
+
+        // 기업 관련 함수
+        function viewCompanyProfile(id) {
+            showToast(`기업 프로필을 확인합니다. (ID: ${id})`, 'info');
+        }
+
+        function sendCollaborationOffer(id) {
+            showToast(`협업 제안을 보냅니다. (ID: ${id})`, 'success');
+        }
+
+        function sendPartnershipOffer(id) {
+            showToast(`파트너십 제안을 보냅니다. (ID: ${id})`, 'success');
+        }
+
+        function compareCompanies() {
+            const selectedCompanies = [];
+            document.querySelectorAll('#company .bookmark-checkbox:checked').forEach(checkbox => {
+                selectedCompanies.push(checkbox.dataset.id);
+            });
+            
+            if (selectedCompanies.length < 2) {
+                showToast('비교할 항목을 2개 이상 선택해주세요.', 'info');
+                return;
+            }
+            
+            const compareSection = document.getElementById('compareSection');
+            const compareContent = document.getElementById('compareContent');
+            
+            compareContent.innerHTML = `
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>항목</th>
+                                <th>기업 1</th>
+                                <th>기업 2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>기업명</td>
+                                <td>테크솔루션</td>
+                                <td>그린마켓</td>
+                            </tr>
+                            <tr>
+                                <td>산업 분야</td>
+                                <td>IT 서비스</td>
+                                <td>이커머스</td>
+                            </tr>
+                            <tr>
+                                <td>규모</td>
+                                <td>50-100명</td>
+                                <td>30-50명</td>
+                            </tr>
+                            <tr>
+                                <td>설립일</td>
+                                <td>2018년 3월</td>
+                                <td>2020년 7월</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            compareSection.classList.add('active');
+            showToast('선택한 기업들을 비교합니다.', 'info');
+        }
+
+        // 교육 관련 함수
+        function viewEducationDetails(id) {
+            showToast(`교육 상세 정보를 확인합니다. (ID: ${id})`, 'info');
+        }
+
+        function applyGroupEducation(id) {
+            showToast(`단체 교육 신청 페이지로 이동합니다. (ID: ${id})`, 'info');
+        }
+
+        function inquireInternalEducation(id) {
+            showToast(`사내 교육 문의를 보냅니다. (ID: ${id})`, 'success');
+        }
+
+        function compareEducations() {
+            const selectedEducations = [];
+            document.querySelectorAll('#education .bookmark-checkbox:checked').forEach(checkbox => {
+                selectedEducations.push(checkbox.dataset.id);
+            });
+            
+            if (selectedEducations.length < 2) {
+                showToast('비교할 항목을 2개 이상 선택해주세요.', 'info');
+                return;
+            }
+            
+            const compareSection = document.getElementById('compareSection');
+            const compareContent = document.getElementById('compareContent');
+            
+            compareContent.innerHTML = `
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>항목</th>
+                                <th>교육 1</th>
+                                <th>교육 2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>교육명</td>
+                                <td>프로덕트 매니저 양성 과정</td>
+                                <td>데이터 분석 기초</td>
+                            </tr>
+                            <tr>
+                                <td>교육 기관</td>
+                                <td>PM 아카데미</td>
+                                <td>데이터 스쿨</td>
+                            </tr>
+                            <tr>
+                                <td>가격</td>
+                                <td>150만원</td>
+                                <td>80만원</td>
+                            </tr>
+                            <tr>
+                                <td>기간</td>
+                                <td>8주 (주 2회)</td>
+                                <td>4주 (주 1회)</td>
+                            </tr>
+                            <tr>
+                                <td>정원</td>
+                                <td>최대 20명</td>
+                                <td>최대 30명</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            compareSection.classList.add('active');
+            showToast('선택한 교육들을 비교합니다.', 'info');
+        }
+
+        // 교육생 관련 함수
+        function viewTraineeProfile(id) {
+            showToast(`교육생 프로필을 확인합니다. (ID: ${id})`, 'info');
+        }
+
+        function recommendEducationToTrainee(id) {
+            showToast(`교육 추천을 보냅니다. (ID: ${id})`, 'success');
+        }
+
+        function sendCoupon(id) {
+            showToast(`할인 쿠폰을 발송합니다. (ID: ${id})`, 'success');
+        }
+
+        function recommendEducation() {
+            const selectedTrainees = [];
+            document.querySelectorAll('#trainee .bookmark-checkbox:checked').forEach(checkbox => {
+                selectedTrainees.push(checkbox.dataset.id);
+            });
+            
+            if (selectedTrainees.length < 1) {
+                showToast('교육 추천을 보낼 교육생을 선택해주세요.', 'info');
+                return;
+            }
+            
+            showToast(`선택한 ${selectedTrainees.length}명의 교육생에게 교육을 추천합니다.`, 'success');
+        }
+
+        // 공통 함수
+        function deleteBookmark(id) {
+            if (confirm('북마크를 삭제하시겠습니까?')) {
+                showToast('북마크가 삭제되었습니다.', 'success');
+                // 실제 구현에서는 해당 북마크 카드를 DOM에서 제거
+            }
+        }
+
+        function closeCompare() {
+            document.getElementById('compareSection').classList.remove('active');
+        }
+
+        function exportBookmarks() {
+            showToast('북마크 내보내기 기능은 준비 중입니다.', 'info');
+        }
+
+        function importBookmarks() {
+            showToast('북마크 가져오기 기능은 준비 중입니다.', 'info');
+        }
+    </script>
+</body>
+</html>

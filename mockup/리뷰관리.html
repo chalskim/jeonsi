@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>리뷰 관리 - 전문가 시간 연결 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- App Header --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        /* --- Main Content Layout --- */
+        .review-management-container {
+            max-width: 900px;
+            margin: 80px auto 20px;
+            padding: 0 20px;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .content-subtitle {
+            color: var(--text-muted);
+        }
+
+        /* --- Review Summary Section --- */
+        .review-summary-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .summary-rating {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+
+        .summary-stars {
+            color: var(--warning-color);
+            font-size: 2rem;
+        }
+
+        .summary-count {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .summary-bars {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .rating-bar-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .rating-bar-label {
+            width: 50px;
+            font-size: 0.9rem;
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        .rating-bar-track {
+            flex: 1;
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .rating-bar-value {
+            height: 100%;
+            background-color: var(--warning-color);
+            border-radius: 5px;
+        }
+
+        .rating-bar-count {
+            width: 40px;
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-left: 10px;
+        }
+
+        /* --- Filter/Sort Bar --- */
+        .filter-sort-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sort-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sort-button {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-background);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .sort-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* --- Review List --- */
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .review-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .review-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .reviewer-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .reviewer-details .reviewer-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .reviewer-details .reviewer-company {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .review-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .review-rating-stars {
+            color: var(--warning-color);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .review-content {
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .review-project-info {
+            background-color: var(--light-color);
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .review-project-info strong {
+            color: var(--text-color);
+        }
+
+        .review-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .review-management-container {
+                padding: 0 15px;
+            }
+
+            .content-title {
+                font-size: 1.5rem;
+            }
+
+            .review-summary-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .summary-bars {
+                width: 100%;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="app-title">리뷰 관리</div>
+        <div class="header-icons">
+            <div class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="header-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="review-management-container">
+        <!-- Content Header -->
+        <div class="content-header">
+            <h1 class="content-title">리뷰 관리</h1>
+            <p class="content-subtitle">받은 리뷰를 확인하고 답글을 달아보세요.</p>
+        </div>
+
+        <!-- Review Summary Card -->
+        <div class="review-summary-card">
+            <div>
+                <div class="summary-rating">4.8</div>
+                <div class="summary-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+                <div class="summary-count">총 23개 리뷰</div>
+            </div>
+            <div class="summary-bars">
+                <div class="rating-bar-item">
+                    <div class="rating-bar-label">5점</div>
+                    <div class="rating-bar-track">
+                        <div class="rating-bar-value" style="width: 75%;"></div>
+                    </div>
+                    <div class="rating-bar-count">15</div>
+                </div>
+                <div class="rating-bar-item">
+                    <div class="rating-bar-label">4점</div>
+                    <div class="rating-bar-track">
+                        <div class="rating-bar-value" style="width: 20%;"></div>
+                    </div>
+                    <div class="rating-bar-count">6</div>
+                </div>
+                <div class="rating-bar-item">
+                    <div class="rating-bar-label">3점</div>
+                    <div class="rating-bar-track">
+                        <div class="rating-bar-value" style="width: 5%;"></div>
+                    </div>
+                    <div class="rating-bar-count">2</div>
+                </div>
+                <div class="rating-bar-item">
+                    <div class="rating-bar-label">2점</div>
+                    <div class="rating-bar-track">
+                        <div class="rating-bar-value" style="width: 0%;"></div>
+                    </div>
+                    <div class="rating-bar-count">0</div>
+                </div>
+                <div class="rating-bar-item">
+                    <div class="rating-bar-label">1점</div>
+                    <div class="rating-bar-track">
+                        <div class="rating-bar-value" style="width: 0%;"></div>
+                    </div>
+                    <div class="rating-bar-count">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter/Sort Bar -->
+        <div class="filter-sort-bar">
+            <div></div> <!-- Placeholder for potential future filters -->
+            <div class="sort-buttons">
+                <button class="sort-button active">최신순</button>
+                <button class="sort-button">평점높은순</button>
+                <button class="sort-button">평점낮은순</button>
+            </div>
+        </div>
+
+        <!-- Review List -->
+        <div class="review-list">
+            <!-- Review Card 1 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <img src="https://picsum.photos/seed/reviewer1/100/100.jpg" alt="리뷰어" class="reviewer-avatar">
+                        <div class="reviewer-details">
+                            <div class="reviewer-name">김대표</div>
+                            <div class="reviewer-company">㈜클라우드테크</div>
+                        </div>
+                    </div>
+                    <div class="review-date">2024-02-25</div>
+                </div>
+                <div class="review-rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="review-project-info">
+                    <strong>프로젝트:</strong> 클라우드 아키텍처 설계
+                </div>
+                <div class="review-content">
+                    클라우드 아키텍처 설계 프로젝트를 의뢰했는데, 기대 이상으로 전문성이 뛰어나셨습니다. 복잡한 요구사항을 정확히 이해하고, 실무에 바로 적용할 수 있는 솔루션을 제시해주셨습니다. 소통도 원활하고 일정도 잘 지켜주셔서 만족도가 매우 높았습니다. 다음 프로젝트에서도 꼭 다시 협력하고 싶습니다.
+                </div>
+                <div class="review-actions">
+                    <button class="btn btn-secondary">신고</button>
+                    <button class="btn btn-primary">답글 달기</button>
+                </div>
+            </div>
+
+            <!-- Review Card 2 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <img src="https://picsum.photos/seed/reviewer2/100/100.jpg" alt="리뷰어" class="reviewer-avatar">
+                        <div class="reviewer-details">
+                            <div class="reviewer-name">이팀장</div>
+                            <div class="reviewer-company">㈜디지털이노베이션</div>
+                        </div>
+                    </div>
+                    <div class="review-date">2024-02-15</div>
+                </div>
+                <div class="review-rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+                <div class="review-project-info">
+                    <strong>프로젝트:</strong> 소프트웨어 품질 검증
+                </div>
+                <div class="review-content">
+                    소프트웨어 품질 검증 프로젝트를 진행했습니다. 전반적으로 만족스러웠으나, 초기 요구사항 공유 과정에서 약간의 혼선이 있었습니다. 하지만 이후에는 빠르게 문제를 해결하고 프로젝트를 성공적으로 마무리해주셨습니다. 경험과 전문성은 확실히 돋보입니다.
+                </div>
+                <div class="review-actions">
+                    <button class="btn btn-secondary">신고</button>
+                    <button class="btn btn-primary">답글 달기</button>
+                </div>
+            </div>
+
+            <!-- Review Card 3 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <img src="https://picsum.photos/seed/reviewer3/100/100.jpg" alt="리뷰어" class="reviewer-avatar">
+                        <div class="reviewer-details">
+                            <div class="reviewer-name">박사장</div>
+                            <div class="reviewer-company">㈜스마일페이</div>
+                        </div>
+                    </div>
+                    <div class="review-date">2023-12-20</div>
+                </div>
+                <div class="review-rating-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="review-project-info">
+                    <strong>프로젝트:</strong> 결제 시스템 기획
+                </div>
+                <div class="review-content">
+                    결제 시스템 기획 프로젝트를 의뢰했는데, 매우 전문적으로 진행해주셨습니다. 특히 다양한 결제 수단과 보안 요구사항을 고려한 설계가 인상 깊었습니다. 프로젝트 기간 내에 모든 작업을 완료해주셔서 감사합니다. 적극적으로 추천합니다!
+                </div>
+                <div class="review-actions">
+                    <button class="btn btn-secondary">신고</button>
+                    <button class="btn btn-primary">답글 달기</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sortButtons = document.querySelectorAll('.sort-button');
+
+            sortButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    sortButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to the clicked button
+                    this.classList.add('active');
+                    
+                    // Here you would typically add logic to sort the reviews
+                    console.log('Sort by:', this.textContent);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>포트폴리오 목록 - 전문가 시간 연결 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- App Header --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        /* --- Main Container --- */
+        .portfolio-list-container {
+            max-width: 1200px;
+            margin: 80px auto 40px;
+            padding: 0 20px;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .content-subtitle {
+            color: var(--text-muted);
+        }
+
+        /* --- Portfolio Grid --- */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .portfolio-card {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .portfolio-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .portfolio-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .portfolio-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .portfolio-tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            background-color: var(--light-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .portfolio-description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            flex-grow: 1; /* Pushes actions to the bottom */
+        }
+
+        .portfolio-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        /* --- Add New Button --- */
+        .add-new-card {
+            background-color: var(--card-background);
+            border: 2px dashed var(--primary-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .add-new-card:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+            border-color: var(--dark-color);
+        }
+
+        .add-new-card i {
+            font-size: 2.5rem;
+        }
+
+        .add-new-card span {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .portfolio-list-container {
+                padding: 0 15px;
+            }
+
+            .content-title {
+                font-size: 1.5rem;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr; /* Stacks cards on smaller screens */
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-icon">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">포트폴리오 관리</div>
+        <div></div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="portfolio-list-container">
+        <!-- Content Header -->
+        <div class="content-header">
+            <h1 class="content-title">나의 포트폴리오</h1>
+            <p class="content-subtitle">등록한 포트폴리오를 확인하고 관리하세요.</p>
+        </div>
+
+        <!-- Portfolio Grid -->
+        <div class="portfolio-grid">
+            <!-- Portfolio Card 1 -->
+            <div class="portfolio-card">
+                <img src="https://picsum.photos/seed/strategy-consulting/400/300.jpg" alt="스타트업 성장 전략 컨설팅" class="portfolio-image">
+                <div class="portfolio-content">
+                    <h3 class="portfolio-title">스타트업 성장 전략 컨설팅</h3>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">전략</span>
+                        <span class="portfolio-tag">성장</span>
+                        <span class="portfolio-tag">컨설팅</span>
+                    </div>
+                    <p class="portfolio-description">
+                        초기 스타트업의 비즈니스 모델 구체화 및 성장 전략 수립. 6개월간의 컨설팅을 통해 월간 사용자 300% 증가 및 투자 유치 성공.
+                    </p>
+                    <div class="portfolio-actions">
+                        <button class="btn btn-primary">수정</button>
+                        <button class="btn btn-danger">삭제</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Card 2 -->
+            <div class="portfolio-card">
+                <img src="https://picsum.photos/seed/agile-team-building/400/300.jpg" alt="애자일 방법론 도입 및 팀 빌딩" class="portfolio-image">
+                <div class="portfolio-content">
+                    <h3 class="portfolio-title">애자일 방법론 도입 및 팀 빌딩</h3>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">애자일</span>
+                        <span class="portfolio-tag">팀 빌딩</span>
+                        <span class="portfolio-tag">프로세스</span>
+                    </div>
+                    <p class="portfolio-description">
+                        전통적인 개발 방식에서 애자일 방법론으로 전환. 스크럼 도입 및 팀 교육. 개발 효율성 40% 향상 및 출시 주기 단축.
+                    </p>
+                    <div class="portfolio-actions">
+                        <button class="btn btn-primary">수정</button>
+                        <button class="btn btn-danger">삭제</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Card 3 -->
+            <div class="portfolio-card">
+                <img src="https://picsum.photos/seed/data-analysis-dashboard/400/300.jpg" alt="데이터 기반 대시보드 구축" class="portfolio-image">
+                <div class="portfolio-content">
+                    <h3 class="portfolio-title">데이터 기반 대시보드 구축</h3>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">데이터 분석</span>
+                        <span class="portfolio-tag">대시보드</span>
+                        <span class="portfolio-tag">BI</span>
+                    </div>
+                    <p class="portfolio-description">
+                        비즈니스 핵심 지표(KPI)를 시각화하는 실시간 대시보드 설계 및 개발. 데이터 기반의 신속한 의사결정 지원 체계 구축.
+                    </p>
+                    <div class="portfolio-actions">
+                        <button class="btn btn-primary">수정</button>
+                        <button class="btn btn-danger">삭제</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add New Portfolio Card -->
+            <div class="add-new-card" id="addNewCard">
+                <i class="fas fa-plus-circle"></i>
+                <span>새 포트폴리오 추가</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simple interaction for the "Add New" button
+            const addNewCard = document.getElementById('addNewCard');
+            const actionButtons = document.querySelectorAll('.portfolio-actions .btn');
+            const portfolioCards = document.querySelectorAll('.portfolio-card');
+
+            addNewCard.addEventListener('click', function() {
+                window.location.href = '포트폴리오_등록.html';
+            });
+
+            portfolioCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    window.location.href = '포트폴리오_상세.html';
+                });
+            });
+
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (this.classList.contains('btn-primary')) {
+                        alert('포트폴리오 수정 페이지로 이동합니다.');
+                    } else if (this.classList.contains('btn-danger')) {
+                        if (confirm('정말로 이 포트폴리오를 삭제하시겠습니까?')) {
+                            alert('포트폴리오가 삭제되었습니다.');
+                            // In a real app, you would remove the card from the DOM
+                            this.closest('.portfolio-card').style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

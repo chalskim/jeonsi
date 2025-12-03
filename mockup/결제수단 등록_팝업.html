@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>결제 수단 등록 - 전문가 시간 연결 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- Form Container --- */
+        .payment-form-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* --- Payment Method Toggle --- */
+        .method-toggle {
+            display: flex;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 25px;
+        }
+
+        .method-option {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .method-option input[type="radio"] {
+            display: none;
+        }
+
+        .method-option.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+        }
+
+        /* --- Form Fields --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none; /* Initially hidden */
+        }
+
+        /* --- Checkbox --- */
+        .form-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .form-checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+
+        /* --- Buttons --- */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e6ea;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 480px) {
+            .payment-form-container {
+                padding: 20px;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="payment-form-container">
+        <div class="form-header">
+            <h2>결제 수단 등록</h2>
+            <p>안전하고 간편하게 결제 수단을 등록하세요.</p>
+        </div>
+
+        <form id="new-payment-form">
+            <!-- Payment Method Toggle -->
+            <div class="method-toggle">
+                <label class="method-option active">
+                    <input type="radio" name="payment-method" value="credit-card" checked>
+                    <span>신용카드</span>
+                </label>
+                <label class="method-option">
+                    <input type="radio" name="payment-method" value="bank-account">
+                    <span>계좌이체</span>
+                </label>
+            </div>
+
+            <!-- Credit Card Fields -->
+            <div id="credit-card-fields">
+                <div class="form-group">
+                    <label class="form-label" for="card-number">카드 번호</label>
+                    <input type="text" id="card-number" class="form-input" placeholder="1234-5678-9012-3456" maxlength="19" required>
+                    <div class="error-message" id="card-number-error"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="expiry">만료일</label>
+                        <input type="text" id="expiry" class="form-input" placeholder="MM/YY" maxlength="5" required>
+                        <div class="error-message" id="expiry-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cvc">CVC</label>
+                        <input type="text" id="cvc" class="form-input" placeholder="123" maxlength="3" required>
+                        <div class="error-message" id="cvc-error"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="cardholder-name">카드 소유주 이름</label>
+                    <input type="text" id="cardholder-name" class="form-input" placeholder="홍길동" required>
+                </div>
+            </div>
+
+            <!-- Bank Account Fields -->
+            <div id="bank-account-fields" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label" for="bank-name">은행명</label>
+                    <select id="bank-name" class="form-input" required>
+                        <option value="" disabled selected>은행을 선택하세요</option>
+                        <option value="kb">국민은행</option>
+                        <option value="shinhan">신한은행</option>
+                        <option value="woori">우리은행</option>
+                        <option value="nh">농협은행</option>
+                        <option value="ibk">기업은행</option>
+                        <option value="kbank">케이뱅크</option>
+                        <option value="kakao">카카오뱅크</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="account-holder">예금주</label>
+                    <input type="text" id="account-holder" class="form-input" placeholder="홍길동" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="account-number">계좌번호</label>
+                    <input type="text" id="account-number" class="form-input" placeholder="123-456789-01-123" required>
+                </div>
+            </div>
+
+            <!-- Set as Default Checkbox -->
+            <div class="form-checkbox-group">
+                <input type="checkbox" id="set-default" name="set-default">
+                <label for="set-default">기본 결제수단으로 설정</label>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-btn">취소</button>
+                <button type="submit" class="btn btn-primary">등록하기</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('new-payment-form');
+            const methodOptions = document.querySelectorAll('.method-option');
+            const creditCardFields = document.getElementById('credit-card-fields');
+            const bankAccountFields = document.getElementById('bank-account-fields');
+            const cardNumberInput = document.getElementById('card-number');
+            const expiryInput = document.getElementById('expiry');
+            const cvcInput = document.getElementById('cvc');
+
+            // Toggle payment method fields
+            methodOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    methodOptions.forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+
+                    if (option.querySelector('input').value === 'credit-card') {
+                        creditCardFields.style.display = 'block';
+                        bankAccountFields.style.display = 'none';
+                    } else {
+                        creditCardFields.style.display = 'none';
+                        bankAccountFields.style.display = 'block';
+                    }
+                });
+            });
+
+            // Format card number input
+            cardNumberInput.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+                let formattedValue = value.match(/.{1,4}/g)?.join('-') || value;
+                e.target.value = formattedValue;
+            });
+
+            // Format expiry date input
+            expiryInput.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 3) {
+                    value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                }
+                e.target.value = value;
+            });
+
+            // Restrict CVC input to digits
+            cvcInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '');
+            });
+
+            // Handle form submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // In a real application, you would send the data to a server here.
+                alert('결제 수단이 성공적으로 등록되었습니다! (이것은 목업입니다)');
+                // You could redirect the user or close a modal here.
+            });
+
+            // Handle cancel button
+            document.getElementById('cancel-btn').addEventListener('click', () => {
+                // In a real application, this would go back or close a modal.
+                alert('취소되었습니다.');
+            });
+        });
+    </script>
+
+</body>
+</html>

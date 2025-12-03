@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>의뢰 등록 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- Form Page Styles --- */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px; /* 하단 고정 버튼 공간 확보 */
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin: -20px -20px 20px -20px;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .page-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .form-section {
+            background-color: var(--card-background);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .required {
+            color: var(--danger-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group .helper-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .checkbox-group, .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .checkbox-item, .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"],
+        .radio-item input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .date-range-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .date-input-group {
+            flex-grow: 1;
+        }
+
+        .time-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .time-input-group input {
+            flex-grow: 1;
+        }
+
+        .time-input-group span {
+            white-space: nowrap;
+        }
+        
+        /* --- NEW: Skill Input Styles --- */
+        .skill-input-container {
+            position: relative;
+        }
+
+        .skill-tag-display {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            cursor: text;
+            min-height: 48px; /* Ensure consistent height */
+        }
+
+        .skill-tag-display:focus-within {
+            border-color: var(--primary-color);
+        }
+
+        .tag {
+            background-color: var(--light-color);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .skill-input {
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            min-width: 120px;
+            padding: 4px;
+            font-size: 1rem;
+        }
+
+        .skill-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: none; /* Initially hidden */
+        }
+
+        .skill-suggestions.active {
+            display: block;
+        }
+
+        .skill-suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .skill-suggestion-item:hover,
+        .skill-suggestion-item.active {
+            background-color: var(--light-color);
+        }
+
+
+        /* --- Bottom Submit Button --- */
+        .submit-button-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-background);
+            padding: 15px 20px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <!-- Form Header -->
+        <header class="form-header">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="page-title">단기 의뢰 등록</h1>
+            <div style="width: 40px;"></div> <!-- Spacer for centering title -->
+        </header>
+
+        <form id="requestForm">
+            <!-- 1. 기본 정보 -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    <span>기본 정보</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label for="requestTitle">의뢰 제목 <span class="required">*</span></label>
+                    <input type="text" id="requestTitle" name="requestTitle" placeholder="예: 스타트업 IR 자료 작성 지원" required>
+                </div>
+
+                
+
+                <div class="form-group">
+                    <label for="categoryMajor">대분류 <span class="required">*</span></label>
+                    <select id="categoryMajor" name="categoryMajor" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="categorySub">중분류 <span class="required">*</span></label>
+                    <select id="categorySub" name="categorySub" required></select>
+                    <div class="helper-text">대분류 선택에 따라 중분류가 변경됩니다.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>긴급 의뢰</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="urgentRequest" name="urgent" value="Y">
+                            <label for="urgentRequest">긴급으로 등록</label>
+                        </div>
+                    </div>
+                    <div class="helper-text">긴급 선택 시 결제 또는 장바구니 분기</div>
+                </div>
+            </div>
+
+            <!-- 2. 상세 요구사항 -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-list-ul"></i>
+                    <span>상세 요구사항</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label for="workDescription">업무 내용 <span class="required">*</span></label>
+                    <textarea id="workDescription" name="workDescription" placeholder="의뢰하려는 업무에 대해 상세하게 설명해주세요." required></textarea>
+                </div>
+
+                <!-- MODIFIED SKILL INPUT -->
+                <div class="form-group">
+                    <label>필요 역량/경험</label>
+                    <div class="skill-input-container">
+                        <div class="skill-tag-display" onclick="focusSkillInput()">
+                            <!-- Selected tags will be rendered here -->
+                            <input type="text" class="skill-input" id="skillInput" placeholder="역량을 검색하여 선택해주세요" autocomplete="off">
+                        </div>
+                        <ul class="skill-suggestions" id="skillSuggestions"></ul>
+                    </div>
+                    <div class="helper-text">예: React, 데이터 분석, 보고서 작성, B2B 영업</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="currentSituation">현재 상황 설명 (선택)</label>
+                    <textarea id="currentSituation" name="currentSituation" placeholder="프로젝트의 배경이나 현재 진행 상황 등을 설명해주세요."></textarea>
+                </div>
+            </div>
+
+            <!-- 3. 협업 조건 -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-handshake"></i>
+                    <span>협업 조건</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label>희망 형태 <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="weekly" name="format" value="weekly" required>
+                            <label for="weekly">주 단위</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="monthly" name="format" value="monthly" required>
+                            <label for="monthly">월 단위</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="session" name="format" value="session" required>
+                            <label for="session">회차 단위</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>예상 시간 <span class="required">*</span></label>
+                    <div class="time-input-group">
+                        <input type="number" id="timeValue" name="timeValue" placeholder="숫자만 입력" required>
+                        <span id="timeUnit">시간</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>희망 기간 <span class="required">*</span></label>
+                    <div class="date-range-group">
+                        <div class="date-input-group">
+                            <input type="date" id="startDate" name="startDate" required>
+                        </div>
+                        <span>~</span>
+                        <div class="date-input-group">
+                            <input type="date" id="endDate" name="endDate" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>예산 범위 <span class="required">*</span></label>
+                    <div class="time-input-group">
+                        <input type="number" id="budgetMin" name="budgetMin" placeholder="최소 금액" required>
+                        <span>~</span>
+                        <input type="number" id="budgetMax" name="budgetMax" placeholder="최대 금액" required>
+                        <span>원</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: 모집 기간 -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>모집 기간</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label>접수 기간 <span class="required">*</span></label>
+                    <div class="date-range-group">
+                        <div class="date-input-group">
+                            <input type="date" id="applicationStartDate" name="applicationStartDate" required>
+                        </div>
+                        <span>~</span>
+                        <div class="date-input-group">
+                            <input type="date" id="applicationEndDate" name="applicationEndDate" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 선호 조건 (선택) -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>선호 조건 (선택)</span>
+                </h2>
+                
+                <div class="form-group">
+                    <label>근무 형태</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="remote" name="workType" value="remote">
+                            <label for="remote">원격</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="offline" name="workType" value="offline">
+                            <label for="offline">오프라인</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hybrid" name="workType" value="hybrid">
+                            <label for="hybrid">혼합</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>선호 요일</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="checkbox" id="mon" name="days" value="월"><label for="mon">월</label></div>
+                        <div class="checkbox-item"><input type="checkbox" id="tue" name="days" value="화"><label for="tue">화</label></div>
+                        <div class="checkbox-item"><input type="checkbox" id="wed" name="days" value="수"><label for="wed">수</label></div>
+                        <div class="checkbox-item"><input type="checkbox" id="thu" name="days" value="목"><label for="thu">목</label></div>
+                        <div class="checkbox-item"><input type="checkbox" id="fri" name="days" value="금"><label for="fri">금</label></div>
+                        <div class="checkbox-item"><input type="checkbox" id="sat" name="days" value="토"><label for="sat">토</label></div>
+                        <div class="checkbox-item"><input type="checkbox" id="sun" name="days" value="일"><label for="sun">일</label></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>커뮤니케이션 방식</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="slack" name="comm" value="slack">
+                            <label for="slack">Slack</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="zoom" name="comm" value="zoom">
+                            <label for="zoom">Zoom/화상회의</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="email" name="comm" value="email">
+                            <label for="email">이메일</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="phone" name="comm" value="phone">
+                            <label for="phone">전화</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Bottom Submit Button -->
+    <div class="submit-button-container">
+        <button type="submit" form="requestForm" class="submit-button">의뢰 등록하기</button>
+    </div>
+
+        <script>
+        // --- JavaScript Functionality ---
+
+        // 뒤로가기 기능
+        function goBack() {
+            window.history.back();
+        }
+
+        // --- NEW: Skill Input Logic ---
+        const skillInput = document.getElementById('skillInput');
+        const skillSuggestions = document.getElementById('skillSuggestions');
+        const skillTagDisplay = document.querySelector('.skill-tag-display');
+        const allSkills = [
+            'React', 'Vue.js', 'Angular', 'Node.js', 'Python', 'Java', 'Spring Boot',
+            '데이터 분석', '머신러닝', '딥러닝', 'SQL', 'AWS', 'Docker', 'Kubernetes',
+            'Figma', 'Adobe XD', 'Sketch', 'UI/UX 디자인', '그래픽 디자인',
+            '보고서 작성', '기획', 'PM', 'Scrum', 'Agile',
+            '디지털 마케팅', '퍼포먼스 마케팅', '콘텐츠 마케팅', '브랜딩', 'SNS 운영',
+            'B2B 영업', 'B2C 영업', '고객 관리(CRM)', 'IR', '재무 모델링', '회계 감사',
+            '채용', '인사 제도', '조직 문화', '법률 자문', '계약서 검토'
+        ];
+        let selectedSkills = [];
+        let currentFocus = -1; // For keyboard navigation
+
+        function focusSkillInput() {
+            skillInput.focus();
+        }
+
+        function renderSelectedSkills() {
+            // Remove existing tags, but keep input field
+            skillTagDisplay.querySelectorAll('.tag').forEach(tag => tag.remove());
+            
+            selectedSkills.forEach((skill, index) => {
+                const tagElement = document.createElement('div');
+                tagElement.className = 'tag';
+                tagElement.innerHTML = `
+                    ${skill}
+                    <button type="button" onclick="removeSkill(${index})"><i class="fas fa-times"></i></button>
+                `;
+                skillTagDisplay.insertBefore(tagElement, skillInput);
+            });
+        }
+        
+        function addSkill(skillName) {
+            if (!selectedSkills.includes(skillName)) {
+                selectedSkills.push(skillName);
+                renderSelectedSkills();
+            }
+            skillInput.value = '';
+            hideSuggestions();
+        }
+
+        function removeSkill(index) {
+            selectedSkills.splice(index, 1);
+            renderSelectedSkills();
+        }
+
+        function showSuggestions(skills) {
+            skillSuggestions.innerHTML = '';
+            if (skills.length === 0) {
+                hideSuggestions();
+                return;
+            }
+            skills.forEach((skill, index) => {
+                const item = document.createElement('li');
+                item.textContent = skill;
+                item.className = 'skill-suggestion-item';
+                item.addEventListener('click', () => {
+                    addSkill(skill);
+                });
+                skillSuggestions.appendChild(item);
+            });
+            skillSuggestions.classList.add('active');
+        }
+
+        function hideSuggestions() {
+            skillSuggestions.classList.remove('active');
+            currentFocus = -1;
+        }
+        
+        function filterSkills(query) {
+            if (!query) {
+                showSuggestions(allSkills.slice(0, 10)); // Show first 10 by default
+                return;
+            }
+            const filtered = allSkills.filter(skill => 
+                skill.toLowerCase().includes(query.toLowerCase())
+            );
+            showSuggestions(filtered);
+        }
+
+        // Event Listeners
+        skillInput.addEventListener('input', () => filterSkills(skillInput.value));
+        skillInput.addEventListener('focus', () => filterSkills(skillInput.value));
+        
+        skillInput.addEventListener('keydown', (e) => {
+            const items = skillSuggestions.getElementsByClassName('skill-suggestion-item');
+            if (e.key === 'ArrowDown') {
+                currentFocus++;
+                if (currentFocus >= items.length) currentFocus = 0;
+                addActive(items);
+            } else if (e.key === 'ArrowUp') {
+                currentFocus--;
+                if (currentFocus < 0) currentFocus = (items.length - 1);
+                addActive(items);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentFocus > -1 && items[currentFocus]) {
+                    addSkill(items[currentFocus].textContent);
+                } else if (skillInput.value) {
+                    // Add custom skill if not in list
+                    addSkill(skillInput.value);
+                }
+            } else if (e.key === 'Escape') {
+                hideSuggestions();
+            }
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.skill-input-container')) {
+                hideSuggestions();
+            }
+        });
+
+        function addActive(items) {
+            if (!items) return;
+            removeActive(items);
+            if (currentFocus >= 0 && currentFocus < items.length) {
+                items[currentFocus].classList.add('active');
+            }
+        }
+
+        function removeActive(items) {
+            for (let i = 0; i < items.length; i++) {
+                items[i].classList.remove('active');
+            }
+        }
+
+
+        // --- Other Form Logic ---
+
+        // 희망 형태에 따라 시간 단위 변경
+        const formatRadios = document.querySelectorAll('input[name="format"]');
+        const timeUnit = document.getElementById('timeUnit');
+
+        formatRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'weekly') {
+                    timeUnit.textContent = '시간/주';
+                } else if (this.value === 'monthly') {
+                    timeUnit.textContent = '시간/월';
+                } else if (this.value === 'session') {
+                    timeUnit.textContent = '시간/회';
+                }
+            });
+        });
+
+        // --- NEW: Date Validation Logic ---
+        const appStartDate = document.getElementById('applicationStartDate');
+        const appEndDate = document.getElementById('applicationEndDate');
+
+        // Set default start date to today
+        const today = new Date().toISOString().split('T')[0];
+        appStartDate.value = today;
+        appEndDate.min = today; // End date cannot be before today
+
+        appStartDate.addEventListener('change', function() {
+            // When start date changes, set it as the minimum for the end date
+            appEndDate.min = this.value;
+            // If end date is earlier than the new start date, clear it
+            if (appEndDate.value < this.value) {
+                appEndDate.value = '';
+            }
+        });
+
+        // 폼 제출 기능
+        document.getElementById('requestForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const data = {
+                title: formData.get('requestTitle'),
+                categoryMajor: formData.get('categoryMajor'),
+                categorySub: formData.get('categorySub'),
+                description: formData.get('workDescription'),
+                situation: formData.get('currentSituation'),
+                format: formData.get('format'),
+                timeValue: formData.get('timeValue'),
+                startDate: formData.get('startDate'),
+                endDate: formData.get('endDate'),
+                budgetMin: formData.get('budgetMin'),
+                budgetMax: formData.get('budgetMax'),
+                applicationStartDate: formData.get('applicationStartDate'),
+                applicationEndDate: formData.get('applicationEndDate'),
+                workType: formData.getAll('workType'),
+                preferredDays: formData.getAll('days'),
+                communication: formData.getAll('comm'),
+                publicity: formData.get('publicity'),
+                skills: selectedSkills,
+                urgent: formData.get('urgent') === 'Y'
+            };
+
+            console.log('제출된 데이터:', data);
+
+            if (data.urgent) {
+                const amount = (parseInt(data.budgetMax, 10) || parseInt(data.budgetMin, 10) || 0);
+                const payNow = confirm('긴급 의뢰입니다. 지금 결제하시겠습니까?\n확인: 바로 결제\n취소: 장바구니에 담기');
+                if (payNow) {
+                    try {
+                        localStorage.setItem('pendingPaymentItem', JSON.stringify({
+                            type: 'short-term',
+                            urgent: true,
+                            title: data.title,
+                            amount
+                        }));
+                    } catch (e) {}
+                    alert('결제 페이지로 이동합니다.');
+                    window.location.href = '/홈.html';
+                } else {
+                    try {
+                        const existing = JSON.parse(localStorage.getItem('cartItems') || '[]');
+                        existing.push({
+                            type: 'short-term',
+                            urgent: true,
+                            name: data.title,
+                            price: amount,
+                            qty: 1
+                        });
+                        localStorage.setItem('cartItems', JSON.stringify(existing));
+                    } catch (e) {
+                        alert('장바구니 저장 중 오류가 발생했습니다.');
+                        return;
+                    }
+                    alert('장바구니에 추가했습니다.\n추가 금액: ₩' + new Intl.NumberFormat('ko-KR').format(amount));
+                }
+                return;
+            }
+
+            alert('의뢰가 성공적으로 등록되었습니다!');
+            // window.location.href = '/short-term/list';
+        });
+
+        const categoryOptions = [
+            { code: 'IT', name: '기술/개발' },
+            { code: 'DS', name: '디자인/크리에이티브' },
+            { code: 'MK', name: '마케팅/홍보' },
+            { code: 'WR', name: '글쓰기/번역' },
+            { code: 'BZ', name: '비즈니스/경영' },
+            { code: 'HR', name: 'HR/인사' },
+            { code: 'ED', name: '교육/강의' },
+            { code: 'BD', name: '건축/설계' },
+            { code: 'IN', name: '인테리어/시공' },
+            { code: 'FC', name: '설비/수리' },
+            { code: 'SP', name: '스포츠/피트니스' },
+            { code: 'BT', name: '뷰티/패션' },
+            { code: 'EV', name: '행사/엔터테인먼트' },
+            { code: 'LF', name: '생활서비스' },
+            { code: 'PS', name: '전문서비스' }
+        ];
+
+        const subCategoryOptions = {
+            IT: [
+                { code: 'IT01', name: '웹 개발' },
+                { code: 'IT02', name: '앱 개발' },
+                { code: 'IT03', name: 'AI/머신러닝' },
+                { code: 'IT04', name: '데이터 분석' },
+                { code: 'IT05', name: '보안/인증' },
+                { code: 'IT06', name: '클라우드/인프라' },
+                { code: 'IT07', name: '게임 개발' },
+                { code: 'IT08', name: '블록체인/Web3' }
+            ],
+            DS: [
+                { code: 'DS01', name: '영상 편집' },
+                { code: 'DS02', name: '모션그래픽/3D' },
+                { code: 'DS03', name: '그래픽 디자인' },
+                { code: 'DS04', name: '일러스트/캐릭터' },
+                { code: 'DS05', name: 'UI/UX 디자인' },
+                { code: 'DS06', name: '제품/산업 디자인' },
+                { code: 'DS07', name: '사진/촬영' },
+                { code: 'DS08', name: '음악/사운드' }
+            ],
+            MK: [
+                { code: 'MK01', name: '퍼포먼스 마케팅' },
+                { code: 'MK02', name: 'SNS 마케팅' },
+                { code: 'MK03', name: '콘텐츠 마케팅' },
+                { code: 'MK04', name: '브랜딩/CI' },
+                { code: 'MK05', name: 'PR/언론홍보' },
+                { code: 'MK06', name: '영업/세일즈' }
+            ],
+            WR: [
+                { code: 'WR01', name: '카피라이팅' },
+                { code: 'WR02', name: '콘텐츠 글쓰기' },
+                { code: 'WR03', name: '번역/통역' },
+                { code: 'WR04', name: '출판/교정' }
+            ],
+            BZ: [
+                { code: 'BZ01', name: '경영/전략 컨설팅' },
+                { code: 'BZ02', name: '창업/스타트업' },
+                { code: 'BZ03', name: '재무/회계' },
+                { code: 'BZ04', name: '세무/기장' },
+                { code: 'BZ05', name: '법률/계약' },
+                { code: 'BZ06', name: '특허/지식재산' }
+            ],
+            HR: [
+                { code: 'HR01', name: '채용/헤드헌팅' },
+                { code: 'HR02', name: '인사제도/조직' },
+                { code: 'HR03', name: '노무/급여' },
+                { code: 'HR04', name: '커리어 코칭' }
+            ],
+            ED: [
+                { code: 'ED01', name: '기업교육/강의' },
+                { code: 'ED02', name: '외국어 교육' },
+                { code: 'ED03', name: '입시/학원' },
+                { code: 'ED04', name: '자격증/실무' }
+            ],
+            BD: [
+                { code: 'BD01', name: '건축 설계' },
+                { code: 'BD02', name: '토목/조경' },
+                { code: 'BD03', name: '도시/부동산' }
+            ],
+            IN: [
+                { code: 'IN01', name: '인테리어 디자인' },
+                { code: 'IN02', name: '도배/바닥' },
+                { code: 'IN03', name: '주방/욕실' },
+                { code: 'IN04', name: '목공/가구' }
+            ],
+            FC: [
+                { code: 'FC01', name: '전기/조명' },
+                { code: 'FC02', name: '설비/배관' },
+                { code: 'FC03', name: '방수/단열' },
+                { code: 'FC04', name: '철거/청소' }
+            ],
+            SP: [
+                { code: 'SP01', name: '골프/라켓' },
+                { code: 'SP02', name: '피트니스/PT' },
+                { code: 'SP03', name: '요가/필라테스' },
+                { code: 'SP04', name: '수영/아웃도어' },
+                { code: 'SP05', name: '댄스/무술' }
+            ],
+            BT: [
+                { code: 'BT01', name: '메이크업/헤어' },
+                { code: 'BT02', name: '네일/속눈썹' },
+                { code: 'BT03', name: '패션/스타일링' }
+            ],
+            EV: [
+                { code: 'EV01', name: '웨딩/돌잔치' },
+                { code: 'EV02', name: '행사/컨퍼런스' },
+                { code: 'EV03', name: 'MC/공연' }
+            ],
+            LF: [
+                { code: 'LF01', name: '반려동물' },
+                { code: 'LF02', name: '청소/정리' },
+                { code: 'LF03', name: '이사/운송' },
+                { code: 'LF04', name: '수리/설치' }
+            ],
+            PS: [
+                { code: 'PS01', name: '의료/헬스케어' },
+                { code: 'PS02', name: '공학/제조' },
+                { code: 'PS03', name: '물류/무역' },
+                { code: 'PS04', name: '농업/식품' }
+            ]
+        };
+
+        const categoryMajorSelect = document.getElementById('categoryMajor');
+        const categorySubSelect = document.getElementById('categorySub');
+
+        function renderMajorOptions() {
+            categoryMajorSelect.innerHTML = `<option value="ALL">전체</option>` + categoryOptions.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
+        }
+
+        function renderSubOptions(majorCode) {
+            let options = `<option value="ALL">전체</option>`;
+            if (majorCode && majorCode !== 'ALL' && subCategoryOptions[majorCode]) {
+                options += subCategoryOptions[majorCode].map(sc => `<option value="${sc.code}">${sc.name}</option>`).join('');
+            }
+            categorySubSelect.innerHTML = options;
+        }
+
+        renderMajorOptions();
+        renderSubOptions('ALL');
+        categoryMajorSelect.addEventListener('change', (e) => {
+            renderSubOptions(e.target.value);
+        });
+    </script>
+
+</body>
+</html>
