@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전시(專時) - 북마크</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #5B5FEF;
+            --primary-light: #E8E9FF;
+            --secondary: #6B7280;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --dark: #1F2937;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-50);
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        /* 헤더 */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* 메인 컨테이너 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* 페이지 타이틀 */
+        .page-title {
+            margin-bottom: 24px;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .page-title p {
+            color: var(--gray-500);
+            font-size: 14px;
+        }
+
+        /* 탭 네비게이션 */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: white;
+            padding: 6px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 10px 18px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-btn:hover {
+            background: var(--gray-100);
+            color: var(--dark);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-btn .count {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .tab-btn.active .count {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* 필터 바 */
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 320px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 10px 16px;
+            border: 1px solid var(--gray-200);
+            background: white;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--gray-700);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .sort-select {
+            padding: 10px 32px 10px 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L2 4h8z'/%3E%3C/svg%3E") no-repeat right 12px center;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* 탭 컨텐츠 */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 리스트 스타일 */
+        .bookmark-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* 리스트 아이템 공통 */
+        .list-item {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .list-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        /* 썸네일/아바타 */
+        .item-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .item-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-thumb.circle {
+            border-radius: 50%;
+        }
+
+        .item-thumb i {
+            font-size: 20px;
+            color: var(--gray-500);
+        }
+
+        /* 아이템 정보 */
+        .item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-title .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .badge-new {
+            background: var(--success);
+            color: white;
+        }
+
+        .badge-hot {
+            background: var(--danger);
+            color: white;
+        }
+
+        .badge-urgent {
+            background: var(--warning);
+            color: white;
+        }
+
+        .item-desc {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .meta-tag {
+            font-size: 12px;
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .meta-tag i {
+            font-size: 11px;
+        }
+
+        /* 스킬 태그 */
+        .skill-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .skill-tag {
+            font-size: 11px;
+            padding: 3px 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* 아이템 액션 */
+        .item-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4B4FDF;
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            color: var(--gray-500);
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            background: var(--gray-100);
+            color: var(--danger);
+        }
+
+        /* 가격/금액 표시 */
+        .price {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* 마감일 */
+        .deadline {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--danger);
+        }
+
+        /* 평점 */
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--warning);
+            font-size: 13px;
+        }
+
+        .rating span {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* 빈 상태 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: var(--gray-300);
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .tab-nav {
+                padding: 4px;
+            }
+
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .list-item {
+                padding: 14px 16px;
+                flex-wrap: wrap;
+            }
+
+            .item-actions {
+                width: 100%;
+                justify-content: flex-end;
+                margin-top: 12px;
+                padding-top: 12px;
+                border-top: 1px solid var(--gray-100);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="#" class="logo">전시(專時)</a>
+            <div class="user-menu">
+                <div class="user-avatar">김</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 -->
+    <main class="container">
+        <div class="page-title">
+            <h1>북마크</h1>
+            <p>저장한 항목을 확인하고 관리하세요</p>
+        </div>
+
+        <!-- 탭 네비게이션 -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="company">
+                <i class="fas fa-building"></i> 기업 <span class="count">3</span>
+            </button>
+            <button class="tab-btn" data-tab="project">
+                <i class="fas fa-briefcase"></i> 단기 의뢰 <span class="count">4</span>
+            </button>
+            <button class="tab-btn" data-tab="expert">
+                <i class="fas fa-user-tie"></i> 전문가 <span class="count">5</span>
+            </button>
+            <button class="tab-btn" data-tab="education">
+                <i class="fas fa-graduation-cap"></i> 교육 <span class="count">3</span>
+            </button>
+            <button class="tab-btn" data-tab="trainee">
+                <i class="fas fa-user-graduate"></i> 교육생 <span class="count">6</span>
+            </button>
+            <button class="tab-btn" data-tab="job">
+                <i class="fas fa-clipboard-list"></i> 채용 공고 <span class="count">4</span>
+            </button>
+            <button class="tab-btn" data-tab="notice">
+                <i class="fas fa-bell"></i> 공지 <span class="count">2</span>
+            </button>
+        </nav>
+
+        <!-- 기업 탭 -->
+        <div class="tab-content active" id="company">
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="기업명 검색">
+                </div>
+                <div class="filter-actions">
+                    <select class="sort-select">
+                        <option>최신 저장순</option>
+                        <option>기업명순</option>
+                        <option>규모순</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bookmark-list">
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <img src="https://picsum.photos/seed/comp1/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">테크솔루션즈 <span class="badge badge-new">채용중</span></div>
+                        <div class="item-desc">IT/소프트웨어 · 50-100명 · 서울 강남구</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-calendar"></i> 저장: 2024.12.01</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">상세보기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <img src="https://picsum.photos/seed/comp2/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">그린마케팅</div>
+                        <div class="item-desc">마케팅/광고 · 10-50명 · 서울 마포구</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-calendar"></i> 저장: 2024.11.28</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">상세보기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <img src="https://picsum.photos/seed/comp3/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">파이낸스플러스</div>
+                        <div class="item-desc">금융/핀테크 · 100-200명 · 서울 여의도</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-calendar"></i> 저장: 2024.11.20</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">상세보기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 단기 의뢰 탭 -->
+        <div class="tab-content" id="project">
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="프로젝트 검색">
+                </div>
+                <div class="filter-actions">
+                    <select class="sort-select">
+                        <option>마감 임박순</option>
+                        <option>최신 저장순</option>
+                        <option>예산 높은순</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bookmark-list">
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">스타트업 IR 자료 작성 지원 <span class="badge badge-urgent">D-3</span></div>
+                        <div class="item-desc">인노베이션랩 · IR, 투자유치, 재무모델링</div>
+                        <div class="item-meta">
+                            <span class="price">300-500만원</span>
+                            <span class="meta-tag"><i class="fas fa-clock"></i> 4주</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">지원하기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">B2B SaaS 제품 UI/UX 개선</div>
+                        <div class="item-desc">소프트웨어웍스 · UI/UX, 사용자경험, 프로토타이핑</div>
+                        <div class="item-meta">
+                            <span class="price">200-300만원</span>
+                            <span class="meta-tag"><i class="fas fa-clock"></i> 3주</span>
+                            <span class="deadline">D-7</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">지원하기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">온라인 쇼핑몰 마케팅 전략 컨설팅</div>
+                        <div class="item-desc">패션플레이스 · 마케팅, 성장전략, 콘텐츠기획</div>
+                        <div class="item-meta">
+                            <span class="price">150-250만원</span>
+                            <span class="meta-tag"><i class="fas fa-clock"></i> 2주</span>
+                            <span class="deadline">D-15</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">지원하기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">모바일 앱 MVP 개발</div>
+                        <div class="item-desc">헬스케어스타트업 · React Native, Firebase</div>
+                        <div class="item-meta">
+                            <span class="price">500-800만원</span>
+                            <span class="meta-tag"><i class="fas fa-clock"></i> 8주</span>
+                            <span class="deadline">D-21</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">지원하기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 전문가 탭 -->
+        <div class="tab-content" id="expert">
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="전문가 검색">
+                </div>
+                <div class="filter-actions">
+                    <select class="sort-select">
+                        <option>최신 저장순</option>
+                        <option>평점 높은순</option>
+                        <option>시간당 비용 낮은순</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bookmark-list">
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/expert1/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">이영희</div>
+                        <div class="item-desc">재무 컨설턴트 · 재무모델링, IR, 투자유치</div>
+                        <div class="item-meta">
+                            <div class="rating"><i class="fas fa-star"></i> <span>4.8</span> (23)</div>
+                            <span class="price">15만원/시간</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">협업요청</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/expert2/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">박준호 <span class="badge badge-hot">인기</span></div>
+                        <div class="item-desc">마케팅 전문가 · 성장마케팅, 콘텐츠전략, 브랜딩</div>
+                        <div class="item-meta">
+                            <div class="rating"><i class="fas fa-star"></i> <span>5.0</span> (15)</div>
+                            <span class="price">12만원/시간</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">협업요청</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/expert3/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">최유진</div>
+                        <div class="item-desc">UI/UX 디자이너 · UI디자인, UX리서치, 프로토타이핑</div>
+                        <div class="item-meta">
+                            <div class="rating"><i class="fas fa-star"></i> <span>4.2</span> (8)</div>
+                            <span class="price">10만원/시간</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">협업요청</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/expert4/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">김선우</div>
+                        <div class="item-desc">HR 전문가 · 인사제도, 조직문화, 성과관리</div>
+                        <div class="item-meta">
+                            <div class="rating"><i class="fas fa-star"></i> <span>4.6</span> (12)</div>
+                            <span class="price">8만원/시간</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">협업요청</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/expert5/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">정다은</div>
+                        <div class="item-desc">데이터 분석가 · Python, SQL, 데이터시각화</div>
+                        <div class="item-meta">
+                            <div class="rating"><i class="fas fa-star"></i> <span>4.9</span> (31)</div>
+                            <span class="price">13만원/시간</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">협업요청</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 교육 탭 -->
+        <div class="tab-content" id="education">
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="교육 과정 검색">
+                </div>
+                <div class="filter-actions">
+                    <select class="sort-select">
+                        <option>시작일 임박순</option>
+                        <option>최신 저장순</option>
+                        <option>가격 낮은순</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bookmark-list">
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">프리랜서를 위한 세무/법무 가이드</div>
+                        <div class="item-desc">박세무 세무사 · 온라인 강의</div>
+                        <div class="item-meta">
+                            <span class="price">15만원</span>
+                            <span class="meta-tag"><i class="fas fa-calendar"></i> 시작: 2024.12.10</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">수강신청</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">시니어 PM을 위한 리더십 워크숍 <span class="badge badge-hot">인기</span></div>
+                        <div class="item-desc">김리더 전 이베이코리아 PM · 오프라인 워크숍</div>
+                        <div class="item-meta">
+                            <span class="price">25만원</span>
+                            <span class="meta-tag"><i class="fas fa-calendar"></i> 시작: 2024.12.15</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">수강신청</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">데이터 기반 제품 전략 수립</div>
+                        <div class="item-desc">이데이터 전 네이버 데이터 분석가 · 온라인 강의</div>
+                        <div class="item-meta">
+                            <span class="price">20만원</span>
+                            <span class="meta-tag"><i class="fas fa-calendar"></i> 시작: 2025.01.05</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">수강신청</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 교육생 탭 -->
+        <div class="tab-content" id="trainee">
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="교육생 검색">
+                </div>
+                <div class="filter-actions">
+                    <select class="sort-select">
+                        <option>최신 저장순</option>
+                        <option>교육과정별</option>
+                        <option>학력순</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bookmark-list">
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/trainee1/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">이수진</div>
+                        <div class="item-desc">프론트엔드 개발 부트캠프 · 패스트캠퍼스</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-school"></i> 한양대 컴퓨터공학과</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">React</span>
+                                <span class="skill-tag">JavaScript</span>
+                                <span class="skill-tag">TypeScript</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">채용제안</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/trainee2/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">김태호</div>
+                        <div class="item-desc">데이터 사이언스 전문가 과정 · 멀티캠퍼스</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-school"></i> 서울대 통계학과</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">Python</span>
+                                <span class="skill-tag">SQL</span>
+                                <span class="skill-tag">ML</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">채용제안</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/trainee3/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">박서연</div>
+                        <div class="item-desc">UX/UI 디자인 실무 과정 · 그린컴퓨터아카데미</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-school"></i> 홍익대 시각디자인과</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">Figma</span>
+                                <span class="skill-tag">Adobe XD</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">채용제안</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/trainee4/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">정민우</div>
+                        <div class="item-desc">백엔드 개발자 양성과정 · 스파르타코딩클럽</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-school"></i> 경희대 소프트웨어융합학과</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">Java</span>
+                                <span class="skill-tag">Spring</span>
+                                <span class="skill-tag">MySQL</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">채용제안</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/trainee5/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">한소희</div>
+                        <div class="item-desc">디지털 마케팅 전문가 과정 · 구글 아카데미</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-school"></i> 이화여대 경영학과</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">Google Ads</span>
+                                <span class="skill-tag">SEO</span>
+                                <span class="skill-tag">GA4</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">채용제안</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb circle">
+                        <img src="https://picsum.photos/seed/trainee6/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">오준혁</div>
+                        <div class="item-desc">클라우드 엔지니어 양성과정 · AWS 교육센터</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-school"></i> KAIST 전산학부</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">AWS</span>
+                                <span class="skill-tag">K8s</span>
+                                <span class="skill-tag">Linux</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">프로필</button>
+                        <button class="btn btn-primary">채용제안</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 채용 공고 탭 -->
+        <div class="tab-content" id="job">
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="채용 공고 검색">
+                </div>
+                <div class="filter-actions">
+                    <select class="sort-select">
+                        <option>마감 임박순</option>
+                        <option>최신 저장순</option>
+                        <option>연봉 높은순</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bookmark-list">
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <img src="https://picsum.photos/seed/job1/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">시니어 프로덕트 매니저 <span class="badge badge-urgent">D-5</span></div>
+                        <div class="item-desc">테크혁신 · 정규직 · 서울</div>
+                        <div class="item-meta">
+                            <span class="price">7,000-9,000만원</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">PM</span>
+                                <span class="skill-tag">Agile</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">지원하기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <img src="https://picsum.photos/seed/job2/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">마케팅 리드</div>
+                        <div class="item-desc">그로스컴퍼니 · 계약직 6개월 · 서울</div>
+                        <div class="item-meta">
+                            <span class="price">5,500-7,000만원</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">디지털마케팅</span>
+                                <span class="skill-tag">팀관리</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">지원하기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <img src="https://picsum.photos/seed/job3/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">프론트엔드 개발자</div>
+                        <div class="item-desc">디자인스튜디오 · 정규직 · 서울/재택</div>
+                        <div class="item-meta">
+                            <span class="price">5,000-7,000만원</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">React</span>
+                                <span class="skill-tag">TypeScript</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">지원하기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <img src="https://picsum.photos/seed/job4/100/100" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">데이터 분석가 (주니어)</div>
+                        <div class="item-desc">핀테크랩 · 정규직 · 판교</div>
+                        <div class="item-meta">
+                            <span class="price">4,000-5,500만원</span>
+                            <div class="skill-tags">
+                                <span class="skill-tag">Python</span>
+                                <span class="skill-tag">SQL</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-primary">지원하기</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 공지 탭 -->
+        <div class="tab-content" id="notice">
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="공지 검색">
+                </div>
+                <div class="filter-actions">
+                    <select class="sort-select">
+                        <option>최신순</option>
+                        <option>중요도순</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bookmark-list">
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <i class="fas fa-bullhorn" style="color: var(--primary);"></i>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">[중요] 2024년 연말 정산 안내 <span class="badge badge-new">NEW</span></div>
+                        <div class="item-desc">프리랜서 분들을 위한 연말정산 가이드를 안내드립니다.</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-calendar"></i> 2024.12.01</span>
+                            <span class="meta-tag"><i class="fas fa-eye"></i> 1,234</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">자세히</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-thumb">
+                        <i class="fas fa-gift" style="color: var(--success);"></i>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">전시(專時) 겨울 이벤트 안내</div>
+                        <div class="item-desc">첫 프로젝트 등록 시 수수료 50% 할인 이벤트</div>
+                        <div class="item-meta">
+                            <span class="meta-tag"><i class="fas fa-calendar"></i> 2024.11.25</span>
+                            <span class="meta-tag"><i class="fas fa-eye"></i> 2,567</span>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-outline">자세히</button>
+                        <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 탭 기능
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 모든 탭 버튼 비활성화
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                // 클릭된 버튼 활성화
+                btn.classList.add('active');
+
+                // 모든 탭 컨텐츠 숨기기
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                // 해당 탭 컨텐츠 표시
+                const tabId = btn.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
