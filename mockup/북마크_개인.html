@@ -428,7 +428,8 @@
             <div class="tab" data-tab="projects">단기 프로젝트</div>
             <div class="tab" data-tab="jobs">채용 공고</div>
             <div class="tab" data-tab="education">교육</div>
-            <div class="tab" data-tab="experts">전문가 북마크 <span class="badge badge-new">NEW</span></div>
+            <div class="tab" data-tab="experts">전문가 북마크</div>
+            <div class="tab" data-tab="trainees">교육생 <span class="badge badge-new">NEW</span></div>
         </div>
         
         <!-- 비교 기능 바 -->
@@ -1135,6 +1136,365 @@
                     <div class="card-footer">
                         <button class="btn btn-outline">프로필 보기</button>
                         <button class="btn btn-primary">협업 요청</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 교육생 북마크 -->
+        <div class="tab-content" id="trainees">
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="교육생 검색">
+                    </div>
+                    <button class="filter-btn">
+                        <i class="fas fa-filter"></i>
+                        필터
+                    </button>
+                </div>
+                <div class="filter-group">
+                    <select class="sort-dropdown">
+                        <option>최신 저장순</option>
+                        <option>수료일 임박순</option>
+                        <option>교육과정별</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bookmark-cards">
+                <!-- 교육생 1 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">이수진</div>
+                        <div class="card-actions">
+                            <input type="checkbox" class="checkbox" id="trainee1">
+                            <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <img src="https://picsum.photos/seed/trainee1/80/80.jpg" alt="교육생 프로필" class="expert-avatar">
+                        <div class="info-row">
+                            <span class="info-label">교육과정:</span>
+                            <span class="info-value">프론트엔드 개발 부트캠프</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">교육기관:</span>
+                            <span class="info-value">패스트캠퍼스</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">수료 예정:</span>
+                            <span class="info-value">2024.01.15</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">진행률:</span>
+                            <div class="info-value">
+                                <div style="background: #e9ecef; border-radius: 10px; height: 8px; width: 100%;">
+                                    <div style="background: linear-gradient(90deg, #4a6cf7, #667eea); border-radius: 10px; height: 8px; width: 85%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #666;">85% 완료</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">보유 스킬:</span>
+                            <div class="tags">
+                                <span class="tag">React</span>
+                                <span class="tag">JavaScript</span>
+                                <span class="tag">TypeScript</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">학력:</span>
+                            <span class="info-value">한양대학교 컴퓨터공학과</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">저장 날짜:</span>
+                            <span class="info-value">2023.12.01</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-outline">프로필 보기</button>
+                        <button class="btn btn-primary">채용 제안</button>
+                    </div>
+                </div>
+
+                <!-- 교육생 2 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">김태호</div>
+                        <div class="card-actions">
+                            <input type="checkbox" class="checkbox" id="trainee2">
+                            <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <img src="https://picsum.photos/seed/trainee2/80/80.jpg" alt="교육생 프로필" class="expert-avatar">
+                        <div class="info-row">
+                            <span class="info-label">교육과정:</span>
+                            <span class="info-value">데이터 사이언스 전문가 과정</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">교육기관:</span>
+                            <span class="info-value">멀티캠퍼스</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">수료 상태:</span>
+                            <span class="info-value" style="color: #28a745; font-weight: bold;">수료 완료</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">진행률:</span>
+                            <div class="info-value">
+                                <div style="background: #e9ecef; border-radius: 10px; height: 8px; width: 100%;">
+                                    <div style="background: linear-gradient(90deg, #28a745, #20c997); border-radius: 10px; height: 8px; width: 100%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #28a745;">100% 완료</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">보유 스킬:</span>
+                            <div class="tags">
+                                <span class="tag">Python</span>
+                                <span class="tag">SQL</span>
+                                <span class="tag">Tableau</span>
+                                <span class="tag">Machine Learning</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">학력:</span>
+                            <span class="info-value">서울대학교 통계학과</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">저장 날짜:</span>
+                            <span class="info-value">2023.11.25</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-outline">프로필 보기</button>
+                        <button class="btn btn-primary">채용 제안</button>
+                    </div>
+                </div>
+
+                <!-- 교육생 3 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">박서연</div>
+                        <div class="card-actions">
+                            <input type="checkbox" class="checkbox" id="trainee3">
+                            <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <img src="https://picsum.photos/seed/trainee3/80/80.jpg" alt="교육생 프로필" class="expert-avatar">
+                        <div class="info-row">
+                            <span class="info-label">교육과정:</span>
+                            <span class="info-value">UX/UI 디자인 실무 과정</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">교육기관:</span>
+                            <span class="info-value">그린컴퓨터아카데미</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">수료 예정:</span>
+                            <span class="info-value">2024.02.28</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">진행률:</span>
+                            <div class="info-value">
+                                <div style="background: #e9ecef; border-radius: 10px; height: 8px; width: 100%;">
+                                    <div style="background: linear-gradient(90deg, #4a6cf7, #667eea); border-radius: 10px; height: 8px; width: 60%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #666;">60% 완료</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">보유 스킬:</span>
+                            <div class="tags">
+                                <span class="tag">Figma</span>
+                                <span class="tag">Adobe XD</span>
+                                <span class="tag">Photoshop</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">학력:</span>
+                            <span class="info-value">홍익대학교 시각디자인과</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">저장 날짜:</span>
+                            <span class="info-value">2023.11.18</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-outline">프로필 보기</button>
+                        <button class="btn btn-primary">채용 제안</button>
+                    </div>
+                </div>
+
+                <!-- 교육생 4 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">정민우</div>
+                        <div class="card-actions">
+                            <input type="checkbox" class="checkbox" id="trainee4">
+                            <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <img src="https://picsum.photos/seed/trainee4/80/80.jpg" alt="교육생 프로필" class="expert-avatar">
+                        <div class="info-row">
+                            <span class="info-label">교육과정:</span>
+                            <span class="info-value">백엔드 개발자 양성과정</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">교육기관:</span>
+                            <span class="info-value">스파르타코딩클럽</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">수료 예정:</span>
+                            <span class="info-value">2024.01.31</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">진행률:</span>
+                            <div class="info-value">
+                                <div style="background: #e9ecef; border-radius: 10px; height: 8px; width: 100%;">
+                                    <div style="background: linear-gradient(90deg, #4a6cf7, #667eea); border-radius: 10px; height: 8px; width: 75%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #666;">75% 완료</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">보유 스킬:</span>
+                            <div class="tags">
+                                <span class="tag">Java</span>
+                                <span class="tag">Spring Boot</span>
+                                <span class="tag">MySQL</span>
+                                <span class="tag">Docker</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">학력:</span>
+                            <span class="info-value">경희대학교 소프트웨어융합학과</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">저장 날짜:</span>
+                            <span class="info-value">2023.11.10</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-outline">프로필 보기</button>
+                        <button class="btn btn-primary">채용 제안</button>
+                    </div>
+                </div>
+
+                <!-- 교육생 5 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">한소희</div>
+                        <div class="card-actions">
+                            <input type="checkbox" class="checkbox" id="trainee5">
+                            <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <img src="https://picsum.photos/seed/trainee5/80/80.jpg" alt="교육생 프로필" class="expert-avatar">
+                        <div class="info-row">
+                            <span class="info-label">교육과정:</span>
+                            <span class="info-value">디지털 마케팅 전문가 과정</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">교육기관:</span>
+                            <span class="info-value">구글 디지털 마케팅 아카데미</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">수료 상태:</span>
+                            <span class="info-value" style="color: #28a745; font-weight: bold;">수료 완료</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">진행률:</span>
+                            <div class="info-value">
+                                <div style="background: #e9ecef; border-radius: 10px; height: 8px; width: 100%;">
+                                    <div style="background: linear-gradient(90deg, #28a745, #20c997); border-radius: 10px; height: 8px; width: 100%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #28a745;">100% 완료</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">보유 스킬:</span>
+                            <div class="tags">
+                                <span class="tag">Google Ads</span>
+                                <span class="tag">SEO</span>
+                                <span class="tag">GA4</span>
+                                <span class="tag">SNS 마케팅</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">학력:</span>
+                            <span class="info-value">이화여자대학교 경영학과</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">저장 날짜:</span>
+                            <span class="info-value">2023.10.28</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-outline">프로필 보기</button>
+                        <button class="btn btn-primary">채용 제안</button>
+                    </div>
+                </div>
+
+                <!-- 교육생 6 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">오준혁</div>
+                        <div class="card-actions">
+                            <input type="checkbox" class="checkbox" id="trainee6">
+                            <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <img src="https://picsum.photos/seed/trainee6/80/80.jpg" alt="교육생 프로필" class="expert-avatar">
+                        <div class="info-row">
+                            <span class="info-label">교육과정:</span>
+                            <span class="info-value">클라우드 엔지니어 양성과정</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">교육기관:</span>
+                            <span class="info-value">AWS 공인 교육센터</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">수료 예정:</span>
+                            <span class="info-value">2024.03.15</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">진행률:</span>
+                            <div class="info-value">
+                                <div style="background: #e9ecef; border-radius: 10px; height: 8px; width: 100%;">
+                                    <div style="background: linear-gradient(90deg, #4a6cf7, #667eea); border-radius: 10px; height: 8px; width: 45%;"></div>
+                                </div>
+                                <span style="font-size: 12px; color: #666;">45% 완료</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">보유 스킬:</span>
+                            <div class="tags">
+                                <span class="tag">AWS</span>
+                                <span class="tag">Linux</span>
+                                <span class="tag">Kubernetes</span>
+                                <span class="tag">Terraform</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">학력:</span>
+                            <span class="info-value">KAIST 전산학부</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">저장 날짜:</span>
+                            <span class="info-value">2023.10.15</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-outline">프로필 보기</button>
+                        <button class="btn btn-primary">채용 제안</button>
                     </div>
                 </div>
             </div>
