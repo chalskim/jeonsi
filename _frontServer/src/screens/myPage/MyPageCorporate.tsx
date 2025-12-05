@@ -27,7 +27,7 @@ export default function MyPageCorporate() {
     { id: 'company-history', label: '회사 연혁 관리', icon: 'history', status: '2개 등록' },
     { id: 'service', label: '서비스 이용 내역', icon: 'clipboard-list', status: '진행중 2건' },
     { id: 'review', label: '리뷰 관리', icon: 'star', status: '4.6점 (18개)' },
-    { id: 'schedule', label: '일정 관리', icon: 'calendar-check', status: '예약 1건' },
+    { id: 'ScheduleManagerCorporate', label: '일정 관리', icon: 'calendar-check', status: '예약 1건' },
     { id: 'payment-method', label: '결제수단', icon: 'credit-card', status: '2개 등록' },
     { id: 'payment-history', label: '결제 내역', icon: 'won-sign', status: '최근 10건' },
     { id: 'bookmark', label: '북마크', icon: 'bookmark', status: '5개' },

@@ -591,7 +591,7 @@ export default function HomeScreen() {
             <View style={styles.section}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hScroll}>
                 {generalRecruitment.slice(0,3).map((c) => (
-                  <TouchableOpacity key={c.id} style={styles.urgentCard} activeOpacity={0.85}>
+                  <TouchableOpacity key={c.id} style={styles.urgentCard} activeOpacity={0.85} onPress={() => navigation.navigate('RecruitmentDetail', { prev: 'Home' })}>
                     <Text style={styles.urgentBadge}>{c.badge || '긴급'}</Text>
                     <Text style={styles.urgentTitle}>{c.title}</Text>
                     <Text style={styles.urgentCompany}>{c.company}</Text>
@@ -603,7 +603,7 @@ export default function HomeScreen() {
             <View style={styles.sectionHeader}><View style={styles.sectionTitleRow}><FontAwesome5 name="briefcase" size={16} color="#374151" /><Text style={styles.sectionTitle}> 채용 공고 </Text></View></View>
             <View style={styles.cardGrid}>
               {generalRecruitment.map((c) => (
-                <TouchableOpacity key={c.id} style={styles.gridCard} activeOpacity={0.85}>
+                <TouchableOpacity key={c.id} style={styles.gridCard} activeOpacity={0.85} onPress={() => navigation.navigate('RecruitmentDetail', { prev: 'Home' })}>
                   {c.badge ? <Text style={styles.gridBadge}>{c.badge}</Text> : null}
                   <Text style={styles.gridTitle}>{c.title}</Text>
                   <Text style={styles.gridCompany}>{c.company}</Text>

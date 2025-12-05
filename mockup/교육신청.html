@@ -357,6 +357,31 @@
             background-color: rgba(255, 193, 7, 0.1);
             border-left: 4px solid var(--warning-color);
         }
+
+        .address-section {
+            display: none;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .address-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-color);
+        }
+        .address-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .address-col {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -454,16 +479,6 @@
                 <label class="form-label">생년월일</label>
                 <input type="date" class="form-control">
             </div>
-            
-            <div class="form-group">
-                <label class="form-label">소속/직책</label>
-                <input type="text" class="form-control" placeholder="회사명 / 직책">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">경력 및 관련 분야</label>
-                <textarea class="form-control" rows="3" placeholder="관련 경력이나 현재 관심 분야를 간략히 입력해주세요."></textarea>
-            </div>
         </div>
         
         <!-- Textbook Selection -->
@@ -507,6 +522,38 @@
                 <div class="summary-row total">
                     <span>총 결제 금액</span>
                     <span id="totalAmount">₩1,235,000</span>
+                </div>
+            </div>
+
+            <div class="address-section" id="addressSection">
+                <div class="address-title"><i class="fas fa-location-dot"></i> 배송지 정보</div>
+                <div class="address-row">
+                    <div class="address-col">
+                        <label class="form-label">받는 분 <span class="required">*</span></label>
+                        <input type="text" class="form-control" placeholder="이름">
+                    </div>
+                    <div class="address-col">
+                        <label class="form-label">연락처 <span class="required">*</span></label>
+                        <input type="text" class="form-control" placeholder="010-1234-5678">
+                    </div>
+                </div>
+                <div class="address-row">
+                    <div class="address-col">
+                        <label class="form-label">우편번호 <span class="required">*</span></label>
+                        <input type="text" class="form-control" placeholder="우편번호">
+                    </div>
+                    <div class="address-col">
+                        <label class="form-label">기본주소 <span class="required">*</span></label>
+                        <input type="text" class="form-control" placeholder="도로명 주소">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">상세주소</label>
+                    <input type="text" class="form-control" placeholder="건물명, 동/호수 등">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">요청사항</label>
+                    <input type="text" class="form-control" placeholder="부재 시 경비실에 맡겨주세요 등">
                 </div>
             </div>
         </div>
@@ -578,6 +625,7 @@
             const textbookQtys = document.querySelectorAll('.textbook-qty');
             const textbookPrices = [35000, 28000];
             const courseFee = 1200000;
+            const addressSection = document.getElementById('addressSection');
             
             // Update total when checkbox or quantity changes
             function updateTotal() {
@@ -592,6 +640,8 @@
                 
                 document.getElementById('textbookTotal').textContent = `₩${textbookTotal.toLocaleString()}`;
                 document.getElementById('totalAmount').textContent = `₩${(courseFee + textbookTotal).toLocaleString()}`;
+                const anySelected = Array.from(textbookCheckboxes).some(cb => cb.checked);
+                addressSection.style.display = anySelected ? 'block' : 'none';
             }
             
             // Enable/disable quantity input based on checkbox
@@ -621,6 +671,8 @@
                     agreeAllCheckbox.checked = allChecked;
                 });
             });
+
+            updateTotal();
         });
     </script>
 </body>

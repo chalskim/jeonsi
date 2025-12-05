@@ -23,7 +23,7 @@ export default function MyPagePersonal() {
     { id: 'portfolio', label: '포트폴리오', icon: 'images', status: '1개 등록' },
     { id: 'service', label: '서비스 내역', icon: 'tasks', status: '진행중 1건' },
     { id: 'review', label: '리뷰 관리', icon: 'star', status: '4.8점 (23개)' },
-    { id: 'schedule', label: '일정 관리', icon: 'calendar-alt', status: '예약 2건, 희망 1건' },
+    { id: 'ScheduleManagerPersonal', label: '일정 관리', icon: 'calendar-alt', status: '예약 2건, 희망 1건' },
     { id: 'payment-method', label: '결제수단', icon: 'wallet', status: '1개 등록' },
     { id: 'payment-history', label: '결제 내역', icon: 'file-invoice-dollar', status: '전체 내역' },
     { id: 'inquiry', label: '1:1 문의', icon: 'comment-dots', status: '문의하기' }

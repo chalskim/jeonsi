@@ -160,7 +160,7 @@ export default function EducationList() {
   const viewCourse = (id: number) => navigation.navigate('EducationDetail', { id , prev: 'EducationList' })
   const editCourse = (id: number) => Alert.alert('안내', `교육 수정 (ID: ${id}) 화면은 준비 중입니다.`)
   const manageStudents = (id: number) => navigation.navigate('EducationStudents', { id, prev: 'EducationList' })
-  const addNewCourse = () => Alert.alert('안내', '교육 등록 화면은 준비 중입니다.')
+  const addNewCourse = () => navigation.navigate('EducationRegister', { prev: 'EducationList' })
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}> 

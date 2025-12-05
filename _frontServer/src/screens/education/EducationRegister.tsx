@@ -4,9 +4,10 @@ import { FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as ImagePicker from 'expo-image-picker'
+import common from '../../data/common.json'
 
-type Category = 'ED' | 'IT' | 'DS' | 'MK'
-type SubCategory = 'ED01' | 'ED04' | 'IT01' | 'DS01' | 'MK01'
+type Category = string
+type SubCategory = string
 
 type Instructor = {
   id: number
@@ -37,6 +38,8 @@ export default function EducationRegistration() {
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState<Category>('ED')
   const [subCategory, setSubCategory] = useState<SubCategory>('ED04')
+  const [openMajor, setOpenMajor] = useState(false)
+  const [openSub, setOpenSub] = useState(false)
   const [features, setFeatures] = useState<string[]>(['신규', '온라인'])
   const [location, setLocation] = useState('')
   const [capacity, setCapacity] = useState<string>('')
@@ -66,6 +69,28 @@ export default function EducationRegistration() {
 
   const [targets, setTargets] = useState<string[]>(['클라우드 보안 전문가로 커리어 전환을 희망하는 분'])
   const [objectives, setObjectives] = useState<string[]>(['클라우드 보안의 기본 개념과 원리 이해'])
+
+  const majorOptions = useMemo(() => (common as any).majorCategories as Array<any>, [])
+  const subOptions = useMemo(() => ((common as any).middleCategories as Array<any>).filter((m) => m.majorCode === category), [category])
+  const categoryLabel = useMemo(() => {
+    const f = majorOptions.find((m) => m.code === category)
+    return f ? f.name : '분류 선택'
+  }, [category, majorOptions])
+  const subCategoryLabel = useMemo(() => {
+    const f = subOptions.find((m) => m.code === subCategory)
+    return f ? `${f.name} (${f.code})` : '세부 분류 선택'
+  }, [subCategory, subOptions])
+
+  const selectMajor = (code: string) => {
+    setCategory(code)
+    const nextSubs = ((common as any).middleCategories as Array<any>).filter((m) => m.majorCode === code)
+    setSubCategory(nextSubs[0]?.code ?? '')
+    setOpenMajor(false)
+  }
+  const selectSub = (code: string) => {
+    setSubCategory(code)
+    setOpenSub(false)
+  }
 
   const canSave = useMemo(() => {
     const cap = Number(capacity)
@@ -180,22 +205,40 @@ export default function EducationRegistration() {
           <View style={styles.formRow}>
             <View style={styles.formCol}>
               <Text style={styles.label}>분류</Text>
-              <View style={styles.chipRow}>
-                {(['ED','IT','DS','MK'] as Category[]).map((v) => (
-                  <TouchableOpacity key={`cat-${v}`} style={[styles.chip, category === v && styles.chipActive]} onPress={() => setCategory(v)}>
-                    <Text style={[styles.chipText, category === v && styles.chipTextActive]}>{v === 'ED' ? '교육/강의' : v === 'IT' ? 'IT/개발' : v === 'DS' ? '디자인' : '마케팅'}</Text>
-                  </TouchableOpacity>
-                ))}
+              <View style={styles.selector}>
+                <TouchableOpacity style={styles.selectorBox} activeOpacity={0.8} onPress={() => setOpenMajor((v) => !v)}>
+                  <Text style={styles.selectorText}>{categoryLabel}</Text>
+                  <FontAwesome5 name={openMajor ? 'chevron-up' : 'chevron-down'} size={14} color="#374151" />
+                </TouchableOpacity>
+                {openMajor && (
+                  <View style={styles.selectorList}>
+                    {majorOptions.map((m) => (
+                      <TouchableOpacity key={`major-${m.code}`} style={styles.selectorItem} onPress={() => selectMajor(m.code)}>
+                        <Text style={styles.selectorItemText}>{m.name}</Text>
+                        <Text style={styles.selectorItemCode}>{m.code}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
               </View>
             </View>
             <View style={styles.formCol}>
               <Text style={styles.label}>세부 분류</Text>
-              <View style={styles.chipRow}>
-                {(['ED04','ED01','IT01','DS01','MK01'] as SubCategory[]).map((v) => (
-                  <TouchableOpacity key={`sub-${v}`} style={[styles.chip, subCategory === v && styles.chipActive]} onPress={() => setSubCategory(v)}>
-                    <Text style={[styles.chipText, subCategory === v && styles.chipTextActive]}>{v}</Text>
-                  </TouchableOpacity>
-                ))}
+              <View style={styles.selector}>
+                <TouchableOpacity style={styles.selectorBox} activeOpacity={0.8} onPress={() => setOpenSub((v) => !v)}>
+                  <Text style={styles.selectorText}>{subCategoryLabel}</Text>
+                  <FontAwesome5 name={openSub ? 'chevron-up' : 'chevron-down'} size={14} color="#374151" />
+                </TouchableOpacity>
+                {openSub && (
+                  <View style={styles.selectorList}>
+                    {subOptions.map((s) => (
+                      <TouchableOpacity key={`sub-${s.code}`} style={styles.selectorItem} onPress={() => selectSub(s.code)}>
+                        <Text style={styles.selectorItemText}>{s.name}</Text>
+                        <Text style={styles.selectorItemCode}>{s.code}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
               </View>
             </View>
           </View>
@@ -417,6 +460,14 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 12, color: '#374151', fontWeight: '600' },
   chipTextActive: { color: '#FFFFFF' },
 
+  selector: { rowGap: 8 },
+  selectorBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: '#FFFFFF' },
+  selectorText: { fontSize: 14, color: '#111827', fontWeight: '600' },
+  selectorList: { borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 8, overflow: 'hidden', backgroundColor: '#FFFFFF' },
+  selectorItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+  selectorItemText: { fontSize: 14, color: '#111827' },
+  selectorItemCode: { fontSize: 12, color: '#6B7280' },
+
   dynamicItem: { flexDirection: 'row', alignItems: 'center', columnGap: 8, backgroundColor: '#F8FAFC', padding: 10, borderRadius: 8, borderWidth: 1, borderColor: '#E5E7EB' },
   selectBox: { width: 20, height: 20, borderRadius: 4, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#D1D5DB', alignItems: 'center', justifyContent: 'center' },
   selectBoxOn: { backgroundColor: '#2563EB', borderColor: '#2563EB' },
@@ -438,4 +489,3 @@ const styles = StyleSheet.create({
 
   fabRow: { position: 'absolute', left: 0, right: 0, bottom: 0, padding: 12, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#E5E7EB', flexDirection: 'row', columnGap: 8, justifyContent: 'flex-end' },
 })
-

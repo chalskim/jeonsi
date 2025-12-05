@@ -178,10 +178,6 @@ export default function EducationStudents() {
           </View>
         </View>
       </ScrollView>
-
-      <TouchableOpacity style={styles.fab} activeOpacity={0.85} onPress={() => Alert.alert('안내', '수강생 추가는 추후 제공됩니다.')}> 
-        <FontAwesome5 name="user-plus" size={18} color="#FFFFFF" />
-      </TouchableOpacity>
     </View>
   )
 }

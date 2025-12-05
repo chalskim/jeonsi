@@ -110,6 +110,57 @@ export default function SideMenu({ open, onClose, categories }: Props) {
                           onClose()
                           return
                         }
+                        if (item.label.includes('구인 목록 및 등록')) {
+                          navigation.navigate('RecruitmentList', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
+                        if (item.label.includes('일정관리(개인)')) {
+                          navigation.navigate('ScheduleManagerPersonal', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
+                        if (item.label.includes('일정관리(기업)')) {
+                          navigation.navigate('ScheduleManagerCorporate', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
+                        if (item.label.includes('북마크(개인)')) {
+                          navigation.navigate('BookmarkList', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
+                        if (item.label.includes('북마크(기업)')) {
+                          navigation.navigate('BookmarkList', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
+
+                        if (item.label.includes('개인 장바구니')) {
+                          navigation.navigate('ShoppingCartPersonal', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
+                        if (item.label.includes('기업 장바구니')) {
+                          navigation.navigate('ShoppingCartCorporate', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
+                        if (item.label.includes('설정')) {
+                          navigation.navigate('Settings', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
+                        if (item.label.includes('QA질문')) {
+                          navigation.navigate('FAQ', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
+                        if (item.label.includes('뉴스/공지 사항')) {
+                          navigation.navigate('NewsNoticeList', { prev: 'Home' } as never)
+                          onClose()
+                          return
+                        }
                       }}
                     >
                       <FontAwesome5 name={displayIcon as any} size={18} color="#0066CC" style={{ width: 24 }} />

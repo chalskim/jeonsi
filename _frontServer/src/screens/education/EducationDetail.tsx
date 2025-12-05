@@ -34,6 +34,10 @@ export default function EducationDetail() {
     return textbooks.reduce((sum, t) => sum + (t.selected ? t.price * t.qty : 0), 0)
   }, [textbooks])
 
+  const totalAmount = useMemo(() => {
+    return price + textbookTotal
+  }, [textbookTotal])
+
   const toggleTextbook = (id: number) => {
     setTextbooks((prev) => prev.map((t) => (t.id === id ? { ...t, selected: !t.selected } : t)))
   }
@@ -148,9 +152,14 @@ export default function EducationDetail() {
               </View>
             ))}
             <Text style={styles.textbookTotal}>교재 총액: {formatPrice(textbookTotal)}</Text>
+            <View style={styles.paymentSummary}>
+              <View style={styles.summaryRow}><Text style={styles.summaryLabel}>교육비</Text><Text style={styles.summaryValue}>{formatPrice(price)}</Text></View>
+              <View style={styles.summaryRow}><Text style={styles.summaryLabel}>교재비</Text><Text style={styles.summaryValue}>{formatPrice(textbookTotal)}</Text></View>
+              <View style={[styles.summaryRow, styles.summaryTotal]}><Text style={styles.summaryTotalLabel}>총 결제 금액</Text><Text style={styles.summaryTotalValue}>{formatPrice(totalAmount)}</Text></View>
+            </View>
           </View>
 
-          <TouchableOpacity style={styles.applyBtn} activeOpacity={0.85} onPress={() => navigation.navigate('ShortTermRequestsInput')}> 
+          <TouchableOpacity style={styles.applyBtn} activeOpacity={0.85} onPress={() => navigation.navigate('EducationApply', { order: { items: textbooks.filter((t) => t.selected), subtotal: price, totalAmount: totalAmount } })}> 
             <Text style={styles.applyBtnText}>신청하기</Text>
           </TouchableOpacity>
         </View>
@@ -298,9 +307,9 @@ export default function EducationDetail() {
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.fab} activeOpacity={0.85} onPress={() => navigation.navigate('ShortTermRequestsInput')}>
+      {/* <TouchableOpacity style={styles.fab} activeOpacity={0.85} onPress={() => navigation.navigate('ShortTermRequestsInput')}>
         <FontAwesome5 name="paper-plane" size={18} color="#FFFFFF" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   )
 }
@@ -347,6 +356,13 @@ const styles = StyleSheet.create({
   qtyText: { width: 26, textAlign: 'center', fontSize: 12, color: '#374151' },
   textbookPrice: { marginLeft: 8, fontSize: 13, color: '#2563EB', fontWeight: '700' },
   textbookTotal: { marginTop: 6, fontSize: 13, fontWeight: '700', textAlign: 'right', color: '#374151' },
+  paymentSummary: { marginTop: 8, backgroundColor: '#F8FAFC', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: '#E5E7EB' },
+  summaryRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  summaryLabel: { fontSize: 13, color: '#6B7280' },
+  summaryValue: { fontSize: 14, color: '#111827', fontWeight: '600' },
+  summaryTotal: { marginTop: 6, paddingTop: 6, borderTopWidth: 1, borderTopColor: '#E5E7EB' },
+  summaryTotalLabel: { fontSize: 14, color: '#111827', fontWeight: '700' },
+  summaryTotalValue: { fontSize: 16, color: '#2563EB', fontWeight: '700' },
 
   applyBtn: { marginTop: 12, backgroundColor: '#2563EB', paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
   applyBtnText: { color: '#FFFFFF', fontSize: 15, fontWeight: '700' },
