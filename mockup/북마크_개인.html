@@ -174,8 +174,8 @@
         }
         
         .bookmark-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            display: flex;
+            flex-direction: column;
             gap: 20px;
         }
         
@@ -388,7 +388,7 @@
         
         @media (max-width: 768px) {
             .bookmark-cards {
-                grid-template-columns: 1fr;
+                gap: 15px;
             }
             
             .filter-bar {
