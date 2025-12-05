@@ -1,0 +1,1373 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model User {
+  id                                                                          String                         @id @default(dbgenerated("uuid_generate_v4()")) @map("user_id") @db.Uuid
+  user_email                                                                  String                         @db.VarChar(255)
+  user_password_hash                                                          String
+  user_password_algo                                                          String                         @default("argon2id") @db.VarChar(32)
+  user_display_name                                                           String?                        @db.VarChar(100)
+  user_email_verified                                                         Boolean                        @default(false)
+  user_type                                                                   user_type                      @default(person)
+  user_state                                                                  code_state_enum                @default(active)
+  user_last_login                                                             DateTime?                      @db.Timestamptz(6)
+  createdAt                                                                   DateTime                       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                                                                   DateTime                       @default(now()) @map("updated_at") @db.Timestamptz(6)
+  user_deleted_at                                                             DateTime?                      @db.Timestamptz(6)
+  admin_user_role                                                             admin_user_role[]
+  cert_audit_announcement                                                     cert_audit_announcement[]
+  cert_code_cert_code_created_byTousers                                       cert_code[]                    @relation("cert_code_created_byTousers")
+  cert_code_cert_code_updated_byTousers                                       cert_code[]                    @relation("cert_code_updated_byTousers")
+  site_banner_site_banner_created_byTousers                                   site_banner[]                  @relation("site_banner_created_byTousers")
+  site_banner_site_banner_updated_byTousers                                   site_banner[]                  @relation("site_banner_updated_byTousers")
+  user_auth_provider                                                          user_auth_provider[]
+  user_bookmark_company                                                       user_bookmark_company[]
+  user_bookmark_personal                                                      user_bookmark_personal[]
+  user_cert_auditor_info                                                      user_cert_auditor_info[]
+  user_company                                                                user_company[]
+  user_company_certification_user_company_certification_created_byTousers     user_company_certification[]   @relation("user_company_certification_created_byTousers")
+  user_company_certification_user_company_certification_updated_byTousers     user_company_certification[]   @relation("user_company_certification_updated_byTousers")
+  user_company_contact_person_user_company_contact_person_created_byTousers   user_company_contact_person[]  @relation("user_company_contact_person_created_byTousers")
+  user_company_contact_person_user_company_contact_person_updated_byTousers   user_company_contact_person[]  @relation("user_company_contact_person_updated_byTousers")
+  user_email_verification                                                     user_email_verification[]
+  user_expert_education_info                                                  user_expert_education_info[]
+  user_expert_professional_info                                               user_expert_professional_info?
+  user_expert_recruitment                                                     user_expert_recruitment[]
+  user_file                                                                   user_file[]
+  user_login_log                                                              user_login_log[]
+  user_meta_code                                                              user_meta_code[]
+  user_password_reset                                                         user_password_reset[]
+  user_payment_company                                                        user_payment_company[]
+  user_payment_personal                                                       user_payment_personal[]
+  user_personal_user_personal_user_idTousers                                  user_personal?                 @relation("user_personal_user_idTousers")
+  user_personal_user_personal_created_byTousers                               user_personal[]                @relation("user_personal_created_byTousers")
+  user_personal_user_personal_updated_byTousers                               user_personal[]                @relation("user_personal_updated_byTousers")
+  user_personal_certificate_user_personal_certificate_created_byTousers       user_personal_certificate[]    @relation("user_personal_certificate_created_byTousers")
+  user_personal_certificate_user_personal_certificate_updated_byTousers       user_personal_certificate[]    @relation("user_personal_certificate_updated_byTousers")
+  user_personal_code_user_personal_code_created_byTousers                     user_personal_code[]           @relation("user_personal_code_created_byTousers")
+  user_personal_code_user_personal_code_updated_byTousers                     user_personal_code[]           @relation("user_personal_code_updated_byTousers")
+  user_personal_experience_user_personal_experience_created_byTousers         user_personal_experience[]     @relation("user_personal_experience_created_byTousers")
+  user_personal_experience_user_personal_experience_updated_byTousers         user_personal_experience[]     @relation("user_personal_experience_updated_byTousers")
+  user_qna_answer_user_qna_answer_user_idTousers                              user_qna_answer[]              @relation("user_qna_answer_user_idTousers")
+  user_qna_answer_user_qna_answer_uans_adopted_by_idTousers                   user_qna_answer[]              @relation("user_qna_answer_uans_adopted_by_idTousers")
+  user_qna_expert_request_user_qna_expert_request_expert_user_idTousers       user_qna_expert_request[]      @relation("user_qna_expert_request_expert_user_idTousers")
+  user_qna_expert_request_user_qna_expert_request_requested_by_user_idTousers user_qna_expert_request[]      @relation("user_qna_expert_request_requested_by_user_idTousers")
+  user_qna_private_user_qna_private_user_idTousers                            user_qna_private[]             @relation("user_qna_private_user_idTousers")
+  user_qna_private_user_qna_private_uqnp_expert_user_idTousers                user_qna_private[]             @relation("user_qna_private_uqnp_expert_user_idTousers")
+  user_qna_question                                                           user_qna_question[]
+  user_schedule_deadline                                                      user_schedule_deadline[]
+  user_schedule_event                                                         user_schedule_event[]
+  user_schedule_setting                                                       user_schedule_setting[]
+  user_session                                                                user_session[]
+  user_settings                                                               user_settings[]
+
+  @@map("users")
+  @@unique([user_email], map: "ux_users_email")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model admin_form {
+  adm_form_id      String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  adm_menu_id      String?            @db.Uuid
+  adm_form_code    String             @db.VarChar(64)
+  adm_form_name    String             @db.VarChar(255)
+  adm_form_desc    String?
+  adm_layout_gb    String             @default("FORM_LAYOUT") @db.VarChar(64)
+  adm_layout_key   String             @db.VarChar(64)
+  adm_state        code_state_enum    @default(active)
+  adm_remarks      String?
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime           @default(now()) @db.Timestamptz(6)
+  adm_deleted_at   DateTime?          @db.Timestamptz(6)
+  cert_code        cert_code          @relation(fields: [adm_layout_gb, adm_layout_key], references: [code_gb, code_key], map: "fk_admin_form_layout_code")
+  admin_menu       admin_menu?        @relation(fields: [adm_menu_id], references: [adm_menu_id], map: "fk_admin_form_menu")
+  admin_form_field admin_form_field[]
+
+  @@index([adm_menu_id], map: "idx_admin_form_menu")
+  @@index([adm_state], map: "idx_admin_form_state")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model admin_form_field {
+  adm_field_id                                                               String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  adm_form_id                                                                String          @db.Uuid
+  adm_field_seq                                                              Int             @default(1)
+  adm_field_key                                                              String          @db.VarChar(64)
+  adm_field_label                                                            String          @db.VarChar(255)
+  adm_field_type_gb                                                          String          @default("FORM_FIELD_TYPE") @db.VarChar(64)
+  adm_field_type_key                                                         String          @db.VarChar(64)
+  adm_widget_gb                                                              String?         @default("FIELD_WIDGET") @db.VarChar(64)
+  adm_widget_key                                                             String?         @db.VarChar(64)
+  adm_required                                                               Boolean         @default(false)
+  adm_placeholder                                                            String?         @db.VarChar(255)
+  adm_help_text                                                              String?
+  adm_default_value                                                          String?
+  adm_options_json                                                           Json?
+  adm_validations_json                                                       Json?
+  adm_state                                                                  code_state_enum @default(active)
+  adm_remarks                                                                String?
+  created_at                                                                 DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at                                                                 DateTime        @default(now()) @db.Timestamptz(6)
+  adm_deleted_at                                                             DateTime?       @db.Timestamptz(6)
+  admin_form                                                                 admin_form      @relation(fields: [adm_form_id], references: [adm_form_id], onDelete: Cascade, map: "fk_admin_form_field_form")
+  cert_code_admin_form_field_adm_field_type_gb_adm_field_type_keyTocert_code cert_code       @relation("admin_form_field_adm_field_type_gb_adm_field_type_keyTocert_code", fields: [adm_field_type_gb, adm_field_type_key], references: [code_gb, code_key], map: "fk_admin_form_field_type")
+  cert_code_admin_form_field_adm_widget_gb_adm_widget_keyTocert_code         cert_code?      @relation("admin_form_field_adm_widget_gb_adm_widget_keyTocert_code", fields: [adm_widget_gb, adm_widget_key], references: [code_gb, code_key], onDelete: Restrict, map: "fk_admin_form_field_widget")
+
+  @@index([adm_form_id, adm_field_seq], map: "idx_admin_form_field_seq")
+  @@index([adm_state], map: "idx_admin_form_field_state")
+}
+
+model admin_menu {
+  adm_menu_id       String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  adm_parent_id     String?           @db.Uuid
+  adm_menu_code     String            @db.VarChar(64)
+  adm_menu_name     String            @db.VarChar(255)
+  adm_route_path    String?           @db.VarChar(255)
+  adm_route_name    String?           @db.VarChar(255)
+  adm_icon          String?           @db.VarChar(100)
+  adm_display_order Int               @default(0)
+  adm_state         code_state_enum   @default(active)
+  adm_perm_id       String?           @db.Uuid
+  adm_remarks       String?
+  created_at        DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime          @default(now()) @db.Timestamptz(6)
+  adm_deleted_at    DateTime?         @db.Timestamptz(6)
+  admin_form        admin_form[]
+  admin_menu        admin_menu?       @relation("admin_menuToadmin_menu", fields: [adm_parent_id], references: [adm_menu_id], map: "fk_admin_menu_parent")
+  other_admin_menu  admin_menu[]      @relation("admin_menuToadmin_menu")
+  admin_permission  admin_permission? @relation(fields: [adm_perm_id], references: [adm_perm_id], map: "fk_admin_menu_perm")
+
+  @@index([adm_display_order], map: "idx_admin_menu_order")
+  @@index([adm_parent_id], map: "idx_admin_menu_parent")
+  @@index([adm_state], map: "idx_admin_menu_state")
+}
+
+model admin_permission {
+  adm_perm_id           String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  adm_perm_key          String                  @db.VarChar(64)
+  adm_perm_name         String                  @db.VarChar(255)
+  adm_perm_desc         String?
+  adm_state             code_state_enum         @default(active)
+  adm_remarks           String?
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  adm_deleted_at        DateTime?               @db.Timestamptz(6)
+  admin_menu            admin_menu[]
+  admin_role_permission admin_role_permission[]
+}
+
+model admin_role {
+  adm_role_id           String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  adm_role_key          String                  @db.VarChar(64)
+  adm_role_name         String                  @db.VarChar(255)
+  adm_role_desc         String?
+  adm_state             code_state_enum         @default(active)
+  adm_remarks           String?
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  adm_deleted_at        DateTime?               @db.Timestamptz(6)
+  admin_role_permission admin_role_permission[]
+  admin_user_role       admin_user_role[]
+}
+
+model admin_role_permission {
+  adm_rperm_id     String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  adm_role_id      String           @db.Uuid
+  adm_perm_id      String           @db.Uuid
+  created_at       DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime         @default(now()) @db.Timestamptz(6)
+  adm_deleted_at   DateTime?        @db.Timestamptz(6)
+  admin_permission admin_permission @relation(fields: [adm_perm_id], references: [adm_perm_id], onDelete: Cascade, map: "fk_admin_role_permission_perm")
+  admin_role       admin_role       @relation(fields: [adm_role_id], references: [adm_role_id], onDelete: Cascade, map: "fk_admin_role_permission_role")
+}
+
+model admin_user_role {
+  adm_urole_id   String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id        String     @db.Uuid
+  adm_role_id    String     @db.Uuid
+  created_at     DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime   @default(now()) @db.Timestamptz(6)
+  adm_deleted_at DateTime?  @db.Timestamptz(6)
+  admin_role     admin_role @relation(fields: [adm_role_id], references: [adm_role_id], onDelete: Cascade, map: "fk_admin_user_role_role")
+  users          User       @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_admin_user_role_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model cert_audit_announcement {
+  caan_id                                                                           String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                                                           String           @db.Uuid
+  caan_company_name                                                                 String
+  caan_project_title                                                                String
+  caan_cert_type_gb                                                                 String           @default("cert_type")
+  caan_cert_type_key                                                                String
+  caan_status                                                                       caan_status_enum @default(recruiting)
+  caan_deadline                                                                     DateTime         @db.Date
+  caan_region_gb                                                                    String           @default("region")
+  caan_region_key                                                                   String?
+  caan_budget_min                                                                   Decimal          @db.Decimal(12, 2)
+  caan_budget_max                                                                   Decimal          @db.Decimal(12, 2)
+  caan_currency_code                                                                String           @default("KRW")
+  caan_duration_text                                                                String
+  caan_duration_days                                                                Int?
+  caan_description                                                                  String
+  caan_requirements                                                                 Json             @default("[]")
+  caan_applications_count                                                           Int              @default(0)
+  created_at                                                                        DateTime         @default(now()) @db.Timestamp(6)
+  updated_at                                                                        DateTime         @default(now()) @db.Timestamp(6)
+  created_by                                                                        String?          @db.Uuid
+  updated_by                                                                        String?          @db.Uuid
+  deleted_at                                                                        DateTime?        @db.Timestamp(6)
+  cert_code_cert_audit_announcement_caan_cert_type_gb_caan_cert_type_keyTocert_code cert_code        @relation("cert_audit_announcement_caan_cert_type_gb_caan_cert_type_keyTocert_code", fields: [caan_cert_type_gb, caan_cert_type_key], references: [code_gb, code_key], onUpdate: NoAction, map: "fk_caan_cert_type")
+  cert_code_cert_audit_announcement_caan_region_gb_caan_region_keyTocert_code       cert_code?       @relation("cert_audit_announcement_caan_region_gb_caan_region_keyTocert_code", fields: [caan_region_gb, caan_region_key], references: [code_gb, code_key], onUpdate: NoAction, map: "fk_caan_region")
+  users                                                                             User             @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "fk_caan_user")
+
+  @@index([caan_requirements], map: "idx_caan_requirements_gin", type: Gin)
+}
+
+model cert_audit_application {
+  caap_id               String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  caan_id               String           @db.Uuid
+  user_id               String           @db.Uuid
+  caap_status           caap_status_enum @default(applied)
+  caap_application_date DateTime         @default(now()) @db.Date
+  caap_decision_date    DateTime?        @db.Date
+  caap_applied_budget   Decimal?         @db.Decimal(12, 2)
+  caap_currency_code    String           @default("KRW")
+  created_at            DateTime         @default(now()) @db.Timestamp(6)
+  updated_at            DateTime         @default(now()) @db.Timestamp(6)
+  created_by            String?          @db.Uuid
+  updated_by            String?          @db.Uuid
+  deleted_at            DateTime?        @db.Timestamp(6)
+}
+
+model cert_code {
+  code_id                                                                                                   String?                      @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  code_gb                                                                                                   String                       @db.VarChar(64)
+  code_key                                                                                                  String                       @db.VarChar(64)
+  code_name                                                                                                 String                       @db.VarChar(255)
+  code_value                                                                                                String?
+  display_order                                                                                             Int                          @default(0)
+  code_state                                                                                                code_state_enum              @default(active)
+  remarks                                                                                                   String?
+  code_crt_dt                                                                                               DateTime                     @default(now()) @db.Timestamptz(6)
+  code_udt_dt                                                                                               DateTime                     @default(now()) @db.Timestamptz(6)
+  code_del_dt                                                                                               DateTime?                    @db.Timestamptz(6)
+  created_by                                                                                                String?                      @db.Uuid
+  updated_by                                                                                                String?                      @db.Uuid
+  admin_form                                                                                                admin_form[]
+  admin_form_field_admin_form_field_adm_field_type_gb_adm_field_type_keyTocert_code                         admin_form_field[]           @relation("admin_form_field_adm_field_type_gb_adm_field_type_keyTocert_code")
+  admin_form_field_admin_form_field_adm_widget_gb_adm_widget_keyTocert_code                                 admin_form_field[]           @relation("admin_form_field_adm_widget_gb_adm_widget_keyTocert_code")
+  cert_audit_announcement_cert_audit_announcement_caan_cert_type_gb_caan_cert_type_keyTocert_code           cert_audit_announcement[]    @relation("cert_audit_announcement_caan_cert_type_gb_caan_cert_type_keyTocert_code")
+  cert_audit_announcement_cert_audit_announcement_caan_region_gb_caan_region_keyTocert_code                 cert_audit_announcement[]    @relation("cert_audit_announcement_caan_region_gb_caan_region_keyTocert_code")
+  users_cert_code_created_byTousers                                                                         User?                        @relation("cert_code_created_byTousers", fields: [created_by], references: [id], onUpdate: NoAction, map: "fk_cert_code_created_by")
+  users_cert_code_updated_byTousers                                                                         User?                        @relation("cert_code_updated_byTousers", fields: [updated_by], references: [id], onUpdate: NoAction, map: "fk_cert_code_updated_by")
+  site_banner_site_banner_bnr_channel_gb_bnr_channel_keyTocert_code                                         site_banner[]                @relation("site_banner_bnr_channel_gb_bnr_channel_keyTocert_code")
+  site_banner_site_banner_bnr_location_gb_bnr_location_keyTocert_code                                       site_banner[]                @relation("site_banner_bnr_location_gb_bnr_location_keyTocert_code")
+  site_banner_site_banner_bnr_state_gb_bnr_state_keyTocert_code                                             site_banner[]                @relation("site_banner_bnr_state_gb_bnr_state_keyTocert_code")
+  user_auth_provider                                                                                        user_auth_provider[]
+  user_bookmark_company_user_bookmark_company_ubmc_category_group_ubmc_category_codeTocert_code             user_bookmark_company[]      @relation("user_bookmark_company_ubmc_category_group_ubmc_category_codeTocert_code")
+  user_bookmark_company_user_bookmark_company_ubmc_subtype_group_ubmc_subtype_codeTocert_code               user_bookmark_company[]      @relation("user_bookmark_company_ubmc_subtype_group_ubmc_subtype_codeTocert_code")
+  user_bookmark_personal_user_bookmark_personal_ubmp_category_group_ubmp_category_codeTocert_code           user_bookmark_personal[]     @relation("user_bookmark_personal_ubmp_category_group_ubmp_category_codeTocert_code")
+  user_bookmark_personal_user_bookmark_personal_ubmp_status_group_ubmp_status_codeTocert_code               user_bookmark_personal[]     @relation("user_bookmark_personal_ubmp_status_group_ubmp_status_codeTocert_code")
+  user_bookmark_personal_user_bookmark_personal_ubmp_subtype_group_ubmp_subtype_codeTocert_code             user_bookmark_personal[]     @relation("user_bookmark_personal_ubmp_subtype_group_ubmp_subtype_codeTocert_code")
+  user_company_user_company_comp_employees_gb_comp_employees_keyTocert_code                                 user_company[]               @relation("user_company_comp_employees_gb_comp_employees_keyTocert_code")
+  user_company_user_company_comp_industry_gb_comp_industry_keyTocert_code                                   user_company[]               @relation("user_company_comp_industry_gb_comp_industry_keyTocert_code")
+  user_company_certification_user_company_certification_ccert_audit_type_gb_ccert_audit_type_keyTocert_code user_company_certification[] @relation("user_company_certification_ccert_audit_type_gb_ccert_audit_type_keyTocert_code")
+  user_company_certification_user_company_certification_ccert_level_gb_ccert_level_keyTocert_code           user_company_certification[] @relation("user_company_certification_ccert_level_gb_ccert_level_keyTocert_code")
+  user_company_certification_user_company_certification_ccert_type_gb_ccert_type_keyTocert_code             user_company_certification[] @relation("user_company_certification_ccert_type_gb_ccert_type_keyTocert_code")
+  user_login_log                                                                                            user_login_log[]
+  user_payment_company_user_payment_company_upmc_method_group_upmc_method_codeTocert_code                   user_payment_company[]       @relation("user_payment_company_upmc_method_group_upmc_method_codeTocert_code")
+  user_payment_company_user_payment_company_upmc_service_group_upmc_service_codeTocert_code                 user_payment_company[]       @relation("user_payment_company_upmc_service_group_upmc_service_codeTocert_code")
+  user_payment_company_user_payment_company_upmc_status_group_upmc_status_codeTocert_code                   user_payment_company[]       @relation("user_payment_company_upmc_status_group_upmc_status_codeTocert_code")
+  user_payment_personal_user_payment_personal_upmp_method_group_upmp_method_codeTocert_code                 user_payment_personal[]      @relation("user_payment_personal_upmp_method_group_upmp_method_codeTocert_code")
+  user_payment_personal_user_payment_personal_upmp_status_group_upmp_status_codeTocert_code                 user_payment_personal[]      @relation("user_payment_personal_upmp_status_group_upmp_status_codeTocert_code")
+  user_payment_personal_user_payment_personal_upmp_type_group_upmp_type_codeTocert_code                     user_payment_personal[]      @relation("user_payment_personal_upmp_type_group_upmp_type_codeTocert_code")
+  user_personal_certificate_user_personal_certificate_pcert_status_gb_pcert_status_keyTocert_code           user_personal_certificate[]  @relation("user_personal_certificate_pcert_status_gb_pcert_status_keyTocert_code")
+  user_personal_certificate_user_personal_certificate_pcert_code_gb_pcert_code_keyTocert_code               user_personal_certificate[]  @relation("user_personal_certificate_pcert_code_gb_pcert_code_keyTocert_code")
+  user_personal_code                                                                                        user_personal_code[]
+  user_qna_answer                                                                                           user_qna_answer[]
+  user_qna_expert_request                                                                                   user_qna_expert_request[]
+  user_qna_private                                                                                          user_qna_private[]
+  user_qna_question_user_qna_question_uqna_category_gb_uqna_category_keyTocert_code                         user_qna_question[]          @relation("user_qna_question_uqna_category_gb_uqna_category_keyTocert_code")
+  user_qna_question_user_qna_question_uqna_status_gb_uqna_status_keyTocert_code                             user_qna_question[]          @relation("user_qna_question_uqna_status_gb_uqna_status_keyTocert_code")
+  user_schedule_deadline                                                                                    user_schedule_deadline[]
+  user_schedule_event_user_schedule_event_usce_region_group_usce_region_codeTocert_code                     user_schedule_event[]        @relation("user_schedule_event_usce_region_group_usce_region_codeTocert_code")
+  user_schedule_event_user_schedule_event_usce_type_group_usce_type_codeTocert_code                         user_schedule_event[]        @relation("user_schedule_event_usce_type_group_usce_type_codeTocert_code")
+  user_settings_def_user_settings_def_usdf_group_gb_usdf_group_keyTocert_code                               user_settings_def[]          @relation("user_settings_def_usdf_group_gb_usdf_group_keyTocert_code")
+  user_settings_def_user_settings_def_usdf_key_gb_usdf_keyTocert_code                                       user_settings_def[]          @relation("user_settings_def_usdf_key_gb_usdf_keyTocert_code")
+  user_settings_def_user_settings_def_usdf_type_gb_usdf_type_keyTocert_code                                 user_settings_def[]          @relation("user_settings_def_usdf_type_gb_usdf_type_keyTocert_code")
+
+  @@id([code_gb, code_key])
+  @@index([code_gb], map: "idx_cert_code_gb")
+  @@index([code_state], map: "idx_cert_code_state")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model site_banner {
+  bnr_id                                                            String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  bnr_title                                                         String     @db.VarChar(255)
+  bnr_description                                                   String?    @db.VarChar(1000)
+  bnr_button_text                                                   String?    @db.VarChar(100)
+  bnr_link_url                                                      String?    @db.VarChar(1024)
+  bnr_image_url                                                     String?    @db.VarChar(1024)
+  bnr_image_ref                                                     String?    @db.VarChar(64)
+  bnr_start_date                                                    DateTime   @db.Date
+  bnr_end_date                                                      DateTime   @db.Date
+  bnr_slot                                                          Int        @default(1)
+  bnr_channel_gb                                                    String?    @default("BANNER_CHANNEL") @db.VarChar(64)
+  bnr_channel_key                                                   String?    @db.VarChar(64)
+  bnr_location_gb                                                   String?    @default("BANNER_LOCATION") @db.VarChar(64)
+  bnr_location_key                                                  String?    @db.VarChar(64)
+  bnr_state_gb                                                      String?    @default("BANNER_STATE") @db.VarChar(64)
+  bnr_state_key                                                     String?    @db.VarChar(64)
+  bnr_display_order                                                 Int        @default(0)
+  bnr_is_active                                                     Boolean    @default(true)
+  created_by                                                        String?    @db.Uuid
+  updated_by                                                        String?    @db.Uuid
+  bnr_created_at                                                    DateTime   @default(now()) @db.Timestamptz(6)
+  bnr_updated_at                                                    DateTime   @default(now()) @db.Timestamptz(6)
+  bnr_deleted_at                                                    DateTime?  @db.Timestamptz(6)
+  cert_code_site_banner_bnr_channel_gb_bnr_channel_keyTocert_code   cert_code? @relation("site_banner_bnr_channel_gb_bnr_channel_keyTocert_code", fields: [bnr_channel_gb, bnr_channel_key], references: [code_gb, code_key], onDelete: Restrict, map: "fk_site_banner_channel")
+  cert_code_site_banner_bnr_location_gb_bnr_location_keyTocert_code cert_code? @relation("site_banner_bnr_location_gb_bnr_location_keyTocert_code", fields: [bnr_location_gb, bnr_location_key], references: [code_gb, code_key], onDelete: Restrict, map: "fk_site_banner_location")
+  cert_code_site_banner_bnr_state_gb_bnr_state_keyTocert_code       cert_code? @relation("site_banner_bnr_state_gb_bnr_state_keyTocert_code", fields: [bnr_state_gb, bnr_state_key], references: [code_gb, code_key], onDelete: Restrict, map: "fk_site_banner_state")
+  users_site_banner_created_byTousers                               User?      @relation("site_banner_created_byTousers", fields: [created_by], references: [id], onUpdate: NoAction)
+  users_site_banner_updated_byTousers                               User?      @relation("site_banner_updated_byTousers", fields: [updated_by], references: [id], onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_auth_provider {
+  uaprov_id           String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id             String          @db.Uuid
+  uaprov_gb           String          @default("AUTH_PROVIDER") @db.VarChar(64)
+  uaprov_key          String          @db.VarChar(64)
+  uaprov_user_id      String          @db.VarChar(255)
+  uaprov_email        String?         @db.VarChar(255)
+  uaprov_display_name String?         @db.VarChar(255)
+  uaprov_avatar_url   String?         @db.VarChar(1024)
+  uaprov_meta_json    Json?
+  uaprov_state        code_state_enum @default(active)
+  created_at          DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime        @default(now()) @db.Timestamptz(6)
+  uaprov_deleted_at   DateTime?       @db.Timestamptz(6)
+  cert_code           cert_code       @relation(fields: [uaprov_gb, uaprov_key], references: [code_gb, code_key], map: "fk_user_auth_provider_code")
+  users               User            @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_user_auth_provider_user")
+
+  @@index([user_id], map: "idx_user_auth_provider_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_bookmark_company {
+  ubmc_id                                                                           String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                                                           String     @db.Uuid
+  ubmc_owner_type                                                                   String     @db.VarChar(50)
+  ubmc_owner_id                                                                     String     @db.Uuid
+  ubmc_category_group                                                               String     @default("BOOKMARK_CATEGORY") @db.VarChar(64)
+  ubmc_category_code                                                                String     @db.VarChar(64)
+  ubmc_subtype_group                                                                String?    @db.VarChar(64)
+  ubmc_subtype_code                                                                 String?    @db.VarChar(64)
+  ubmc_title                                                                        String     @db.VarChar(255)
+  ubmc_source_text                                                                  String?    @db.VarChar(100)
+  ubmc_location_text                                                                String?    @db.VarChar(100)
+  ubmc_date                                                                         DateTime?  @db.Timestamptz(6)
+  ubmc_tags                                                                         Json       @default("[]")
+  ubmc_star                                                                         Boolean    @default(false)
+  ubmc_note                                                                         String?
+  ubmc_rating                                                                       Decimal?   @db.Decimal(2, 1)
+  ubmc_reviews                                                                      Int?
+  ubmc_projects                                                                     Int?
+  ubmc_experience_text                                                              String?    @db.VarChar(50)
+  ubmc_created_at                                                                   DateTime   @default(now()) @db.Timestamptz(6)
+  ubmc_updated_at                                                                   DateTime   @default(now()) @db.Timestamptz(6)
+  ubmc_deleted_at                                                                   DateTime?  @db.Timestamptz(6)
+  cert_code_user_bookmark_company_ubmc_category_group_ubmc_category_codeTocert_code cert_code  @relation("user_bookmark_company_ubmc_category_group_ubmc_category_codeTocert_code", fields: [ubmc_category_group, ubmc_category_code], references: [code_gb, code_key], map: "fk_user_bookmark_company_category")
+  cert_code_user_bookmark_company_ubmc_subtype_group_ubmc_subtype_codeTocert_code   cert_code? @relation("user_bookmark_company_ubmc_subtype_group_ubmc_subtype_codeTocert_code", fields: [ubmc_subtype_group, ubmc_subtype_code], references: [code_gb, code_key], onDelete: Restrict, map: "fk_user_bookmark_company_subtype")
+  users                                                                             User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_bookmark_company_user")
+
+  @@index([ubmc_tags], map: "gin_user_bookmark_company_tags", type: Gin)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_bookmark_personal {
+  ubmp_id                                                                            String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                                                            String     @db.Uuid
+  ubmp_owner_type                                                                    String     @db.VarChar(50)
+  ubmp_owner_id                                                                      String     @db.Uuid
+  ubmp_category_group                                                                String     @default("BOOKMARK_CATEGORY") @db.VarChar(64)
+  ubmp_category_code                                                                 String     @db.VarChar(64)
+  ubmp_subtype_group                                                                 String?    @db.VarChar(64)
+  ubmp_subtype_code                                                                  String?    @db.VarChar(64)
+  ubmp_status_group                                                                  String?    @db.VarChar(64)
+  ubmp_status_code                                                                   String?    @db.VarChar(64)
+  ubmp_title                                                                         String     @db.VarChar(255)
+  ubmp_source_text                                                                   String?    @db.VarChar(100)
+  ubmp_location_text                                                                 String?    @db.VarChar(100)
+  ubmp_amount_text                                                                   String?    @db.VarChar(100)
+  ubmp_date                                                                          DateTime?  @db.Timestamptz(6)
+  ubmp_tags                                                                          Json       @default("[]")
+  ubmp_star                                                                          Boolean    @default(false)
+  ubmp_note                                                                          String?
+  ubmp_created_at                                                                    DateTime   @default(now()) @db.Timestamptz(6)
+  ubmp_updated_at                                                                    DateTime   @default(now()) @db.Timestamptz(6)
+  ubmp_deleted_at                                                                    DateTime?  @db.Timestamptz(6)
+  cert_code_user_bookmark_personal_ubmp_category_group_ubmp_category_codeTocert_code cert_code  @relation("user_bookmark_personal_ubmp_category_group_ubmp_category_codeTocert_code", fields: [ubmp_category_group, ubmp_category_code], references: [code_gb, code_key], map: "fk_user_bookmark_personal_category")
+  cert_code_user_bookmark_personal_ubmp_status_group_ubmp_status_codeTocert_code     cert_code? @relation("user_bookmark_personal_ubmp_status_group_ubmp_status_codeTocert_code", fields: [ubmp_status_group, ubmp_status_code], references: [code_gb, code_key], onDelete: Restrict, map: "fk_user_bookmark_personal_status")
+  cert_code_user_bookmark_personal_ubmp_subtype_group_ubmp_subtype_codeTocert_code   cert_code? @relation("user_bookmark_personal_ubmp_subtype_group_ubmp_subtype_codeTocert_code", fields: [ubmp_subtype_group, ubmp_subtype_code], references: [code_gb, code_key], onDelete: Restrict, map: "fk_user_bookmark_personal_subtype")
+  users                                                                              User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_bookmark_personal_user")
+
+  @@index([ubmp_tags], map: "gin_user_bookmark_personal_tags", type: Gin)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_cert_auditor_info {
+  caui_id              String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id              String             @db.Uuid
+  caui_certifications  Json               @default("[]")
+  caui_expertise_codes Json               @default("[]")
+  caui_experiences     Json               @default("[]")
+  caui_regions         Json               @default("[]")
+  caui_fee_type        caui_fee_type_enum
+  caui_min_fee         Int
+  caui_max_fee         Int
+  caui_fee_currency    String             @default("KRW") @db.Char(3)
+  caui_created_at      DateTime           @default(now()) @db.Timestamptz(6)
+  caui_updated_at      DateTime           @default(now()) @db.Timestamptz(6)
+  caui_deleted_at      DateTime?          @db.Timestamptz(6)
+  users                User               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_cert_auditor_info_user")
+
+  @@index([caui_certifications], map: "gin_user_cert_auditor_info_certifications", type: Gin)
+  @@index([caui_experiences], map: "gin_user_cert_auditor_info_experiences", type: Gin)
+  @@index([caui_expertise_codes], map: "gin_user_cert_auditor_info_expertise", type: Gin)
+  @@index([caui_regions], map: "gin_user_cert_auditor_info_regions", type: Gin)
+  @@index([caui_fee_type], map: "idx_user_cert_auditor_info_fee_type")
+  @@index([user_id], map: "idx_user_cert_auditor_info_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_company {
+  comp_id                                                                String                        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                                                String                        @db.Uuid
+  comp_name                                                              String
+  comp_biz_reg_no                                                        String                        @unique(map: "uq_user_company_biz_reg_no")
+  comp_ceo_name                                                          String
+  comp_establish_date                                                    DateTime                      @db.Date
+  comp_industry_gb                                                       String                        @default("INDUSTRY")
+  comp_industry_key                                                      String
+  comp_employees_gb                                                      String                        @default("EMP_SIZE")
+  comp_employees_key                                                     String
+  comp_postcode                                                          String?
+  comp_address                                                           String
+  comp_address_detail                                                    String?
+  comp_contact_person                                                    String
+  comp_contact_email                                                     String
+  comp_contact_phone                                                     String
+  comp_contact_persons_json                                              Json                          @default("[]")
+  comp_industry_tags_json                                                Json                          @default("[]")
+  comp_selected_cert_types_json                                          Json                          @default("[]")
+  comp_cert_infos_json                                                   Json                          @default("[]")
+  comp_terms1                                                            Boolean                       @default(false)
+  comp_terms2                                                            Boolean                       @default(false)
+  comp_terms3                                                            Boolean                       @default(false)
+  comp_terms_agreed_at                                                   DateTime?                     @db.Timestamptz(6)
+  comp_profile_state                                                     comp_profile_state            @default(draft)
+  comp_created_at                                                        DateTime                      @default(now()) @db.Timestamptz(6)
+  comp_updated_at                                                        DateTime                      @default(now()) @db.Timestamptz(6)
+  cert_code_user_company_comp_employees_gb_comp_employees_keyTocert_code cert_code                     @relation("user_company_comp_employees_gb_comp_employees_keyTocert_code", fields: [comp_employees_gb, comp_employees_key], references: [code_gb, code_key], map: "fk_user_company_employees_code")
+  cert_code_user_company_comp_industry_gb_comp_industry_keyTocert_code   cert_code                     @relation("user_company_comp_industry_gb_comp_industry_keyTocert_code", fields: [comp_industry_gb, comp_industry_key], references: [code_gb, code_key], map: "fk_user_company_industry_code")
+  users                                                                  User                          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_company_certification                                             user_company_certification[]
+  user_company_contact_person                                            user_company_contact_person[]
+  user_expert_recruitment                                                user_expert_recruitment[]
+
+  @@index([comp_cert_infos_json], map: "idx_user_company_cert_infos_gin", type: Gin)
+  @@index([comp_contact_persons_json], map: "idx_user_company_contact_persons_gin", type: Gin)
+  @@index([comp_employees_gb, comp_employees_key], map: "idx_user_company_employees_code")
+  @@index([comp_industry_gb, comp_industry_key], map: "idx_user_company_industry_code")
+  @@index([comp_industry_tags_json], map: "idx_user_company_industry_tags_gin", type: Gin)
+  @@index([comp_selected_cert_types_json], map: "idx_user_company_selected_cert_types_gin", type: Gin)
+  @@index([user_id], map: "idx_user_company_user_id")
+}
+
+model user_company_certification {
+  ccert_id                                                                                 String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  comp_id                                                                                  String       @db.Uuid
+  ccert_type_gb                                                                            String       @default("CERT_TYPE")
+  ccert_type_key                                                                           String
+  ccert_type_label                                                                         String?
+  ccert_level_gb                                                                           String       @default("CERT_LEVEL")
+  ccert_level_key                                                                          String?
+  ccert_level_label                                                                        String?
+  ccert_audit_type_gb                                                                      String       @default("AUDIT_TYPE")
+  ccert_audit_type_key                                                                     String?
+  ccert_audit_type_label                                                                   String?
+  ccert_scope                                                                              String?
+  ccert_desired_date                                                                       DateTime?    @db.Date
+  ccert_seq                                                                                Int          @default(1)
+  created_by                                                                               String?      @db.Uuid
+  updated_by                                                                               String?      @db.Uuid
+  ccert_created_at                                                                         DateTime     @default(now()) @db.Timestamptz(6)
+  ccert_updated_at                                                                         DateTime     @default(now()) @db.Timestamptz(6)
+  ccert_deleted_at                                                                         DateTime?    @db.Timestamptz(6)
+  cert_code_user_company_certification_ccert_audit_type_gb_ccert_audit_type_keyTocert_code cert_code?   @relation("user_company_certification_ccert_audit_type_gb_ccert_audit_type_keyTocert_code", fields: [ccert_audit_type_gb, ccert_audit_type_key], references: [code_gb, code_key], onDelete: SetNull, map: "fk_ccert_audit_type_code")
+  cert_code_user_company_certification_ccert_level_gb_ccert_level_keyTocert_code           cert_code?   @relation("user_company_certification_ccert_level_gb_ccert_level_keyTocert_code", fields: [ccert_level_gb, ccert_level_key], references: [code_gb, code_key], onDelete: SetNull, map: "fk_ccert_level_code")
+  cert_code_user_company_certification_ccert_type_gb_ccert_type_keyTocert_code             cert_code    @relation("user_company_certification_ccert_type_gb_ccert_type_keyTocert_code", fields: [ccert_type_gb, ccert_type_key], references: [code_gb, code_key], map: "fk_ccert_type_code")
+  user_company                                                                             user_company @relation(fields: [comp_id], references: [comp_id], onDelete: Cascade, onUpdate: NoAction)
+  users_user_company_certification_created_byTousers                                       User?        @relation("user_company_certification_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_user_company_certification_updated_byTousers                                       User?        @relation("user_company_certification_updated_byTousers", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([ccert_audit_type_gb, ccert_audit_type_key], map: "idx_ccert_audit_code")
+  @@index([comp_id], map: "idx_ccert_comp_id")
+  @@index([ccert_level_gb, ccert_level_key], map: "idx_ccert_level_code")
+  @@index([ccert_type_gb, ccert_type_key], map: "idx_ccert_type_code")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_company_contact_person {
+  cper_id                                             String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  comp_id                                             String       @db.Uuid
+  cper_name                                           String
+  cper_position                                       String?
+  cper_email                                          String
+  cper_phone                                          String
+  cper_is_primary                                     Boolean      @default(false)
+  cper_seq                                            Int          @default(1)
+  created_by                                          String?      @db.Uuid
+  updated_by                                          String?      @db.Uuid
+  cper_created_at                                     DateTime     @default(now()) @db.Timestamptz(6)
+  cper_updated_at                                     DateTime     @default(now()) @db.Timestamptz(6)
+  cper_deleted_at                                     DateTime?    @db.Timestamptz(6)
+  user_company                                        user_company @relation(fields: [comp_id], references: [comp_id], onDelete: Cascade, onUpdate: NoAction)
+  users_user_company_contact_person_created_byTousers User?        @relation("user_company_contact_person_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_user_company_contact_person_updated_byTousers User?        @relation("user_company_contact_person_updated_byTousers", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([comp_id], map: "idx_cper_comp_id")
+}
+
+model user_email_verification {
+  ueverify_id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id             String    @db.Uuid
+  ueverify_token_hash String
+  ueverify_expires_at DateTime  @db.Timestamptz(6)
+  ueverify_used_at    DateTime? @db.Timestamptz(6)
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime  @default(now()) @db.Timestamptz(6)
+  ueverify_deleted_at DateTime? @db.Timestamptz(6)
+  users               User      @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_user_email_verification_user")
+
+  @@index([ueverify_expires_at], map: "idx_user_email_verification_exp")
+  @@index([user_id], map: "idx_user_email_verification_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_expert_education_info {
+  exed_id                  String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                  String           @db.Uuid
+  exed_institution_name    String           @db.VarChar(255)
+  exed_representative_name String?          @db.VarChar(100)
+  exed_contact_number      String           @db.VarChar(20)
+  exed_address             String?          @db.VarChar(255)
+  exed_institution_intro   String?
+  exed_course_name         String           @db.VarChar(255)
+  exed_course_overview     String?
+  exed_curriculum          String
+  exed_location            String?          @db.VarChar(100)
+  exed_total_hours         Int
+  exed_duration            String?          @db.VarChar(50)
+  exed_method              exed_method_enum
+  exed_level               exed_level_enum
+  exed_tuition_fee         Decimal          @db.Decimal(12, 2)
+  exed_currency_code       String           @default("KRW") @db.Char(3)
+  exed_government_support  Boolean          @default(false)
+  exed_capacity            Int
+  exed_schedules           Json             @default("[]")
+  exed_instructors         Json             @default("[]")
+  exed_cert_issuance       Boolean          @default(false)
+  exed_state               code_state_enum  @default(active)
+  created_at               DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime         @default(now()) @db.Timestamptz(6)
+  deleted_at               DateTime?        @db.Timestamptz(6)
+  users                    User             @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_exed_user")
+
+  @@index([exed_instructors], map: "gin_exed_instructors", type: Gin)
+  @@index([exed_schedules], map: "gin_exed_schedules", type: Gin)
+  @@index([exed_state], map: "idx_exed_state")
+  @@index([user_id], map: "idx_exed_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_expert_professional_info {
+  expf_id                    String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                    String                @unique(map: "uq_expf_user_unique") @db.Uuid
+  expf_name                  String                @db.VarChar(100)
+  expf_introduction          String
+  expf_expertise             Json                  @default("[]")
+  expf_other_expertise       String?               @db.VarChar(100)
+  expf_services              Json                  @default("[]")
+  expf_experience_years_text String                @db.VarChar(50)
+  expf_experience_years_min  Int?                  @db.SmallInt
+  expf_experience_years_max  Int?                  @db.SmallInt
+  expf_prev_workplaces       Json?                 @default("[]")
+  expf_portfolio_desc        String?
+  expf_rate_type             expert_rate_type_enum
+  expf_hourly_rate           Decimal?              @db.Decimal(12, 2)
+  expf_daily_rate            Decimal?              @db.Decimal(12, 2)
+  expf_project_rate          Decimal?              @db.Decimal(12, 2)
+  expf_currency_code         String                @default("KRW") @db.Char(3)
+  expf_regions               Json?                 @default("[]")
+  expf_availability_days     Json?                 @default("[]")
+  expf_time_slots            Json?                 @default("[]")
+  expf_languages             Json?                 @default("[]")
+  expf_state                 code_state_enum       @default(active)
+  created_at                 DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime              @default(now()) @db.Timestamptz(6)
+  deleted_at                 DateTime?             @db.Timestamptz(6)
+  users                      User                  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_expf_user")
+
+  @@index([expf_availability_days], map: "idx_expf_availability_days_gin", type: Gin)
+  @@index([expf_expertise], map: "idx_expf_expertise_gin", type: Gin)
+  @@index([expf_languages], map: "idx_expf_languages_gin", type: Gin)
+  @@index([expf_prev_workplaces], map: "idx_expf_prev_workplaces_gin", type: Gin)
+  @@index([expf_regions], map: "idx_expf_regions_gin", type: Gin)
+  @@index([expf_services], map: "idx_expf_services_gin", type: Gin)
+  @@index([expf_state], map: "idx_expf_state")
+  @@index([expf_time_slots], map: "idx_expf_time_slots_gin", type: Gin)
+  @@index([user_id], map: "idx_expf_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_expert_recruitment {
+  expr_id                            String                               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                            String                               @db.Uuid
+  expr_posting_state                 expr_posting_state                   @default(draft)
+  expr_company_info_mode             expr_company_info_mode               @default(manual)
+  expr_position                      String                               @db.VarChar(255)
+  expr_experience                    String                               @db.VarChar(255)
+  expr_education                     String                               @db.VarChar(255)
+  expr_requirements                  String
+  expr_preferences                   String?
+  expr_salary_type                   expr_salary_type
+  expr_salary_range                  String                               @db.VarChar(255)
+  expr_employment_type               expr_employment_type
+  expr_work_hours                    String?                              @db.VarChar(255)
+  expr_work_days                     String?                              @db.VarChar(255)
+  expr_work_location                 String?                              @db.VarChar(255)
+  expr_deadline_date                 DateTime                             @db.Date
+  expr_is_urgent                     Boolean                              @default(false)
+  expr_inquiry_enabled               Boolean                              @default(true)
+  expr_main_tasks                    String
+  expr_project_details               String?
+  expr_comp_id                       String?                              @db.Uuid
+  expr_comp_name                     String?                              @db.VarChar(255)
+  expr_comp_website                  String?                              @db.VarChar(255)
+  expr_comp_founded                  String?                              @db.VarChar(64)
+  expr_comp_size                     String?                              @db.VarChar(64)
+  expr_comp_verified                 Boolean                              @default(false)
+  expr_certifications_json           Json                                 @default("[]")
+  expr_tech_stack_json               Json                                 @default("[]")
+  expr_benefits_json                 Json                                 @default("[]")
+  expr_extras_json                   Json                                 @default("[]")
+  created_at                         DateTime                             @default(now()) @db.Timestamptz(6)
+  updated_at                         DateTime                             @default(now()) @db.Timestamptz(6)
+  deleted_at                         DateTime?                            @db.Timestamptz(6)
+  user_company                       user_company?                        @relation(fields: [expr_comp_id], references: [comp_id], onUpdate: NoAction, map: "fk_user_expert_recruitment_company")
+  users                              User                                 @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_expert_recruitment_user")
+  user_expert_recruitment_experience user_expert_recruitment_experience[]
+
+  @@index([expr_benefits_json], map: "idx_expr_benefits_gin", type: Gin)
+  @@index([expr_certifications_json], map: "idx_expr_certifications_gin", type: Gin)
+  @@index([expr_tech_stack_json], map: "idx_expr_tech_stack_gin", type: Gin)
+  @@index([expr_deadline_date], map: "idx_user_expert_recruitment_deadline")
+  @@index([expr_posting_state], map: "idx_user_expert_recruitment_state")
+  @@index([user_id], map: "idx_user_expert_recruitment_user_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_expert_recruitment_experience {
+  rexp_id                 String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  expr_id                 String                  @db.Uuid
+  rexp_title              String                  @db.VarChar(150)
+  rexp_company            String                  @db.VarChar(150)
+  rexp_start_date         DateTime?               @db.Date
+  rexp_end_date           DateTime?               @db.Date
+  rexp_description        String?
+  rexp_seq                Int                     @default(1) @db.SmallInt
+  rexp_state              code_state_enum         @default(active)
+  created_at              DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime                @default(now()) @db.Timestamptz(6)
+  deleted_at              DateTime?               @db.Timestamptz(6)
+  user_expert_recruitment user_expert_recruitment @relation(fields: [expr_id], references: [expr_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_rexp_expr")
+
+  @@index([expr_id], map: "idx_rexp_expr_id")
+  @@index([rexp_state], map: "idx_rexp_state")
+}
+
+model user_file {
+  ufile_autho_id      String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id             String    @db.Uuid
+  owner_type          String    @db.VarChar(50)
+  owner_id            String    @db.Uuid
+  ufile_code          String    @db.VarChar(50)
+  ufile_seq           Int       @default(1)
+  ufile_name          String    @db.VarChar(255)
+  ufile_path          String    @db.VarChar(1024)
+  ufile_original_name String    @db.VarChar(255)
+  mime_type           String?   @db.VarChar(100)
+  file_size           Int?
+  ufile_update        DateTime? @default(now()) @db.Timestamp(6)
+  ufile_delete        DateTime? @db.Timestamp(6)
+  created_at          DateTime  @default(now()) @db.Timestamp(6)
+  updated_at          DateTime  @default(now()) @db.Timestamp(6)
+  users               User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_file_user")
+
+  @@unique([owner_type, owner_id, ufile_code, ufile_seq], map: "ux_user_file_owner_code_seq")
+  @@index([ufile_code], map: "idx_user_file_code")
+  @@index([owner_type, owner_id], map: "idx_user_file_owner")
+  @@index([user_id], map: "idx_user_file_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_login_log {
+  ullog_id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id          String    @db.Uuid
+  ullog_login_at   DateTime  @default(now()) @db.Timestamptz(6)
+  ullog_success    Boolean   @default(true)
+  ullog_method_gb  String    @default("LOGIN_METHOD") @db.VarChar(64)
+  ullog_method_key String    @db.VarChar(64)
+  ullog_ip         String?   @db.VarChar(64)
+  ullog_user_agent String?   @db.VarChar(255)
+  ullog_error_code String?   @db.VarChar(64)
+  ullog_error_msg  String?
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime  @default(now()) @db.Timestamptz(6)
+  ullog_deleted_at DateTime? @db.Timestamptz(6)
+  cert_code        cert_code @relation(fields: [ullog_method_gb, ullog_method_key], references: [code_gb, code_key], map: "fk_user_login_log_method")
+  users            User      @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_user_login_log_user")
+
+  @@index([ullog_login_at], map: "idx_user_login_log_at")
+  @@index([user_id], map: "idx_user_login_log_user")
+}
+
+model user_meta_code {
+  mcode_id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  mcode_user_id    String    @db.Uuid
+  mcode_gubun_code String    @db.VarChar(50)
+  mcode_seq        Int       @default(1)
+  mcode_mdata_text String    @db.VarChar(255)
+  mcode_mdata_code String?   @db.VarChar(50)
+  mdata_update     DateTime? @default(now()) @db.Timestamp(6)
+  mdata_delete     DateTime? @db.Timestamp(6)
+  created_at       DateTime  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime  @default(now()) @db.Timestamp(6)
+  users            User      @relation(fields: [mcode_user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_meta_code_user")
+
+  @@index([mcode_gubun_code], map: "idx_user_meta_code_gubun")
+  @@index([mcode_user_id], map: "idx_user_meta_code_user")
+  @@index([mcode_user_id, mcode_gubun_code], map: "idx_user_meta_code_user_gubun")
+}
+
+model user_password_reset {
+  uprst_id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id          String    @db.Uuid
+  uprst_token_hash String
+  uprst_expires_at DateTime  @db.Timestamptz(6)
+  uprst_used_at    DateTime? @db.Timestamptz(6)
+  uprst_request_ip String?   @db.VarChar(64)
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime  @default(now()) @db.Timestamptz(6)
+  uprst_deleted_at DateTime? @db.Timestamptz(6)
+  users            User      @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_user_password_reset_user")
+
+  @@index([uprst_expires_at], map: "idx_user_password_reset_exp")
+  @@index([user_id], map: "idx_user_password_reset_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_payment_company {
+  upmc_id                                                                        String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                                                        String     @db.Uuid
+  upmc_owner_type                                                                String     @db.VarChar(50)
+  upmc_owner_id                                                                  String     @db.Uuid
+  upmc_service_group                                                             String?    @db.VarChar(64)
+  upmc_service_code                                                              String?    @db.VarChar(64)
+  upmc_status_group                                                              String     @default("PAYMENT_STATUS") @db.VarChar(64)
+  upmc_status_code                                                               String     @db.VarChar(64)
+  upmc_method_group                                                              String?    @db.VarChar(64)
+  upmc_method_code                                                               String?    @db.VarChar(64)
+  upmc_service_title                                                             String     @db.VarChar(255)
+  upmc_description                                                               String?
+  upmc_amount                                                                    Decimal    @db.Decimal(12, 2)
+  upmc_currency                                                                  String     @default("KRW") @db.Char(3)
+  upmc_date                                                                      DateTime   @db.Timestamptz(6)
+  upmc_txn_ref                                                                   String?    @db.VarChar(100)
+  upmc_tags                                                                      Json       @default("[]")
+  upmc_note                                                                      String?
+  upmc_created_at                                                                DateTime   @default(now()) @db.Timestamptz(6)
+  upmc_updated_at                                                                DateTime   @default(now()) @db.Timestamptz(6)
+  upmc_deleted_at                                                                DateTime?  @db.Timestamptz(6)
+  cert_code_user_payment_company_upmc_method_group_upmc_method_codeTocert_code   cert_code? @relation("user_payment_company_upmc_method_group_upmc_method_codeTocert_code", fields: [upmc_method_group, upmc_method_code], references: [code_gb, code_key], onDelete: Restrict, map: "fk_user_payment_company_method")
+  cert_code_user_payment_company_upmc_service_group_upmc_service_codeTocert_code cert_code? @relation("user_payment_company_upmc_service_group_upmc_service_codeTocert_code", fields: [upmc_service_group, upmc_service_code], references: [code_gb, code_key], onDelete: Restrict, map: "fk_user_payment_company_service")
+  cert_code_user_payment_company_upmc_status_group_upmc_status_codeTocert_code   cert_code  @relation("user_payment_company_upmc_status_group_upmc_status_codeTocert_code", fields: [upmc_status_group, upmc_status_code], references: [code_gb, code_key], map: "fk_user_payment_company_status")
+  users                                                                          User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_payment_company_user")
+
+  @@index([upmc_tags], map: "gin_user_payment_company_tags", type: Gin)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_payment_personal {
+  upmp_id                                                                       String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                                                       String     @db.Uuid
+  upmp_owner_type                                                               String     @db.VarChar(50)
+  upmp_owner_id                                                                 String     @db.Uuid
+  upmp_status_group                                                             String     @default("PAYMENT_STATUS") @db.VarChar(64)
+  upmp_status_code                                                              String     @db.VarChar(64)
+  upmp_method_group                                                             String?    @db.VarChar(64)
+  upmp_method_code                                                              String?    @db.VarChar(64)
+  upmp_type_group                                                               String     @default("PAYMENT_TYPE") @db.VarChar(64)
+  upmp_type_code                                                                String     @db.VarChar(64)
+  upmp_service_title                                                            String     @db.VarChar(255)
+  upmp_description                                                              String?
+  upmp_amount                                                                   Decimal    @db.Decimal(12, 2)
+  upmp_currency                                                                 String     @default("KRW") @db.Char(3)
+  upmp_date                                                                     DateTime   @db.Timestamptz(6)
+  upmp_txn_ref                                                                  String?    @db.VarChar(100)
+  upmp_tags                                                                     Json       @default("[]")
+  upmp_note                                                                     String?
+  upmp_created_at                                                               DateTime   @default(now()) @db.Timestamptz(6)
+  upmp_updated_at                                                               DateTime   @default(now()) @db.Timestamptz(6)
+  upmp_deleted_at                                                               DateTime?  @db.Timestamptz(6)
+  cert_code_user_payment_personal_upmp_method_group_upmp_method_codeTocert_code cert_code? @relation("user_payment_personal_upmp_method_group_upmp_method_codeTocert_code", fields: [upmp_method_group, upmp_method_code], references: [code_gb, code_key], onDelete: Restrict, map: "fk_user_payment_personal_method")
+  cert_code_user_payment_personal_upmp_status_group_upmp_status_codeTocert_code cert_code  @relation("user_payment_personal_upmp_status_group_upmp_status_codeTocert_code", fields: [upmp_status_group, upmp_status_code], references: [code_gb, code_key], map: "fk_user_payment_personal_status")
+  cert_code_user_payment_personal_upmp_type_group_upmp_type_codeTocert_code     cert_code  @relation("user_payment_personal_upmp_type_group_upmp_type_codeTocert_code", fields: [upmp_type_group, upmp_type_code], references: [code_gb, code_key], map: "fk_user_payment_personal_type")
+  users                                                                         User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_payment_personal_user")
+
+  @@index([upmp_tags], map: "gin_user_payment_personal_tags", type: Gin)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_personal {
+  pers_id                               String                      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                               String                      @unique @db.Uuid
+  pers_name                             String                      @db.VarChar(100)
+  pers_email                            String                      @db.VarChar(255)
+  pers_phone                            String                      @db.VarChar(20)
+  pers_location                         String                      @db.VarChar(100)
+  pers_bio                              String
+  pers_experience_years                 Int                         @default(0) @db.SmallInt
+  pers_hourly_rate_raw                  String?                     @db.VarChar(50)
+  pers_hourly_rate_min                  Int?
+  pers_hourly_rate_max                  Int?
+  pers_hourly_rate_currency             String                      @default("KRW") @db.Char(3)
+  pers_is_verified                      Boolean                     @default(false)
+  pers_verified_at                      DateTime?                   @db.Timestamp(6)
+  pers_profile_state                    pers_profile_state          @default(draft)
+  created_by                            String?                     @db.Uuid
+  updated_by                            String?                     @db.Uuid
+  pers_created_at                       DateTime                    @default(now()) @db.Timestamp(6)
+  pers_updated_at                       DateTime                    @default(now()) @db.Timestamp(6)
+  pers_deleted_at                       DateTime?                   @db.Timestamp(6)
+  users_user_personal_user_idTousers    User                        @relation("user_personal_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_personal_user")
+  users_user_personal_created_byTousers User?                       @relation("user_personal_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_user_personal_updated_byTousers User?                       @relation("user_personal_updated_byTousers", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_personal_certificate             user_personal_certificate[]
+  user_personal_code                    user_personal_code[]
+  user_personal_experience              user_personal_experience[]
+
+  @@index([pers_location], map: "idx_pers_location")
+  @@index([pers_profile_state], map: "idx_pers_state")
+  @@index([user_id], map: "idx_pers_user_id")
+  @@index([pers_is_verified], map: "idx_pers_verified")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_personal_certificate {
+  pcert_id                                                                        String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  pers_id                                                                         String        @db.Uuid
+  pcert_name                                                                      String        @db.VarChar(150)
+  pcert_code_gb                                                                   String        @default("CERT_TYPE") @db.VarChar(64)
+  pcert_code_key                                                                  String?       @db.VarChar(64)
+  pcert_status_gb                                                                 String        @default("CERT_STATUS") @db.VarChar(64)
+  pcert_status_key                                                                String?       @db.VarChar(64)
+  pcert_issue_date                                                                DateTime?     @db.Date
+  pcert_expiry_date                                                               DateTime?     @db.Date
+  pcert_issuer                                                                    String?       @db.VarChar(150)
+  pcert_number                                                                    String?       @db.VarChar(100)
+  pcert_description                                                               String?
+  pcert_seq                                                                       Int           @default(1)
+  created_by                                                                      String?       @db.Uuid
+  updated_by                                                                      String?       @db.Uuid
+  pcert_created_at                                                                DateTime      @default(now()) @db.Timestamp(6)
+  pcert_updated_at                                                                DateTime      @default(now()) @db.Timestamp(6)
+  pcert_deleted_at                                                                DateTime?     @db.Timestamp(6)
+  cert_code_user_personal_certificate_pcert_status_gb_pcert_status_keyTocert_code cert_code?    @relation("user_personal_certificate_pcert_status_gb_pcert_status_keyTocert_code", fields: [pcert_status_gb, pcert_status_key], references: [code_gb, code_key], onDelete: SetNull, map: "fk_pcert_status_code")
+  cert_code_user_personal_certificate_pcert_code_gb_pcert_code_keyTocert_code     cert_code?    @relation("user_personal_certificate_pcert_code_gb_pcert_code_keyTocert_code", fields: [pcert_code_gb, pcert_code_key], references: [code_gb, code_key], onDelete: SetNull, map: "fk_pcert_type_code")
+  users_user_personal_certificate_created_byTousers                               User?         @relation("user_personal_certificate_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_personal                                                                   user_personal @relation(fields: [pers_id], references: [pers_id], onDelete: Cascade, onUpdate: NoAction)
+  users_user_personal_certificate_updated_byTousers                               User?         @relation("user_personal_certificate_updated_byTousers", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([pcert_code_gb, pcert_code_key], map: "idx_pcert_code")
+  @@index([pers_id], map: "idx_pcert_pers_id")
+  @@index([pcert_status_gb, pcert_status_key], map: "idx_pcert_status")
+}
+
+model user_personal_code {
+  pcode_id                                   String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  pers_id                                    String        @db.Uuid
+  pcode_gb                                   String        @db.VarChar(64)
+  pcode_key                                  String        @db.VarChar(64)
+  pcode_label                                String?       @db.VarChar(255)
+  pcode_seq                                  Int           @default(1)
+  created_by                                 String?       @db.Uuid
+  updated_by                                 String?       @db.Uuid
+  pcode_created_at                           DateTime      @default(now()) @db.Timestamp(6)
+  pcode_updated_at                           DateTime      @default(now()) @db.Timestamp(6)
+  pcode_deleted_at                           DateTime?     @db.Timestamp(6)
+  cert_code                                  cert_code     @relation(fields: [pcode_gb, pcode_key], references: [code_gb, code_key], map: "fk_pcode_cert_code")
+  users_user_personal_code_created_byTousers User?         @relation("user_personal_code_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_personal                              user_personal @relation(fields: [pers_id], references: [pers_id], onDelete: Cascade, onUpdate: NoAction)
+  users_user_personal_code_updated_byTousers User?         @relation("user_personal_code_updated_byTousers", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([pcode_gb, pcode_key], map: "idx_pcode_gb_key")
+  @@index([pers_id], map: "idx_pcode_pers_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_personal_experience {
+  pexp_id                                          String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  pers_id                                          String        @db.Uuid
+  pexp_title                                       String        @db.VarChar(100)
+  pexp_company                                     String?       @db.VarChar(100)
+  pexp_period_text                                 String?       @db.VarChar(100)
+  pexp_start_date                                  DateTime?     @db.Date
+  pexp_end_date                                    DateTime?     @db.Date
+  pexp_is_current                                  Boolean       @default(false)
+  pexp_description                                 String?
+  pexp_seq                                         Int           @default(1)
+  created_by                                       String?       @db.Uuid
+  updated_by                                       String?       @db.Uuid
+  pexp_created_at                                  DateTime      @default(now()) @db.Timestamp(6)
+  pexp_updated_at                                  DateTime      @default(now()) @db.Timestamp(6)
+  pexp_deleted_at                                  DateTime?     @db.Timestamp(6)
+  users_user_personal_experience_created_byTousers User?         @relation("user_personal_experience_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_personal                                    user_personal @relation(fields: [pers_id], references: [pers_id], onDelete: Cascade, onUpdate: NoAction)
+  users_user_personal_experience_updated_byTousers User?         @relation("user_personal_experience_updated_byTousers", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([pers_id], map: "idx_pexp_pers_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_qna_answer {
+  uans_id                                                                  String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  uans_question_id                                                         String              @db.Uuid
+  user_id                                                                  String              @db.Uuid
+  uans_status_gb                                                           String              @default("QA_ANSWER_STATE") @db.VarChar(64)
+  uans_status_key                                                          String              @default("published") @db.VarChar(64)
+  uans_body                                                                String
+  uans_like_count                                                          Int                 @default(0)
+  uans_is_best                                                             Boolean             @default(false)
+  uans_adopted_by_id                                                       String?             @db.Uuid
+  uans_adopted_at                                                          DateTime?           @db.Timestamptz(6)
+  uans_created_at                                                          DateTime            @default(now()) @db.Timestamptz(6)
+  uans_updated_at                                                          DateTime            @default(now()) @db.Timestamptz(6)
+  uans_deleted_at                                                          DateTime?           @db.Timestamptz(6)
+  cert_code                                                                cert_code           @relation(fields: [uans_status_gb, uans_status_key], references: [code_gb, code_key], map: "fk_uans_status")
+  user_qna_question_user_qna_answer_uans_question_idTouser_qna_question    user_qna_question   @relation("user_qna_answer_uans_question_idTouser_qna_question", fields: [uans_question_id], references: [uqna_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_qna_answer_question")
+  users_user_qna_answer_user_idTousers                                     User                @relation("user_qna_answer_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_qna_answer_user")
+  users_user_qna_answer_uans_adopted_by_idTousers                          User?               @relation("user_qna_answer_uans_adopted_by_idTousers", fields: [uans_adopted_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_qna_question_user_qna_question_uqna_best_answer_idTouser_qna_answer user_qna_question[] @relation("user_qna_question_uqna_best_answer_idTouser_qna_answer")
+
+  @@index([uans_question_id], map: "idx_user_qna_answer_question")
+  @@index([user_id], map: "idx_user_qna_answer_user")
+}
+
+model user_qna_expert_request {
+  uqer_id                                                   String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  uqer_question_id                                          String            @db.Uuid
+  requested_by_user_id                                      String            @db.Uuid
+  expert_user_id                                            String            @db.Uuid
+  uqer_reason                                               String
+  uqer_status_gb                                            String            @default("QA_REQUEST_STATUS") @db.VarChar(64)
+  uqer_status_key                                           String            @default("requested") @db.VarChar(64)
+  uqer_created_at                                           DateTime          @default(now()) @db.Timestamptz(6)
+  uqer_updated_at                                           DateTime          @default(now()) @db.Timestamptz(6)
+  uqer_deleted_at                                           DateTime?         @db.Timestamptz(6)
+  cert_code                                                 cert_code         @relation(fields: [uqer_status_gb, uqer_status_key], references: [code_gb, code_key], map: "fk_uqer_status")
+  user_qna_question                                         user_qna_question @relation(fields: [uqer_question_id], references: [uqna_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_qna_expert_request_question")
+  users_user_qna_expert_request_expert_user_idTousers       User              @relation("user_qna_expert_request_expert_user_idTousers", fields: [expert_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_user_qna_expert_request_requested_by_user_idTousers User              @relation("user_qna_expert_request_requested_by_user_idTousers", fields: [requested_by_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([expert_user_id], map: "idx_user_qna_expert_request_expert")
+  @@index([uqer_question_id], map: "idx_user_qna_expert_request_question")
+  @@index([uqer_status_gb, uqer_status_key], map: "idx_user_qna_expert_request_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_qna_private {
+  uqnp_id                                           String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                           String    @db.Uuid
+  uqnp_expert_user_id                               String?   @db.Uuid
+  uqnp_expert_display                               String?   @db.VarChar(100)
+  uqnp_status_gb                                    String    @default("QA_PRIVATE_STATUS") @db.VarChar(64)
+  uqnp_status_key                                   String    @default("pending") @db.VarChar(64)
+  uqnp_title                                        String    @db.VarChar(255)
+  uqnp_content                                      String?
+  uqnp_last_message_preview                         String?   @db.VarChar(500)
+  uqnp_view_count                                   Int       @default(0)
+  uqnp_created_at                                   DateTime  @default(now()) @db.Timestamptz(6)
+  uqnp_updated_at                                   DateTime  @default(now()) @db.Timestamptz(6)
+  uqnp_deleted_at                                   DateTime? @db.Timestamptz(6)
+  cert_code                                         cert_code @relation(fields: [uqnp_status_gb, uqnp_status_key], references: [code_gb, code_key], map: "fk_uqnp_status")
+  users_user_qna_private_user_idTousers             User      @relation("user_qna_private_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_qna_private_user")
+  users_user_qna_private_uqnp_expert_user_idTousers User?     @relation("user_qna_private_uqnp_expert_user_idTousers", fields: [uqnp_expert_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([uqnp_expert_user_id], map: "idx_user_qna_private_expert")
+  @@index([uqnp_status_gb, uqnp_status_key], map: "idx_user_qna_private_status")
+  @@index([user_id], map: "idx_user_qna_private_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_qna_question {
+  uqna_id                                                                   String                    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                                                   String                    @db.Uuid
+  uqna_category_gb                                                          String                    @default("QA_CATEGORY") @db.VarChar(64)
+  uqna_category_key                                                         String                    @db.VarChar(64)
+  uqna_status_gb                                                            String                    @default("QA_QUESTION_STATUS") @db.VarChar(64)
+  uqna_status_key                                                           String                    @db.VarChar(64)
+  uqna_title                                                                String                    @db.VarChar(255)
+  uqna_content                                                              String
+  uqna_author_display                                                       String?                   @db.VarChar(100)
+  uqna_view_count                                                           Int                       @default(0)
+  uqna_like_count                                                           Int                       @default(0)
+  uqna_answer_count                                                         Int                       @default(0)
+  uqna_best_answer_id                                                       String?                   @db.Uuid
+  uqna_tags                                                                 Json?
+  uqna_created_at                                                           DateTime                  @default(now()) @db.Timestamptz(6)
+  uqna_updated_at                                                           DateTime                  @default(now()) @db.Timestamptz(6)
+  uqna_deleted_at                                                           DateTime?                 @db.Timestamptz(6)
+  user_qna_answer_user_qna_answer_uans_question_idTouser_qna_question       user_qna_answer[]         @relation("user_qna_answer_uans_question_idTouser_qna_question")
+  user_qna_expert_request                                                   user_qna_expert_request[]
+  user_qna_answer_user_qna_question_uqna_best_answer_idTouser_qna_answer    user_qna_answer?          @relation("user_qna_question_uqna_best_answer_idTouser_qna_answer", fields: [uqna_best_answer_id], references: [uans_id], onUpdate: NoAction, map: "fk_uqna_best_answer")
+  cert_code_user_qna_question_uqna_category_gb_uqna_category_keyTocert_code cert_code                 @relation("user_qna_question_uqna_category_gb_uqna_category_keyTocert_code", fields: [uqna_category_gb, uqna_category_key], references: [code_gb, code_key], map: "fk_uqna_category")
+  cert_code_user_qna_question_uqna_status_gb_uqna_status_keyTocert_code     cert_code                 @relation("user_qna_question_uqna_status_gb_uqna_status_keyTocert_code", fields: [uqna_status_gb, uqna_status_key], references: [code_gb, code_key], map: "fk_uqna_status")
+  users                                                                     User                      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_qna_question_user")
+
+  @@index([uqna_tags], map: "gin_user_qna_question_tags", type: Gin)
+  @@index([uqna_category_gb, uqna_category_key], map: "idx_user_qna_question_category")
+  @@index([uqna_status_gb, uqna_status_key], map: "idx_user_qna_question_status")
+  @@index([user_id], map: "idx_user_qna_question_user")
+}
+
+model user_schedule_deadline {
+  usdl_id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id          String    @db.Uuid
+  usdl_title       String    @db.VarChar(100)
+  usdl_type_group  String    @default("DEADLINE_TYPE") @db.VarChar(64)
+  usdl_type_code   String    @db.VarChar(64)
+  usdl_date        DateTime  @db.Date
+  usdl_description String?
+  usdl_created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  usdl_updated_at  DateTime  @default(now()) @db.Timestamptz(6)
+  usdl_deleted_at  DateTime? @db.Timestamptz(6)
+  cert_code        cert_code @relation(fields: [usdl_type_group, usdl_type_code], references: [code_gb, code_key], map: "fk_user_schedule_deadline_type")
+  users            User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_schedule_deadline_user")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_schedule_event {
+  usce_id                                                                     String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                                                                     String     @db.Uuid
+  usce_title                                                                  String     @db.VarChar(100)
+  usce_type_group                                                             String     @default("EVENT_TYPE") @db.VarChar(64)
+  usce_type_code                                                              String     @db.VarChar(64)
+  usce_start_at                                                               DateTime   @db.Timestamptz(6)
+  usce_end_at                                                                 DateTime?  @db.Timestamptz(6)
+  usce_location_text                                                          String?    @db.VarChar(100)
+  usce_region_group                                                           String     @default("REGION") @db.VarChar(64)
+  usce_region_code                                                            String?    @db.VarChar(64)
+  usce_memo                                                                   String?
+  usce_created_at                                                             DateTime   @default(now()) @db.Timestamptz(6)
+  usce_updated_at                                                             DateTime   @default(now()) @db.Timestamptz(6)
+  usce_deleted_at                                                             DateTime?  @db.Timestamptz(6)
+  cert_code_user_schedule_event_usce_region_group_usce_region_codeTocert_code cert_code? @relation("user_schedule_event_usce_region_group_usce_region_codeTocert_code", fields: [usce_region_group, usce_region_code], references: [code_gb, code_key], map: "fk_user_schedule_event_region")
+  cert_code_user_schedule_event_usce_type_group_usce_type_codeTocert_code     cert_code  @relation("user_schedule_event_usce_type_group_usce_type_codeTocert_code", fields: [usce_type_group, usce_type_code], references: [code_gb, code_key], map: "fk_user_schedule_event_type")
+  users                                                                       User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_schedule_event_user")
+}
+
+model user_schedule_setting {
+  uscs_id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                    String    @db.Uuid
+  uscs_notifications         Boolean   @default(true)
+  uscs_sharing               Boolean   @default(false)
+  uscs_google_calendar       Boolean   @default(false)
+  uscs_education_deadlines   Boolean   @default(true)
+  uscs_recruitment_deadlines Boolean   @default(true)
+  uscs_important_deadlines   Boolean   @default(true)
+  uscs_created_at            DateTime  @default(now()) @db.Timestamptz(6)
+  uscs_updated_at            DateTime  @default(now()) @db.Timestamptz(6)
+  uscs_deleted_at            DateTime? @db.Timestamptz(6)
+  users                      User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_schedule_setting_user")
+}
+
+model user_session {
+  usess_id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id             String    @db.Uuid
+  usess_session_token String    @db.VarChar(255)
+  usess_refresh_token String?   @db.VarChar(255)
+  usess_expires_at    DateTime  @db.Timestamptz(6)
+  usess_last_seen_at  DateTime? @db.Timestamptz(6)
+  usess_ip            String?   @db.VarChar(64)
+  usess_user_agent    String?   @db.VarChar(255)
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime  @default(now()) @db.Timestamptz(6)
+  usess_deleted_at    DateTime? @db.Timestamptz(6)
+  users               User      @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_user_session_user")
+
+  @@index([user_id], map: "idx_user_session_user")
+}
+
+model user_settings {
+  uset_id           String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id           String            @db.Uuid
+  uset_def_id       String            @db.Uuid
+  uset_val_bool     Boolean?
+  uset_val_text     String?           @db.VarChar(255)
+  uset_created_at   DateTime          @default(now()) @db.Timestamptz(6)
+  uset_updated_at   DateTime          @default(now()) @db.Timestamptz(6)
+  uset_deleted_at   DateTime?         @db.Timestamptz(6)
+  user_settings_def user_settings_def @relation(fields: [uset_def_id], references: [usdf_id], onUpdate: NoAction, map: "fk_user_settings_def")
+  users             User              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_settings_user")
+}
+
+model user_settings_def {
+  usdf_id                                                             String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  usdf_key_gb                                                         String          @default("SETTINGS_KEY") @db.VarChar(64)
+  usdf_key                                                            String          @db.VarChar(64)
+  usdf_type_gb                                                        String          @default("SETTINGS_TYPE") @db.VarChar(64)
+  usdf_type_key                                                       String          @db.VarChar(64)
+  usdf_group_gb                                                       String          @default("SETTINGS_GROUP") @db.VarChar(64)
+  usdf_group_key                                                      String          @db.VarChar(64)
+  usdf_title                                                          String          @db.VarChar(255)
+  usdf_description                                                    String?         @db.VarChar(500)
+  usdf_icon                                                           String?         @db.VarChar(50)
+  usdf_default_bool                                                   Boolean?
+  usdf_default_text                                                   String?         @db.VarChar(255)
+  usdf_display_order                                                  Int             @default(0)
+  usdf_is_active                                                      Boolean         @default(true)
+  usdf_created_at                                                     DateTime        @default(now()) @db.Timestamptz(6)
+  usdf_updated_at                                                     DateTime        @default(now()) @db.Timestamptz(6)
+  usdf_deleted_at                                                     DateTime?       @db.Timestamptz(6)
+  user_settings                                                       user_settings[]
+  cert_code_user_settings_def_usdf_group_gb_usdf_group_keyTocert_code cert_code       @relation("user_settings_def_usdf_group_gb_usdf_group_keyTocert_code", fields: [usdf_group_gb, usdf_group_key], references: [code_gb, code_key], map: "fk_usdf_group")
+  cert_code_user_settings_def_usdf_key_gb_usdf_keyTocert_code         cert_code       @relation("user_settings_def_usdf_key_gb_usdf_keyTocert_code", fields: [usdf_key_gb, usdf_key], references: [code_gb, code_key], map: "fk_usdf_key")
+  cert_code_user_settings_def_usdf_type_gb_usdf_type_keyTocert_code   cert_code       @relation("user_settings_def_usdf_type_gb_usdf_type_keyTocert_code", fields: [usdf_type_gb, usdf_type_key], references: [code_gb, code_key], map: "fk_usdf_type")
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ScheduleStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ScheduleType {
+  CONSULTATION
+  AUDIT
+  TRAINING
+  MEETING
+}
+
+enum UserRole {
+  MASTER
+  PERSON
+  COMPANY
+  ADMIN
+}
+
+enum cert_type_enum {
+  ISMS
+  ISMS_P   @map("ISMS-P")
+  ISO27001
+  GS
+  CPPG
+  ISO27701
+  GDPR
+}
+
+enum company_size_enum {
+  small
+  medium
+  large
+  enterprise
+}
+
+enum contract_status_enum {
+  pending
+  signed
+  active
+  completed
+  cancelled
+}
+
+enum notification_type_enum {
+  matching
+  message
+  payment
+  settlement
+  community
+  system
+}
+
+enum payment_method_enum {
+  card
+  transfer
+  virtual
+  mobile
+}
+
+enum payment_status_enum {
+  pending
+  success
+  failed
+  refunded
+  cancelled
+}
+
+enum post_category_enum {
+  qa
+  success
+  tips
+  news
+}
+
+enum proposal_status_enum {
+  pending
+  accepted
+  rejected
+  expired
+  completed
+}
+
+enum review_status_enum {
+  pending
+  approved
+  rejected
+  hidden
+}
+
+enum settlement_status_enum {
+  pending
+  transferred
+  failed
+}
+
+
+
+enum pers_profile_state {
+  draft
+  active
+  inactive
+  suspended
+}
+
+enum caan_status_enum {
+  recruiting
+  closed
+}
+
+enum caap_status_enum {
+  applied
+  accepted
+  rejected
+  requested
+  scheduled
+  in_progress
+  reporting
+  completed
+}
+
+enum caui_fee_type_enum {
+  daily
+  project
+}
+
+enum code_state_enum {
+  active
+  inactive
+  deprecated
+}
+
+enum user_type {
+  person
+  company
+  admin
+  master
+  @@map("user_type_enum")
+}
+
+enum comp_profile_state {
+  draft
+  submitted
+  pending_review
+  approved
+  rejected
+}
+
+enum exed_level_enum {
+  beginner
+  intermediate
+  advanced
+}
+
+enum exed_method_enum {
+  online
+  offline
+  hybrid
+}
+
+enum expert_rate_type_enum {
+  hourly
+  daily
+  project
+}
+
+enum expr_company_info_mode {
+  registered
+  image
+  manual
+}
+
+enum expr_employment_type {
+  full_time @map("full-time")
+  contract
+  freelance
+  intern
+  project
+}
+
+enum expr_posting_state {
+  draft
+  active
+  closed
+}
+
+enum expr_salary_type {
+  annual
+  monthly
+  daily
+  project
+  negotiable
+}

@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>지원자 관리 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .page-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .filter-button {
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* --- Filter Section --- */
+        .filter-section {
+            background-color: var(--card-background);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+
+        .filter-tab {
+            padding: 8px 15px;
+            background-color: var(--light-color);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .filter-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .filter-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-number {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* --- Applicant Cards --- */
+        .applicants-container {
+            padding: 0 15px 80px;
+        }
+
+        .applicant-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+
+        .applicant-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .applicant-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .applicant-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #e9ecef;
+            flex-shrink: 0;
+        }
+
+        .applicant-basic-info {
+            flex-grow: 1;
+        }
+
+        .applicant-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .applicant-role {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .applicant-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .applicant-tag {
+            padding: 3px 8px;
+            background-color: var(--light-color);
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .applicant-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .status-badge.reviewing {
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .status-badge.passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-badge.rejected {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .status-change-btn {
+            padding: 6px 12px;
+            background-color: var(--light-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .status-change-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .applicant-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-section {
+            background-color: var(--light-color);
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .detail-section h4 {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+
+        .detail-content {
+            font-size: 0.9rem;
+        }
+
+        .proposal-summary {
+            background-color: #f0f7ff;
+            border: 1px solid #b3d9ff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .proposal-summary h4 {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .proposal-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .proposal-time {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .applicant-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .profile-btn {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .message-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .pass-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .reject-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* --- Decision Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 500px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .modal-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .cancel-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .confirm-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .confirm-btn.danger {
+            background-color: var(--danger-color);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .applicant-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .applicant-actions {
+                flex-wrap: wrap;
+            }
+            
+            .action-btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <button class="back-button" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1 class="page-title">UI/UX 디자이너 지원자 관리</h1>
+        <button class="filter-button" onclick="toggleAdvancedFilter()">
+            <i class="fas fa-filter"></i>
+            필터
+        </button>
+    </header>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterApplicants('all')">전체 (4)</button>
+            <button class="filter-tab" onclick="filterApplicants('reviewing')">검토중 (2)</button>
+            <button class="filter-tab" onclick="filterApplicants('passed')">합격 (1)</button>
+            <button class="filter-tab" onclick="filterApplicants('rejected')">불합격 (1)</button>
+        </div>
+        
+        <div class="filter-stats">
+            <div class="stat-item">
+                <span>총 모집 인원:</span>
+                <span class="stat-number">2명</span>
+            </div>
+            <div class="stat-item">
+                <span>현재 합격자:</span>
+                <span class="stat-number">1명</span>
+            </div>
+            <div class="stat-item">
+                <span>남은 인원:</span>
+                <span class="stat-number">1명</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Applicants Container -->
+    <div class="applicants-container">
+        <!-- Applicant 1 - Reviewing -->
+        <div class="applicant-card" data-status="reviewing">
+            <div class="applicant-header">
+                <img src="https://via.placeholder.com/60x60.png?text=KM" alt="지원자" class="applicant-avatar">
+                <div class="applicant-basic-info">
+                    <div class="applicant-name">김민준</div>
+                    <div class="applicant-role">UI/UX 디자이너 • 5년 경력</div>
+                    <div class="applicant-tags">
+                        <span class="applicant-tag">Figma</span>
+                        <span class="applicant-tag">프로토타이핑</span>
+                        <span class="applicant-tag">핀테크 경험</span>
+                        <span class="applicant-tag">시니어</span>
+                    </div>
+                </div>
+                <div class="applicant-status">
+                    <span class="status-badge reviewing">검토중</span>
+                    <button class="status-change-btn" onclick="showStatusOptions(1)">
+                        상태 변경 <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="proposal-summary">
+                <h4>제안서 요약</h4>
+                <div class="proposal-price">월 650만원 제안</div>
+                <div class="proposal-time">주 40시간 (월 160시간) 가능</div>
+            </div>
+            
+            <div class="applicant-details">
+                <div class="detail-section">
+                    <h4>핵심 역량</h4>
+                    <div class="detail-content">
+                        • 5년간 UI/UX 디자인 경력<br>
+                        • 핀테크 앱 3종 디자인 경험<br>
+                        • Figma, Sketch 전문가<br>
+                        • 사용자 리서치 및 데이터 분석 능력
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h4>제안 접근 방식</h4>
+                    <div class="detail-content">
+                        • 사용자 중심의 디자인 시스템 구축<br>
+                        • 빠른 프로토타이핑으로 검증<br>
+                        • 디자인 가이드라인 제작<br>
+                        • 개발팀과의 긴밀한 협업
+                    </div>
+                </div>
+            </div>
+            
+            <div class="applicant-actions">
+                <button class="action-btn profile-btn" onclick="viewProfile(1)">
+                    <i class="fas fa-user"></i> 프로필 보기
+                </button>
+                <button class="action-btn message-btn" onclick="sendMessage(1)">
+                    <i class="fas fa-comment"></i> 메시지
+                </button>
+                <button class="action-btn pass-btn" onclick="showDecisionModal(1, 'pass')">
+                    <i class="fas fa-check"></i> 합격
+                </button>
+                <button class="action-btn reject-btn" onclick="showDecisionModal(1, 'reject')">
+                    <i class="fas fa-times"></i> 불합격
+                </button>
+            </div>
+        </div>
+
+        <!-- Applicant 2 - Passed -->
+        <div class="applicant-card" data-status="passed">
+            <div class="applicant-header">
+                <img src="https://via.placeholder.com/60x60.png?text=LS" alt="지원자" class="applicant-avatar">
+                <div class="applicant-basic-info">
+                    <div class="applicant-name">이서연</div>
+                    <div class="applicant-role">시니어 UI 디자이너 • 7년 경력</div>
+                    <div class="applicant-tags">
+                        <span class="applicant-tag">Figma</span>
+                        <span class="applicant-tag">디자인 시스템</span>
+                        <span class="applicant-tag">핀테크 경험</span>
+                        <span class="applicant-tag">팀 리드</span>
+                    </div>
+                </div>
+                <div class="applicant-status">
+                    <span class="status-badge passed">1차 합격</span>
+                    <button class="status-change-btn" onclick="showStatusOptions(2)">
+                        상태 변경 <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="proposal-summary">
+                <h4>제안서 요약</h4>
+                <div class="proposal-price">월 700만원 제안</div>
+                <div class="proposal-time">주 40시간 (월 160시간) 가능</div>
+            </div>
+            
+            <div class="applicant-details">
+                <div class="detail-section">
+                    <h4>핵심 역량</h4>
+                    <div class="detail-content">
+                        • 7년간 UI/UX 디자인 경력<br>
+                        • 대형 핀테크 앱 디자인 시스템 구축<br>
+                        • 팀 리딩 및 멘토링 경험<br>
+                        • 디자인 툴 개발 경험
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h4>제안 접근 방식</h4>
+                    <div class="detail-content">
+                        • 확장 가능한 디자인 시스템 설계<br>
+                        • 컴포넌트 기반 디자인 접근<br>
+                        • A/B 테스트 기반 의사결정<br>
+                        • 기술 팀과의 원활한 소통
+                    </div>
+                </div>
+            </div>
+            
+            <div class="applicant-actions">
+                <button class="action-btn profile-btn" onclick="viewProfile(2)">
+                    <i class="fas fa-user"></i> 프로필 보기
+                </button>
+                <button class="action-btn message-btn" onclick="sendMessage(2)">
+                    <i class="fas fa-comment"></i> 메시지
+                </button>
+                <button class="action-btn pass-btn" onclick="showDecisionModal(2, 'final')">
+                    <i class="fas fa-crown"></i> 최종 합격
+                </button>
+                <button class="action-btn reject-btn" onclick="showDecisionModal(2, 'reject')">
+                    <i class="fas fa-times"></i> 불합격
+                </button>
+            </div>
+        </div>
+
+        <!-- Applicant 3 - Rejected -->
+        <div class="applicant-card" data-status="rejected">
+            <div class="applicant-header">
+                <img src="https://via.placeholder.com/60x60.png?text=PH" alt="지원자" class="applicant-avatar">
+                <div class="applicant-basic-info">
+                    <div class="applicant-name">박현우</div>
+                    <div class="applicant-role">UX 리서처 • 3년 경력</div>
+                    <div class="applicant-tags">
+                        <span class="applicant-tag">사용자 리서치</span>
+                        <span class="applicant-tag">데이터 분석</span>
+                        <span class="applicant-tag">Figma</span>
+                    </div>
+                </div>
+                <div class="applicant-status">
+                    <span class="status-badge rejected">불합격</span>
+                    <button class="status-change-btn" onclick="showStatusOptions(3)">
+                        상태 변경 <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="proposal-summary">
+                <h4>제안서 요약</h4>
+                <div class="proposal-price">월 550만원 제안</div>
+                <div class="proposal-time">주 35시간 (월 140시간) 가능</div>
+            </div>
+            
+            <div class="applicant-details">
+                <div class="detail-section">
+                    <h4>핵심 역량</h4>
+                    <div class="detail-content">
+                        • 3년간 UX 리서치 경력<br>
+                        • 정성적/정량적 리서치 전문<br>
+                        • 사용자 인터뷰 및 테스트 설계<br>
+                        • 데이터 시각화 능력
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h4>불합격 사유</h4>
+                    <div class="detail-content" style="color: var(--danger-color);">
+                        • 실제 UI 디자인 경험 부족<br>
+                        • 핀테크 도메인 이해도 낮음<br>
+                        • 제안 가격이 예산 범위를 벗어남
+                    </div>
+                </div>
+            </div>
+            
+            <div class="applicant-actions">
+                <button class="action-btn profile-btn" onclick="viewProfile(3)">
+                    <i class="fas fa-user"></i> 프로필 보기
+                </button>
+                <button class="action-btn message-btn" onclick="sendMessage(3)">
+                    <i class="fas fa-comment"></i> 메시지
+                </button>
+                <button class="action-btn pass-btn" onclick="showDecisionModal(3, 'reconsider')">
+                    <i class="fas fa-redo"></i> 재검토
+                </button>
+            </div>
+        </div>
+
+        <!-- Applicant 4 - Reviewing -->
+        <div class="applicant-card" data-status="reviewing">
+            <div class="applicant-header">
+                <img src="https://via.placeholder.com/60x60.png?text=CJ" alt="지원자" class="applicant-avatar">
+                <div class="applicant-basic-info">
+                    <div class="applicant-name">최지아</div>
+                    <div class="applicant-role">프로덕트 디자이너 • 4년 경력</div>
+                    <div class="applicant-tags">
+                        <span class="applicant-tag">프로덕트 디자인</span>
+                        <span class="applicant-tag">와이어프레임</span>
+                        <span class="applicant-tag">프로토타이핑</span>
+                    </div>
+                </div>
+                <div class="applicant-status">
+                    <span class="status-badge reviewing">검토중</span>
+                    <button class="status-change-btn" onclick="showStatusOptions(4)">
+                        상태 변경 <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="proposal-summary">
+                <h4>제안서 요약</h4>
+                <div class="proposal-price">월 600만원 제안</div>
+                <div class="proposal-time">주 40시간 (월 160시간) 가능</div>
+            </div>
+            
+            <div class="applicant-details">
+                <div class="detail-section">
+                    <h4>핵심 역량</h4>
+                    <div class="detail-content">
+                        • 4년간 프로덕트 디자인 경력<br>
+                        • 와이어프레임 및 프로토타이핑 전문<br>
+                        • 스타트업 프로덕트 런칭 경험<br>
+                        • 빠른 학습 및 적응 능력
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h4>제안 접근 방식</h4>
+                    <div class="detail-content">
+                        • MVP 기반 빠른 프로토타이핑<br>
+                        • 사용자 피드백 반복 수렴<br>
+                        • 개발팀과의 적극적 소통<br>
+                        • 디자인 문서화 능력
+                    </div>
+                </div>
+            </div>
+            
+            <div class="applicant-actions">
+                <button class="action-btn profile-btn" onclick="viewProfile(4)">
+                    <i class="fas fa-user"></i> 프로필 보기
+                </button>
+                <button class="action-btn message-btn" onclick="sendMessage(4)">
+                    <i class="fas fa-comment"></i> 메시지
+                </button>
+                <button class="action-btn pass-btn" onclick="showDecisionModal(4, 'pass')">
+                    <i class="fas fa-check"></i> 합격
+                </button>
+                <button class="action-btn reject-btn" onclick="showDecisionModal(4, 'reject')">
+                    <i class="fas fa-times"></i> 불합격
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decision Modal -->
+    <div class="modal-overlay" id="decisionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">합격 처리</div>
+                <div class="modal-subtitle" id="modalSubtitle">이 지원자를 합격 처리하시겠습니까?</div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="decisionReason">의견 또는 사유</label>
+                    <textarea id="decisionReason" placeholder="합격/불합격 사유를 입력하세요 (선택사항)"></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="modal-btn cancel-btn" onclick="closeDecisionModal()">취소</button>
+                <button class="modal-btn confirm-btn" id="confirmBtn" onclick="confirmDecision()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentApplicantId = null;
+        let currentDecision = null;
+
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
+
+        // 필터링
+        function filterApplicants(status) {
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter applicants
+            const cards = document.querySelectorAll('.applicant-card');
+            cards.forEach(card => {
+                if (status === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = card.dataset.status === status ? 'block' : 'none';
+                }
+            });
+        }
+
+        // 상태 변경 옵션 표시
+        function showStatusOptions(applicantId) {
+            alert(`지원자 ID ${applicantId}의 상태 변경 옵션을 표시합니다.`);
+            // 실제로는 드롭다운 메뉴 표시
+        }
+
+        // 결정 모달 표시
+        function showDecisionModal(applicantId, decision) {
+            currentApplicantId = applicantId;
+            currentDecision = decision;
+
+            const modal = document.getElementById('decisionModal');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            const confirmBtn = document.getElementById('confirmBtn');
+
+            // Set modal content based on decision
+            switch(decision) {
+                case 'pass':
+                    title.textContent = '합격 처리';
+                    subtitle.textContent = '이 지원자를 1차 합격 처리하시겠습니까?';
+                    confirmBtn.textContent = '합격';
+                    confirmBtn.className = 'modal-btn confirm-btn';
+                    break;
+                case 'final':
+                    title.textContent = '최종 합격';
+                    subtitle.textContent = '이 지원자를 최종 합격 처리하시겠습니까?';
+                    confirmBtn.textContent = '최종 합격';
+                    confirmBtn.className = 'modal-btn confirm-btn';
+                    break;
+                case 'reject':
+                    title.textContent = '불합격 처리';
+                    subtitle.textContent = '이 지원자를 불합격 처리하시겠습니까?';
+                    confirmBtn.textContent = '불합격';
+                    confirmBtn.className = 'modal-btn confirm-btn danger';
+                    break;
+                case 'reconsider':
+                    title.textContent = '재검토';
+                    subtitle.textContent = '이 지원자를 다시 검토하시겠습니까?';
+                    confirmBtn.textContent = '재검토';
+                    confirmBtn.className = 'modal-btn confirm-btn';
+                    break;
+            }
+
+            modal.classList.add('active');
+        }
+
+        // 결정 모달 닫기
+        function closeDecisionModal() {
+            document.getElementById('decisionModal').classList.remove('active');
+            document.getElementById('decisionReason').value = '';
+            currentApplicantId = null;
+            currentDecision = null;
+        }
+
+        // 결정 확인
+        function confirmDecision() {
+            const reason = document.getElementById('decisionReason').value;
+            
+            // Update applicant status
+            const applicantCard = document.querySelector(`.applicant-card:nth-child(${currentApplicantId})`);
+            const statusBadge = applicantCard.querySelector('.status-badge');
+            const statusSection = applicantCard.querySelector('.applicant-status');
+
+            // Update status based on decision
+            switch(currentDecision) {
+                case 'pass':
+                    statusBadge.textContent = '1차 합격';
+                    statusBadge.className = 'status-badge passed';
+                    applicantCard.dataset.status = 'passed';
+                    break;
+                case 'final':
+                    statusBadge.textContent = '최종 합격';
+                    statusBadge.className = 'status-badge passed';
+                    applicantCard.dataset.status = 'passed';
+                    break;
+                case 'reject':
+                    statusBadge.textContent = '불합격';
+                    statusBadge.className = 'status-badge rejected';
+                    applicantCard.dataset.status = 'rejected';
+                    
+                    // Add rejection reason section
+                    const detailsGrid = applicantCard.querySelector('.applicant-details');
+                    if (!detailsGrid.querySelector('.rejection-reason')) {
+                        const reasonSection = document.createElement('div');
+                        reasonSection.className = 'detail-section rejection-reason';
+                        reasonSection.innerHTML = `
+                            <h4>불합격 사유</h4>
+                            <div class="detail-content" style="color: var(--danger-color);">
+                                ${reason || '사유 미기재'}
+                            </div>
+                        `;
+                        detailsGrid.appendChild(reasonSection);
+                    }
+                    break;
+                case 'reconsider':
+                    statusBadge.textContent = '검토중';
+                    statusBadge.className = 'status-badge reviewing';
+                    applicantCard.dataset.status = 'reviewing';
+                    
+                    // Remove rejection reason section if exists
+                    const rejectionSection = applicantCard.querySelector('.rejection-reason');
+                    if (rejectionSection) {
+                        rejectionSection.remove();
+                    }
+                    break;
+            }
+
+            // Show success message
+            const actionText = currentDecision === 'pass' ? '합격' : 
+                             currentDecision === 'final' ? '최종 합격' : 
+                             currentDecision === 'reject' ? '불합격' : '재검토';
+            alert(`지원자를 ${actionText} 처리했습니다.`);
+
+            // Close modal
+            closeDecisionModal();
+
+            // Update filter counts (in real app, this would update from server)
+            updateFilterCounts();
+        }
+
+        // 필터 카운트 업데이트
+        function updateFilterCounts() {
+            const cards = document.querySelectorAll('.applicant-card');
+            let reviewing = 0, passed = 0, rejected = 0;
+
+            cards.forEach(card => {
+                switch(card.dataset.status) {
+                    case 'reviewing': reviewing++; break;
+                    case 'passed': passed++; break;
+                    case 'rejected': rejected++; break;
+                }
+            });
+
+            // Update tab counts
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs[0].textContent = `전체 (${cards.length})`;
+            tabs[1].textContent = `검토중 (${reviewing})`;
+            tabs[2].textContent = `합격 (${passed})`;
+            tabs[3].textContent = `불합격 (${rejected})`;
+
+            // Update stats
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers[1].textContent = passed; // 현재 합격자
+            statNumbers[2].textContent = Math.max(0, 2 - passed); // 남은 인원 (모집 2명 기준)
+        }
+
+        // 프로필 보기
+        function viewProfile(applicantId) {
+            alert(`지원자 ID ${applicantId}의 프로필을 봅니다.`);
+            // 실제 프로필 페이지로 이동
+        }
+
+        // 메시지 보내기
+        function sendMessage(applicantId) {
+            alert(`지원자 ID ${applicantId}와의 1:1 채팅방으로 이동합니다.`);
+            // 실제 채팅 화면으로 이동
+        }
+
+        // 고급 필터 토글
+        function toggleAdvancedFilter() {
+            alert('고급 필터 옵션을 표시합니다.');
+            // 실제 고급 필터 패널 표시
+        }
+    </script>
+
+</body>
+</html>

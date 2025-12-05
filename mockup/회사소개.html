@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기업 정보 - 테크솔루션</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066CC;
+            --secondary-blue: #e6f2ff;
+            --success-green: #2EBD59;
+            --neutral-gray: #333333;
+            --light-gray: #F5F5F5;
+            --border-color: #E0E0E0;
+            --text-light: #6c757d;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.12);
+            --card-gap: 16px; /* 통일된 카드 간격 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--neutral-gray);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        .logo i {
+            margin-right: 8px;
+            font-size: 24px;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Company Profile Header */
+        .profile-header {
+            background-color: white;
+            padding: 25px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+        .profile-header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .company-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        .company-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .company-title .industry-tag {
+            display: inline-block;
+            background-color: var(--secondary-blue);
+            color: var(--primary-blue);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .company-actions {
+            margin-left: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .btn {
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0052a3;
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background-color: white;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+        }
+        .btn-outline:hover {
+            background-color: var(--secondary-blue);
+        }
+
+        /* Main Content Layout */
+        .profile-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        /* --- 통합된 카드 스타일 --- */
+        .card-base {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            margin-bottom: var(--card-gap);
+        }
+        .card-base:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 18px 20px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title i {
+            color: var(--primary-blue);
+            font-size: 15px;
+        }
+        
+        /* Sidebar Info */
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--light-gray);
+            font-size: 13px;
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: 500;
+            color: var(--text-light);
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        .info-value {
+            text-align: right;
+            word-break: break-all;
+        }
+        .info-value a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        .info-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* Description Text */
+        .description-text {
+            white-space: pre-wrap;
+            line-height: 1.7;
+            color: #444;
+            font-size: 13px;
+        }
+
+        /* Contact Cards */
+        .contact-card {
+            padding: 15px;
+        }
+        .contact-card-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-blue);
+            font-size: 14px;
+        }
+        .contact-card-body p {
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+        .contact-card-body a {
+            color: var(--primary-blue);
+        }
+
+        /* Promo File List */
+        .promo-file-list {
+            list-style: none;
+        }
+        .promo-file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            font-size: 13px;
+        }
+        .promo-file-item i {
+            font-size: 20px;
+            margin-right: 12px;
+            color: var(--primary-blue);
+            width: 20px;
+            text-align: center;
+        }
+        .promo-file-item i.fa-file-pdf { color: #e74c3c; }
+        .promo-file-item i.fa-file-powerpoint { color: #d35400; }
+        .promo-file-item i.fa-file-image { color: #27ae60; }
+        
+        /* --- New Postings Section --- */
+        .postings-section {
+            margin-top: 40px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden; /* To contain the border radius of children */
+        }
+        .postings-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: white;
+        }
+        .postings-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--neutral-gray);
+        }
+        .postings-tabs {
+            display: flex;
+            background-color: #fafafa;
+        }
+        .postings-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .postings-tab.active {
+            color: var(--primary-blue);
+            background-color: white;
+            border-bottom-color: var(--primary-blue);
+        }
+        .postings-content {
+            padding: 20px;
+            background-color: white;
+        }
+        .postings-panel {
+            display: none;
+        }
+        .postings-panel.active {
+            display: block;
+        }
+        .posting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--card-gap); /* 통일된 간격 사용 */
+        }
+        .posting-card {
+            padding: 15px;
+        }
+        .posting-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .posting-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--neutral-gray);
+        }
+        .posting-status {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .status-open {
+            background-color: rgba(46, 189, 89, 0.1);
+            color: var(--success-green);
+        }
+        .status-closed {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--text-light);
+        }
+        .posting-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        .posting-details span {
+            background-color: var(--light-gray);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .view-more {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .view-more a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .view-more a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+            .profile-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .company-actions {
+                margin-left: 0;
+                flex-direction: row;
+                width: 100%;
+            }
+            .company-actions .btn {
+                flex: 1;
+            }
+            .posting-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-container">
+                <a href="#" class="logo">
+                    <i class="fas fa-building"></i>
+                    전시(專時)
+                </a>
+                <div class="user-menu">
+                    <div class="user-profile">
+                        <img src="https://picsum.photos/seed/viewer/32/32.jpg" alt="User Avatar" class="user-avatar">
+                        <span>박전문가 님</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Company Profile Header -->
+    <section class="profile-header">
+        <div class="container">
+            <div class="profile-header-content">
+                <img src="https://picsum.photos/seed/techsolution/100/100.jpg" alt="Company Logo" class="company-logo">
+                <div class="company-title">
+                    <h1 id="company-name">테크솔루션</h1>
+                    <span class="industry-tag" id="industry-field">IT/개발 > 웹 개발</span>
+                </div>
+                <div class="company-actions">
+                    <button class="btn btn-primary" onclick="sendProposal()">
+                        <i class="fas fa-paper-plane"></i> 협업 제안
+                    </button>
+                    <button class="btn btn-outline" onclick="bookmarkCompany()">
+                        <i class="fas fa-bookmark"></i> 북마크
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container profile-content">
+        <!-- Left Column: Main Info -->
+        <div class="main-column">
+            <!-- 회사 소개 -->
+            <section class="content-section card-base">
+                <h2 class="section-title">
+                    <i class="fas fa-bullhorn"></i>
+                    회사 소개
+                </h2>
+                <p class="description-text" id="company-intro">테크솔루션은 혁신적인 기술로 미래를 만들어가는 IT 기업입니다. 우리는 최신 기술 트렌드를 바탕으로 고객에게 최적의 솔루션을 제공하며, 끊임없는 도전과 혁신을 통해 성장하고 있습니다. 주요 사업 모델은 B2B SaaS 플랫폼 개발 및 공급이며, 국내외 다수 기업과 파트너십을 맺고 있습니다.</p>
+            </section>
+
+            <!-- 서비스/제품 소개 -->
+            <section class="content-section card-base">
+                <h2 class="section-title">
+                    <i class="fas fa-cube"></i>
+                    서비스/제품 소개
+                </h2>
+                <p class="description-text" id="service-info">1. 클라우드 기반 ERP 솔루션 'BizCloud'
+   - 중소기업을 위한 맞춤형 재무, 인사, 물류 관리 시스템
+   - 월 구독 모델로 높은 비용 효율성 제공
+
+2. AI 기반 데이터 분석 플랫폼 'Insight'
+   - 빅데이터 수집 및 시각화 툴
+   - 예측 분석을 통한 비즈니스 의사결정 지원</p>
+            </section>
+
+            <!-- 담당자 정보 -->
+            <section class="content-section card-base">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i>
+                    담당자 정보
+                </h2>
+                <div id="contact-list">
+                    <!-- Contacts will be dynamically inserted here -->
+                </div>
+            </section>
+
+            <!-- 홍보 자료 -->
+            <section class="content-section card-base">
+                <h2 class="section-title">
+                    <i class="fas fa-file-alt"></i>
+                    홍보 자료
+                </h2>
+                <ul class="promo-file-list" id="promo-list">
+                    <!-- Promo files will be dynamically inserted here -->
+                </ul>
+            </section>
+        </div>
+
+        <!-- Right Column: Sidebar Info -->
+        <div class="sidebar-column">
+            <!-- 기본 정보 -->
+            <section class="content-section card-base">
+                <h2 class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    기본 정보
+                </h2>
+                <div class="info-item">
+                    <span class="info-label">사업자등록번호</span>
+                    <span class="info-value" id="biz-reg-no">123-45-67890</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">대표자명</span>
+                    <span class="info-value" id="ceo-name">김대표</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">설립일</span>
+                    <span class="info-value" id="establish-date">2018년 3월 15일</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">직원 수</span>
+                    <span class="info-value" id="employees">51-100명</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">주소</span>
+                    <span class="info-value" id="address">서울특별시 강남구 테헤란로 123</span>
+                </div>
+            </section>
+
+            <!-- 연결 정보 -->
+            <section class="content-section card-base">
+                <h2 class="section-title">
+                    <i class="fas fa-link"></i>
+                    연결 정보
+                </h2>
+                <div class="info-item">
+                    <span class="info-label">홈페이지</span>
+                    <span class="info-value"><a href="https://techsolution.example.com" target="_blank">techsolution.example.com</a></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">링크드인</span>
+                    <span class="info-value"><a href="https://linkedin.com/company/techsolution" target="_blank">linkedin.com/company/techsolution</a></span>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Postings Section -->
+    <section class="postings-section">
+        <div class="container">
+            <div class="postings-header">
+                <h2 class="postings-title">최신 공고</h2>
+            </div>
+            <div class="postings-tabs">
+                <div class="postings-tab active" data-tab="short-requests">단기 의뢰</div>
+                <div class="postings-tab" data-tab="job-postings">구인 공고</div>
+            </div>
+            <div class="postings-content">
+                <div class="postings-panel active" id="short-requests-panel">
+                    <div class="posting-grid" id="short-requests-grid">
+                        <!-- Short requests will be dynamically inserted here -->
+                    </div>
+                    <div class="view-more"><a href="#">단기 의뢰 더보기 <i class="fas fa-arrow-right"></i></a></div>
+                </div>
+                <div class="postings-panel" id="job-postings-panel">
+                    <div class="posting-grid" id="job-postings-grid">
+                        <!-- Job postings will be dynamically inserted here -->
+                    </div>
+                    <div class="view-more"><a href="#">구인 공고 더보기 <i class="fas fa-arrow-right"></i></a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Mock data representing submitted form data
+        const companyData = {
+            companyName: "테크솔루션",
+            logoUrl: "https://picsum.photos/seed/techsolution/100/100.jpg",
+            majorCategory: "IT",
+            minorCategory: "IT01",
+            majorCategoryName: "IT/개발",
+            minorCategoryName: "웹 개발",
+            bizRegNo: "123-45-67890",
+            ceoName: "김대표",
+            establishDate: "2018-03-15",
+            employees: "51-100명",
+            address: "서울특별시 강남구 테헤란로 123",
+            companyIntro: "테크솔루션은 혁신적인 기술로 미래를 만들어가는 IT 기업입니다. 우리는 최신 기술 트렌드를 바탕으로 고객에게 최적의 솔루션을 제공하며, 끊임없는 도전과 혁신을 통해 성장하고 있습니다. 주요 사업 모델은 B2B SaaS 플랫폼 개발 및 공급이며, 국내외 다수 기업과 파트너십을 맺고 있습니다.",
+            serviceInfo: "1. 클라우드 기반 ERP 솔루션 'BizCloud'\n   - 중소기업을 위한 맞춤형 재무, 인사, 물류 관리 시스템\n   - 월 구독 모델로 높은 비용 효율성 제공\n\n2. AI 기반 데이터 분석 플랫폼 'Insight'\n   - 빅데이터 수집 및 시각화 툴\n   - 예측 분석을 통한 비즈니스 의사결정 지원",
+            website: "https://techsolution.example.com",
+            linkedin: "https://linkedin.com/company/techsolution",
+            contacts: [
+                { title: "마케팅팀장", name: "이마케", email: "market@techsolution.com", phone: "010-1111-2222" },
+                { title: "개발리드", name: "박개발", email: "dev@techsolution.com", phone: "010-3333-4444" },
+            ],
+            promoFiles: [
+                { name: "테크솔루션_소개서.pdf", type: "pdf" },
+                { name: "BizCloud_제안서.pptx", type: "pptx" },
+                { name: "회사_전경.jpg", type: "image" },
+            ]
+        };
+
+        // Mock data for postings
+        const shortRequests = [
+            { title: "B2B SaaS 솔루션 UI/UX 개선 의뢰", category: "UI/UX 디자인", budget: "300만원", deadline: "2023-07-15", status: "open" },
+            { title: "마케팅 콘텐츠(블로그, 카드뉴스) 제작", category: "콘텐츠 마케팅", budget: "150만원", deadline: "2023-06-30", status: "open" },
+            { title: "Python을 활용한 데이터 분석 및 시각화", category: "데이터 분석", budget: "250만원", deadline: "2023-07-31", status: "open" },
+        ];
+
+        const jobPostings = [
+            { title: "시니어 프론트엔드 개발자 (React)", position: "프론트엔드 개발자", type: "정규직", deadline: "2023-07-10", status: "open" },
+            { title: "기획자/PM (경력 5년 이상)", position: "프로덕트 매니저", type: "정규직", deadline: "2023-07-20", status: "open" },
+            { title: "마케팅 인턴 (SNS 채널 운영)", position: "마케팅 인턴", type: "인턴", deadline: "2023-06-25", status: "closed" },
+        ];
+
+        // Function to populate page with data
+        function populateProfile() {
+            document.getElementById('company-name').textContent = companyData.companyName;
+            document.querySelector('.company-logo').src = companyData.logoUrl;
+            document.getElementById('industry-field').textContent = `${companyData.majorCategoryName} > ${companyData.minorCategoryName}`;
+            document.getElementById('biz-reg-no').textContent = companyData.bizRegNo;
+            document.getElementById('ceo-name').textContent = companyData.ceoName;
+            document.getElementById('establish-date').textContent = new Date(companyData.establishDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('employees').textContent = companyData.employees;
+            document.getElementById('address').textContent = companyData.address;
+            document.getElementById('company-intro').textContent = companyData.companyIntro;
+            document.getElementById('service-info').textContent = companyData.serviceInfo;
+            document.querySelector('a[href*="techsolution.example.com"]').href = companyData.website;
+            document.querySelector('a[href*="linkedin.com/company"]').href = companyData.linkedin;
+
+            // Populate contacts
+            const contactList = document.getElementById('contact-list');
+            companyData.contacts.forEach(contact => {
+                const card = document.createElement('div');
+                card.className = 'contact-card card-base'; // 통일된 카드 스타일 적용
+                card.innerHTML = `
+                    <div class="contact-card-header">${contact.title} | ${contact.name}</div>
+                    <div class="contact-card-body">
+                        <p><i class="fas fa-envelope"></i> <a href="mailto:${contact.email}">${contact.email}</a></p>
+                        <p><i class="fas fa-phone"></i> <a href="tel:${contact.phone}">${contact.phone}</a></p>
+                    </div>
+                `;
+                contactList.appendChild(card);
+            });
+
+            // Populate promo files
+            const promoList = document.getElementById('promo-list');
+            companyData.promoFiles.forEach(file => {
+                const item = document.createElement('li');
+                item.className = 'promo-file-item card-base'; // 통일된 카드 스타일 적용
+                
+                let iconClass = 'fas fa-file';
+                if (file.type === 'pdf') iconClass = 'fas fa-file-pdf';
+                else if (file.type === 'pptx') iconClass = 'fas fa-file-powerpoint';
+                else if (file.type === 'image') iconClass = 'fas fa-file-image';
+
+                item.innerHTML = `
+                    <i class="${iconClass}"></i>
+                    <span>${file.name}</span>
+                `;
+                promoList.appendChild(item);
+            });
+        }
+
+        function populatePostings() {
+            const shortRequestsGrid = document.getElementById('short-requests-grid');
+            shortRequests.forEach(req => {
+                const card = document.createElement('div');
+                card.className = 'posting-card card-base'; // 통일된 카드 스타일 적용
+                card.innerHTML = `
+                    <div class="posting-header">
+                        <div class="posting-title">${req.title}</div>
+                        <div class="posting-status ${req.status === 'open' ? 'status-open' : 'status-closed'}">${req.status === 'open' ? '모집중' : '마감'}</div>
+                    </div>
+                    <div class="posting-details">
+                        <span><i class="fas fa-tag"></i> ${req.category}</span>
+                        <span><i class="fas fa-won-sign"></i> ${req.budget}</span>
+                        <span><i class="fas fa-calendar-alt"></i> ${req.deadline}</span>
+                    </div>
+                `;
+                shortRequestsGrid.appendChild(card);
+            });
+
+            const jobPostingsGrid = document.getElementById('job-postings-grid');
+            jobPostings.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'posting-card card-base'; // 통일된 카드 스타일 적용
+                card.innerHTML = `
+                    <div class="posting-header">
+                        <div class="posting-title">${post.title}</div>
+                        <div class="posting-status ${post.status === 'open' ? 'status-open' : 'status-closed'}">${post.status === 'open' ? '모집중' : '마감'}</div>
+                    </div>
+                    <div class="posting-details">
+                        <span><i class="fas fa-briefcase"></i> ${post.position}</span>
+                        <span><i class="fas fa-user-tie"></i> ${post.type}</span>
+                        <span><i class="fas fa-calendar-alt"></i> ${post.deadline}</span>
+                    </div>
+                `;
+                jobPostingsGrid.appendChild(card);
+            });
+        }
+
+        // Tab switching logic
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.postings-tab');
+            const panels = document.querySelectorAll('.postings-panel');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.dataset.tab;
+
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(`${targetTab}-panel`).classList.add('active');
+                });
+            });
+        }
+
+        // Action functions
+        function bookmarkCompany() {
+            alert('기업이 북마크되었습니다.');
+        }
+        function sendProposal() {
+            alert('협업 제안 페이지로 이동합니다.');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            populateProfile();
+            populatePostings();
+            setupTabs();
+        });
+    </script>
+</body>
+</html>

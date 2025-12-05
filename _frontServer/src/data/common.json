@@ -1,0 +1,674 @@
+{
+  "majorCategories": [
+    {
+      "code": "IT",
+      "name": "정보기술",
+      "englishName": "Information Technology",
+      "description": "IT/개발"
+    },
+    {
+      "code": "DS",
+      "name": "디자인",
+      "englishName": "Design",
+      "description": "디자인/크리에이티브"
+    },
+    {
+      "code": "MK",
+      "name": "마케팅",
+      "englishName": "Marketing",
+      "description": "마케팅/홍보"
+    },
+    {
+      "code": "WR",
+      "name": "글쓰기",
+      "englishName": "Writing",
+      "description": "글쓰기/번역"
+    },
+    {
+      "code": "BZ",
+      "name": "비즈니스",
+      "englishName": "Business",
+      "description": "비즈니스/경영"
+    },
+    {
+      "code": "HR",
+      "name": "인사",
+      "englishName": "Human Resources",
+      "description": "HR/인사"
+    },
+    {
+      "code": "ED",
+      "name": "교육",
+      "englishName": "Education",
+      "description": "교육/강의"
+    },
+    {
+      "code": "BD",
+      "name": "건축",
+      "englishName": "Building",
+      "description": "건축/설계"
+    },
+    {
+      "code": "IN",
+      "name": "인테리어",
+      "englishName": "Interior",
+      "description": "인테리어/시공"
+    },
+    {
+      "code": "FC",
+      "name": "설비",
+      "englishName": "Facilities",
+      "description": "설비/수리"
+    },
+    {
+      "code": "SP",
+      "name": "스포츠",
+      "englishName": "Sports",
+      "description": "스포츠/피트니스"
+    },
+    {
+      "code": "BT",
+      "name": "뷰티",
+      "englishName": "Beauty",
+      "description": "뷰티/패션"
+    },
+    {
+      "code": "EV",
+      "name": "행사",
+      "englishName": "Events",
+      "description": "행사/엔터테인먼트"
+    },
+    {
+      "code": "LF",
+      "name": "생활서비스",
+      "englishName": "Lifestyle",
+      "description": "생활서비스"
+    },
+    {
+      "code": "PS",
+      "name": "전문서비스",
+      "englishName": "Professional Services",
+      "description": "전문서비스"
+    }
+  ],
+  "middleCategories": [
+    {
+      "code": "IT01",
+      "majorCode": "IT",
+      "name": "웹 개발",
+      "englishName": "Web Development",
+      "emoji": "🌐",
+      "description": "프론트엔드, 백엔드, 풀스택, 워드프레스"
+    },
+    {
+      "code": "IT02",
+      "majorCode": "IT",
+      "name": "앱 개발",
+      "englishName": "App Development",
+      "emoji": "📱",
+      "description": "iOS, Android, React Native, Flutter"
+    },
+    {
+      "code": "IT03",
+      "majorCode": "IT",
+      "name": "AI/머신러닝",
+      "englishName": "AI & Machine Learning",
+      "emoji": "🤖",
+      "description": "AI 모델, LLM, 챗봇, 자연어처리"
+    },
+    {
+      "code": "IT04",
+      "majorCode": "IT",
+      "name": "데이터 분석",
+      "englishName": "Data Analytics",
+      "emoji": "📊",
+      "description": "BI, 시각화, 통계분석, 크롤링"
+    },
+    {
+      "code": "IT05",
+      "majorCode": "IT",
+      "name": "보안/인증",
+      "englishName": "Security & Compliance",
+      "emoji": "🔒",
+      "description": "ISMS, 보안컨설팅, 취약점진단, 개인정보"
+    },
+    {
+      "code": "IT06",
+      "majorCode": "IT",
+      "name": "클라우드/인프라",
+      "englishName": "Cloud & Infrastructure",
+      "emoji": "☁️",
+      "description": "AWS, Azure, DevOps, 서버관리"
+    },
+    {
+      "code": "IT07",
+      "majorCode": "IT",
+      "name": "게임 개발",
+      "englishName": "Game Development",
+      "emoji": "🎮",
+      "description": "Unity, Unreal, 모바일게임, PC게임"
+    },
+    {
+      "code": "IT08",
+      "majorCode": "IT",
+      "name": "블록체인/Web3",
+      "englishName": "Blockchain & Web3",
+      "emoji": "⛓️",
+      "description": "스마트컨트랙트, NFT, 디파이, 코인"
+    },
+    {
+      "code": "DS01",
+      "majorCode": "DS",
+      "name": "영상 편집",
+      "englishName": "Video Editing",
+      "emoji": "🎬",
+      "description": "유튜브, 숏폼, 브이로그, 자막"
+    },
+    {
+      "code": "DS02",
+      "majorCode": "DS",
+      "name": "모션그래픽/3D",
+      "englishName": "Motion & 3D",
+      "emoji": "🎥",
+      "description": "애프터이펙트, 3D애니메이션, VFX"
+    },
+    {
+      "code": "DS03",
+      "majorCode": "DS",
+      "name": "그래픽 디자인",
+      "englishName": "Graphic Design",
+      "emoji": "🎨",
+      "description": "로고, 포스터, 명함, 브로슈어"
+    },
+    {
+      "code": "DS04",
+      "majorCode": "DS",
+      "name": "일러스트/캐릭터",
+      "englishName": "Illustration",
+      "emoji": "✏️",
+      "description": "일러스트, 캐릭터, 이모티콘, 웹툰"
+    },
+    {
+      "code": "DS05",
+      "majorCode": "DS",
+      "name": "UI/UX 디자인",
+      "englishName": "UI/UX Design",
+      "emoji": "📐",
+      "description": "앱/웹 디자인, 프로토타입, 사용자경험"
+    },
+    {
+      "code": "DS06",
+      "majorCode": "DS",
+      "name": "제품/산업 디자인",
+      "englishName": "Product Design",
+      "emoji": "🏭",
+      "description": "제품디자인, 패키지, 3D프린팅"
+    },
+    {
+      "code": "DS07",
+      "majorCode": "DS",
+      "name": "사진/촬영",
+      "englishName": "Photography",
+      "emoji": "📷",
+      "description": "제품촬영, 프로필, 행사, 드론촬영"
+    },
+    {
+      "code": "DS08",
+      "majorCode": "DS",
+      "name": "음악/사운드",
+      "englishName": "Music & Sound",
+      "emoji": "🎵",
+      "description": "작곡, 편곡, 믹싱, 나레이션, 더빙"
+    },
+    {
+      "code": "MK01",
+      "majorCode": "MK",
+      "name": "퍼포먼스 마케팅",
+      "englishName": "Performance Marketing",
+      "emoji": "📈",
+      "description": "페이스북/구글광고, 리타겟팅, ROAS"
+    },
+    {
+      "code": "MK02",
+      "majorCode": "MK",
+      "name": "SNS 마케팅",
+      "englishName": "SNS Marketing",
+      "emoji": "📲",
+      "description": "인스타, 틱톡, 유튜브, 바이럴"
+    },
+    {
+      "code": "MK03",
+      "majorCode": "MK",
+      "name": "콘텐츠 마케팅",
+      "englishName": "Content Marketing",
+      "emoji": "📝",
+      "description": "블로그, SEO, 뉴스레터, 카피라이팅"
+    },
+    {
+      "code": "MK04",
+      "majorCode": "MK",
+      "name": "브랜딩/CI",
+      "englishName": "Branding & CI",
+      "emoji": "🎯",
+      "description": "브랜드전략, CI/BI, 네이밍, 슬로건"
+    },
+    {
+      "code": "MK05",
+      "majorCode": "MK",
+      "name": "PR/언론홍보",
+      "englishName": "PR & Communications",
+      "emoji": "📰",
+      "description": "보도자료, 언론대응, 위기관리"
+    },
+    {
+      "code": "MK06",
+      "majorCode": "MK",
+      "name": "영업/세일즈",
+      "englishName": "Sales",
+      "emoji": "💰",
+      "description": "B2B영업, 제휴, CRM, 텔레마케팅"
+    },
+    {
+      "code": "WR01",
+      "majorCode": "WR",
+      "name": "카피라이팅",
+      "englishName": "Copywriting",
+      "emoji": "✍️",
+      "description": "광고카피, 상세페이지, 슬로건"
+    },
+    {
+      "code": "WR02",
+      "majorCode": "WR",
+      "name": "콘텐츠 글쓰기",
+      "englishName": "Content Writing",
+      "emoji": "📖",
+      "description": "블로그, 칼럼, 기사, 시나리오"
+    },
+    {
+      "code": "WR03",
+      "majorCode": "WR",
+      "name": "번역/통역",
+      "englishName": "Translation",
+      "emoji": "🌍",
+      "description": "영어, 중국어, 일본어, 전문번역"
+    },
+    {
+      "code": "WR04",
+      "majorCode": "WR",
+      "name": "출판/교정",
+      "englishName": "Publishing & Editing",
+      "emoji": "📚",
+      "description": "전자책, 교정교열, 자서전, 논문"
+    },
+    {
+      "code": "BZ01",
+      "majorCode": "BZ",
+      "name": "경영/전략 컨설팅",
+      "englishName": "Strategy Consulting",
+      "emoji": "💼",
+      "description": "사업계획, 시장분석, BM설계"
+    },
+    {
+      "code": "BZ02",
+      "majorCode": "BZ",
+      "name": "창업/스타트업",
+      "englishName": "Startup Consulting",
+      "emoji": "🚀",
+      "description": "창업컨설팅, 엑셀러레이팅, 멘토링"
+    },
+    {
+      "code": "BZ03",
+      "majorCode": "BZ",
+      "name": "재무/회계",
+      "englishName": "Finance & Accounting",
+      "emoji": "💵",
+      "description": "재무분석, IR, 회계감사, 자금조달"
+    },
+    {
+      "code": "BZ04",
+      "majorCode": "BZ",
+      "name": "세무/기장",
+      "englishName": "Tax & Bookkeeping",
+      "emoji": "🧾",
+      "description": "세무신고, 기장대행, 절세컨설팅"
+    },
+    {
+      "code": "BZ05",
+      "majorCode": "BZ",
+      "name": "법률/계약",
+      "englishName": "Legal & Contracts",
+      "emoji": "⚖️",
+      "description": "계약서, 법률자문, 분쟁해결"
+    },
+    {
+      "code": "BZ06",
+      "majorCode": "BZ",
+      "name": "특허/지식재산",
+      "englishName": "Patent & IP",
+      "emoji": "📜",
+      "description": "특허출원, 상표등록, 저작권"
+    },
+    {
+      "code": "HR01",
+      "majorCode": "HR",
+      "name": "채용/헤드헌팅",
+      "englishName": "Recruiting",
+      "emoji": "🎯",
+      "description": "채용대행, 헤드헌팅, 면접컨설팅"
+    },
+    {
+      "code": "HR02",
+      "majorCode": "HR",
+      "name": "인사제도/조직",
+      "englishName": "HR Systems",
+      "emoji": "👥",
+      "description": "인사제도, 평가/보상, 조직문화"
+    },
+    {
+      "code": "HR03",
+      "majorCode": "HR",
+      "name": "노무/급여",
+      "englishName": "Labor & Payroll",
+      "emoji": "📋",
+      "description": "노무상담, 급여관리, 4대보험"
+    },
+    {
+      "code": "HR04",
+      "majorCode": "HR",
+      "name": "커리어 코칭",
+      "englishName": "Career Coaching",
+      "emoji": "🎓",
+      "description": "이직컨설팅, 이력서, 면접코칭"
+    },
+    {
+      "code": "ED01",
+      "majorCode": "ED",
+      "name": "기업교육/강의",
+      "englishName": "Corporate Training",
+      "emoji": "🏢",
+      "description": "사내교육, 워크숍, 리더십"
+    },
+    {
+      "code": "ED02",
+      "majorCode": "ED",
+      "name": "외국어 교육",
+      "englishName": "Language Education",
+      "emoji": "🌏",
+      "description": "영어회화, 중국어, 일본어, 비즈니스영어"
+    },
+    {
+      "code": "ED03",
+      "majorCode": "ED",
+      "name": "입시/학원",
+      "englishName": "Academic Tutoring",
+      "emoji": "📝",
+      "description": "수학, 과학, 논술, 입시컨설팅"
+    },
+    {
+      "code": "ED04",
+      "majorCode": "ED",
+      "name": "자격증/실무",
+      "englishName": "Certification & Skills",
+      "emoji": "📜",
+      "description": "IT자격증, 회계, 공인중개사"
+    },
+    {
+      "code": "BD01",
+      "majorCode": "BD",
+      "name": "건축 설계",
+      "englishName": "Architecture",
+      "emoji": "🏗️",
+      "description": "건축설계, 구조설계, 인허가, 감리"
+    },
+    {
+      "code": "BD02",
+      "majorCode": "BD",
+      "name": "토목/조경",
+      "englishName": "Civil & Landscape",
+      "emoji": "🌳",
+      "description": "토목설계, 조경, 측량, 환경"
+    },
+    {
+      "code": "BD03",
+      "majorCode": "BD",
+      "name": "도시/부동산",
+      "englishName": "Urban & Real Estate",
+      "emoji": "🏙️",
+      "description": "도시계획, 부동산개발, 분양컨설팅"
+    },
+    {
+      "code": "IN01",
+      "majorCode": "IN",
+      "name": "인테리어 디자인",
+      "englishName": "Interior Design",
+      "emoji": "🏠",
+      "description": "주거, 상업공간, 사무실, 스타일링"
+    },
+    {
+      "code": "IN02",
+      "majorCode": "IN",
+      "name": "도배/바닥",
+      "englishName": "Wallpaper & Flooring",
+      "emoji": "🎨",
+      "description": "도배, 장판, 마루, 타일"
+    },
+    {
+      "code": "IN03",
+      "majorCode": "IN",
+      "name": "주방/욕실",
+      "englishName": "Kitchen & Bathroom",
+      "emoji": "🚿",
+      "description": "싱크대, 욕실리모델링, 붙박이장"
+    },
+    {
+      "code": "IN04",
+      "majorCode": "IN",
+      "name": "목공/가구",
+      "englishName": "Carpentry & Furniture",
+      "emoji": "🪑",
+      "description": "목공, 맞춤가구, 가구제작"
+    },
+    {
+      "code": "FC01",
+      "majorCode": "FC",
+      "name": "전기/조명",
+      "englishName": "Electrical & Lighting",
+      "emoji": "💡",
+      "description": "전기공사, 조명설치, 콘센트"
+    },
+    {
+      "code": "FC02",
+      "majorCode": "FC",
+      "name": "설비/배관",
+      "englishName": "Plumbing & HVAC",
+      "emoji": "🔧",
+      "description": "수도, 난방, 에어컨, 보일러"
+    },
+    {
+      "code": "FC03",
+      "majorCode": "FC",
+      "name": "방수/단열",
+      "englishName": "Waterproofing & Insulation",
+      "emoji": "🏚️",
+      "description": "방수, 단열, 결로, 누수"
+    },
+    {
+      "code": "FC04",
+      "majorCode": "FC",
+      "name": "철거/청소",
+      "englishName": "Demolition & Cleaning",
+      "emoji": "🧹",
+      "description": "철거, 폐기물, 입주청소, 준공청소"
+    },
+    {
+      "code": "SP01",
+      "majorCode": "SP",
+      "name": "골프/라켓",
+      "englishName": "Golf & Racket Sports",
+      "emoji": "⛳",
+      "description": "골프, 테니스, 배드민턴, 탁구"
+    },
+    {
+      "code": "SP02",
+      "majorCode": "SP",
+      "name": "피트니스/PT",
+      "englishName": "Fitness & Personal Training",
+      "emoji": "💪",
+      "description": "PT, 크로스핏, 바디빌딩, 다이어트"
+    },
+    {
+      "code": "SP03",
+      "majorCode": "SP",
+      "name": "요가/필라테스",
+      "englishName": "Yoga & Pilates",
+      "emoji": "🧘",
+      "description": "요가, 필라테스, 명상, 스트레칭"
+    },
+    {
+      "code": "SP04",
+      "majorCode": "SP",
+      "name": "수영/아웃도어",
+      "englishName": "Swimming & Outdoor",
+      "emoji": "🏊",
+      "description": "수영, 마라톤, 등산, 클라이밍, 자전거"
+    },
+    {
+      "code": "SP05",
+      "majorCode": "SP",
+      "name": "댄스/무술",
+      "englishName": "Dance & Martial Arts",
+      "emoji": "💃",
+      "description": "발레, 방송댄스, 태권도, 주짓수, 복싱"
+    },
+    {
+      "code": "BT01",
+      "majorCode": "BT",
+      "name": "메이크업/헤어",
+      "englishName": "Makeup & Hair",
+      "emoji": "💄",
+      "description": "메이크업, 헤어, 웨딩, 촬영"
+    },
+    {
+      "code": "BT02",
+      "majorCode": "BT",
+      "name": "네일/속눈썹",
+      "englishName": "Nail & Lash",
+      "emoji": "💅",
+      "description": "네일아트, 속눈썹, 반영구"
+    },
+    {
+      "code": "BT03",
+      "majorCode": "BT",
+      "name": "패션/스타일링",
+      "englishName": "Fashion & Styling",
+      "emoji": "👗",
+      "description": "퍼스널컬러, 스타일링, 옷수선"
+    },
+    {
+      "code": "EV01",
+      "majorCode": "EV",
+      "name": "웨딩/돌잔치",
+      "englishName": "Wedding & Celebration",
+      "emoji": "💒",
+      "description": "웨딩플래너, 돌잔치, 플로리스트"
+    },
+    {
+      "code": "EV02",
+      "majorCode": "EV",
+      "name": "행사/컨퍼런스",
+      "englishName": "Events & Conference",
+      "emoji": "🎉",
+      "description": "행사기획, 전시, 컨퍼런스, 세미나"
+    },
+    {
+      "code": "EV03",
+      "majorCode": "EV",
+      "name": "MC/공연",
+      "englishName": "MC & Performance",
+      "emoji": "🎤",
+      "description": "사회자, 마술, 밴드, 연주, 가수섭외"
+    },
+    {
+      "code": "LF01",
+      "majorCode": "LF",
+      "name": "반려동물",
+      "englishName": "Pet Services",
+      "emoji": "🐕",
+      "description": "펫시터, 훈련사, 미용, 장례"
+    },
+    {
+      "code": "LF02",
+      "majorCode": "LF",
+      "name": "청소/정리",
+      "englishName": "Cleaning & Organizing",
+      "emoji": "🧹",
+      "description": "가사도우미, 정리수납, 에어컨청소"
+    },
+    {
+      "code": "LF03",
+      "majorCode": "LF",
+      "name": "이사/운송",
+      "englishName": "Moving & Delivery",
+      "emoji": "🚚",
+      "description": "이사, 용달, 보관, 폐기물"
+    },
+    {
+      "code": "LF04",
+      "majorCode": "LF",
+      "name": "수리/설치",
+      "englishName": "Repair & Installation",
+      "emoji": "🔨",
+      "description": "가전수리, 가구조립, 커튼설치"
+    },
+    {
+      "code": "PS01",
+      "majorCode": "PS",
+      "name": "의료/헬스케어",
+      "englishName": "Healthcare",
+      "emoji": "🏥",
+      "description": "의료IT, 임상분석, 건강관리, 영양"
+    },
+    {
+      "code": "PS02",
+      "majorCode": "PS",
+      "name": "공학/제조",
+      "englishName": "Engineering",
+      "emoji": "⚙️",
+      "description": "기계설계, 전기전자, 품질관리, CAD"
+    },
+    {
+      "code": "PS03",
+      "majorCode": "PS",
+      "name": "물류/무역",
+      "englishName": "Logistics & Trade",
+      "emoji": "📦",
+      "description": "수출입, 통관, 물류컨설팅, FTA"
+    },
+    {
+      "code": "PS04",
+      "majorCode": "PS",
+      "name": "농업/식품",
+      "englishName": "Agriculture & Food",
+      "emoji": "🌾",
+      "description": "스마트팜, 식품개발, HACCP, 유통"
+    }
+  ],
+  "regions": [
+    { "ko": "서울", "full_en": "Seoul", "short_en": "SEO" },
+    { "ko": "인천", "full_en": "Incheon", "short_en": "INC" },
+    { "ko": "경기", "full_en": "Gyeonggi", "short_en": "GG" },
+    { "ko": "대전", "full_en": "Daejeon", "short_en": "DJ" },
+    { "ko": "세종", "full_en": "Sejong", "short_en": "SJ" },
+    { "ko": "충북", "full_en": "Chungbuk", "short_en": "CB" },
+    { "ko": "충남", "full_en": "Chungnam", "short_en": "CN" },
+    { "ko": "광주", "full_en": "Gwangju", "short_en": "GJ" },
+    { "ko": "전북", "full_en": "Jeonbuk", "short_en": "JB" },
+    { "ko": "전남", "full_en": "Jeonnam", "short_en": "JN" },
+    { "ko": "제주", "full_en": "Jeju", "short_en": "JJ" },
+    { "ko": "대구", "full_en": "Daegu", "short_en": "DG" },
+    { "ko": "경북", "full_en": "Gyeongbuk", "short_en": "GB" },
+    { "ko": "부산", "full_en": "Busan", "short_en": "BS" },
+    { "ko": "울산", "full_en": "Ulsan", "short_en": "US" },
+    { "ko": "경남", "full_en": "Gyeongnam", "short_en": "GN" }
+  ]
+}

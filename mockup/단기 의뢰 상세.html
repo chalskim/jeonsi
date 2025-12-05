@@ -85,6 +85,13 @@
             font-weight: bold;
             margin-bottom: 15px;
             color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
         }
 
         /* Company Info Section */
@@ -254,21 +261,99 @@
             color: var(--primary-color);
         }
 
-        .budget-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* Team Composition Section */
+        .team-composition {
+            margin-bottom: 20px;
         }
 
-        .budget-amount {
-            font-size: 1.3rem;
+        .role-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #fdfdfd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .role-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .role-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .role-title {
             font-weight: bold;
+            font-size: 1.1rem;
             color: var(--primary-color);
         }
 
-        .budget-note {
+        .role-count {
+            background-color: var(--light-color);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .role-category {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
             font-size: 0.9rem;
             color: var(--text-muted);
+        }
+
+        .role-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .role-description {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .role-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .role-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .role-detail-btn, .role-apply-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .role-detail-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .role-apply-btn {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         /* Attachment Section */
@@ -336,11 +421,6 @@
             color: var(--dark-color);
             margin-right: 5px;
         }
-
-        .apply-btn {
-            background-color: var(--primary-color);
-            color: white;
-        }
         
         .bookmark-btn.bookmarked {
             background-color: var(--primary-color);
@@ -371,7 +451,7 @@
 
         .modal-content {
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             max-height: 90vh;
             background-color: var(--card-background);
             border-radius: 8px;
@@ -421,28 +501,7 @@
             font-weight: bold;
         }
 
-        .price-input-group {
-            display: flex;
-            align-items: center;
-        }
-
-        .price-input-group input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px 0 0 4px;
-            border-right: none;
-        }
-
-        .price-unit {
-            padding: 10px;
-            background-color: var(--light-color);
-            border: 1px solid var(--border-color);
-            border-radius: 0 4px 4px 0;
-            border-left: none;
-        }
-
-        .form-group input, .form-group textarea {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -475,6 +534,85 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+        }
+
+        /* Role Detail Modal */
+        .role-detail-modal .modal-body {
+            padding: 0;
+        }
+
+        .role-detail-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .role-detail-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .role-detail-count {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .role-detail-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .role-detail-section:last-child {
+            border-bottom: none;
+        }
+
+        .role-detail-section h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .role-detail-category {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .role-detail-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .role-tasks {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .role-tasks ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .role-tasks li {
+            margin-bottom: 8px;
+        }
+
+        .role-tasks li:last-child {
+            margin-bottom: 0;
+        }
+
+        .role-detail-footer {
+            padding: 20px;
+            background-color: var(--light-color);
+        }
+
+        .role-detail-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
         }
 
     </style>
@@ -527,74 +665,163 @@
                     <span class="badge urgent">🔥 긴급</span>
                     <span class="badge remote">원격 가능</span>
                 </div>
-                <h3 class="request-title">보안 진단 보고서 작성 (3일)</h3>
+                <h3 class="request-title">신규 앱 런칭 프로젝트</h3>
                 <div class="classification-info">
                     <i class="fas fa-tags"></i>
-                    <span>분류: 기술/개발 > 보안/인증 (IT05)</span>
+                    <span>분류: 기술/개발 > 앱 개발 (IT02)</span>
                 </div>
                 <div class="request-meta">
                     <span class="request-date">등록일: 2025-03-15</span>
-                    <span class="request-deadline">마감일: 2025-03-20</span>
-                    <span class="request-applicants">지원자: 3명</span>
+                    <span class="request-deadline">마감일: 2025-03-25</span>
+                    <span class="request-applicants">지원자: 5명</span>
                 </div>
             </div>
             
             <div class="repetition-info">
                 <i class="fas fa-clock"></i>
-                <span>기간별 반복</span>
+                <span>주 단위 반복 (총 8주)</span>
             </div>
             
             <div class="request-content">
-                <h4>업무 내용</h4>
-                <p>웹 애플리케이션 보안 진단 결과를 바탕으로 상세 보고서 작성이 필요합니다. 취약점 분석 및 개선 방안 제안까지 포함됩니다.</p>
+                <h4>프로젝트 소개</h4>
+                <p>새로운 핀테크 앱 런칭을 위한 개발 프로젝트입니다. 사용자 경험을 중심으로 한 UI/UX 설계부터 백엔드 시스템 구축까지 전체 과정이 필요합니다. 안정적인 서비스 운영을 위한 보안 강화와 데이터 분석 기능 포함합니다.</p>
                 
-                <h4>필요 역량</h4>
-                <div class="required-skills">
-                    <span class="skill-tag">웹 애플리케이션 보안</span>
-                    <span class="skill-tag">보고서 작성</span>
-                    <span class="skill-tag">취약점 분석</span>
+                <h4>모집 역할 (Team Composition)</h4>
+                <div class="team-composition">
+                    <!-- Role 1 -->
+                    <div class="role-card" onclick="openRoleDetailModal('ui-ux')">
+                        <div class="role-header">
+                            <div class="role-title">UI/UX 디자이너</div>
+                            <div class="role-count">2명 모집</div>
+                        </div>
+                        <div class="role-category">
+                            <span><i class="fas fa-folder"></i> 디자인/크리에이티브</span>
+                            <span><i class="fas fa-angle-right"></i> UI/UX 디자인</span>
+                        </div>
+                        <div class="role-skills">
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">프로토타이핑</span>
+                            <span class="skill-tag">사용자 경험 디자인</span>
+                            <span class="skill-tag">모바일 앱 디자인</span>
+                        </div>
+                        <div class="role-description">
+                            <p>핀테크 앱의 전체 UI/UX 설계를 담당합니다. 사용자 리서치 기반의 직관적인 인터페이스 디자인과 프로토타입 제작이 필요합니다.</p>
+                        </div>
+                        <div class="role-price">월 500만원 ~ 700만원</div>
+                        <div class="role-actions">
+                            <button class="role-detail-btn" onclick="event.stopPropagation(); openRoleDetailModal('ui-ux')">
+                                <i class="fas fa-info-circle"></i> 상세보기
+                            </button>
+                            <button class="role-apply-btn" onclick="event.stopPropagation(); openProposalModal('ui-ux')">
+                                <i class="fas fa-paper-plane"></i> 제안서 보내기
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Role 2 -->
+                    <div class="role-card" onclick="openRoleDetailModal('backend')">
+                        <div class="role-header">
+                            <div class="role-title">백엔드 개발자</div>
+                            <div class="role-count">3명 모집</div>
+                        </div>
+                        <div class="role-category">
+                            <span><i class="fas fa-folder"></i> 기술/개발</span>
+                            <span><i class="fas fa-angle-right"></i> 백엔드 개발</span>
+                        </div>
+                        <div class="role-skills">
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">Java</span>
+                            <span class="skill-tag">AWS</span>
+                            <span class="skill-tag">마이크로서비스</span>
+                            <span class="skill-tag">데이터베이스 설계</span>
+                        </div>
+                        <div class="role-description">
+                            <p>핀테크 앱의 백엔드 시스템을 구축합니다. 안정적인 데이터 처리와 보안 기능 구현이 필요합니다.</p>
+                        </div>
+                        <div class="role-price">월 600만원 ~ 800만원</div>
+                        <div class="role-actions">
+                            <button class="role-detail-btn" onclick="event.stopPropagation(); openRoleDetailModal('backend')">
+                                <i class="fas fa-info-circle"></i> 상세보기
+                            </button>
+                            <button class="role-apply-btn" onclick="event.stopPropagation(); openProposalModal('backend')">
+                                <i class="fas fa-paper-plane"></i> 제안서 보내기
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Role 3 -->
+                    <div class="role-card" onclick="openRoleDetailModal('frontend')">
+                        <div class="role-header">
+                            <div class="role-title">프론트엔드 개발자</div>
+                            <div class="role-count">2명 모집</div>
+                        </div>
+                        <div class="role-category">
+                            <span><i class="fas fa-folder"></i> 기술/개발</span>
+                            <span><i class="fas fa-angle-right"></i> 프론트엔드 개발</span>
+                        </div>
+                        <div class="role-skills">
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">TypeScript</span>
+                            <span class="skill-tag">Redux</span>
+                            <span class="skill-tag">웹 성능 최적화</span>
+                        </div>
+                        <div class="role-description">
+                            <p>디자인 시안을 기반으로 앱의 프론트엔드를 개발합니다. 반응형 디자인과 부드러운 사용자 경험 구현이 필요합니다.</p>
+                        </div>
+                        <div class="role-price">월 550만원 ~ 750만원</div>
+                        <div class="role-actions">
+                            <button class="role-detail-btn" onclick="event.stopPropagation(); openRoleDetailModal('frontend')">
+                                <i class="fas fa-info-circle"></i> 상세보기
+                            </button>
+                            <button class="role-apply-btn" onclick="event.stopPropagation(); openProposalModal('frontend')">
+                                <i class="fas fa-paper-plane"></i> 제안서 보내기
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
                 <h4>협업 조건</h4>
                 <div class="collaboration-conditions">
                     <div class="condition-item">
                         <i class="fas fa-calendar-alt"></i>
-                        <span>기간: 3일 (2025-03-26 ~ 2025-03-28)</span>
+                        <span>기간: 8주 (2025-04-01 ~ 2025-05-26)</span>
                     </div>
                     <div class="condition-item">
                         <i class="fas fa-clock"></i>
-                        <span>시간: 총 24시간 (일 8시간)</span>
+                        <span>시간: 주 40시간 (월 160시간)</span>
                     </div>
                     <div class="condition-item">
                         <i class="fas fa-map-marker-alt"></i>
-                        <span>근무 형태: 원격/오프라인 혼합</span>
+                        <span>근무 형태: 원격/오프라인 혼합 (주 2회 오프라인 미팅)</span>
                     </div>
                     <div class="condition-item">
                         <i class="fas fa-comments"></i>
-                        <span>커뮤니케이션: 슬랙, 화상회의</span>
+                        <span>커뮤니케이션: 슬랙, 화상회의, Jira</span>
                     </div>
-                </div>
-                
-                <h4>예산</h4>
-                <div class="budget-info">
-                    <span class="budget-amount">150만원</span>
-                    <span class="budget-note">(세금 별도)</span>
                 </div>
             </div>
         </section>
 
         <!-- Attachment Section -->
         <section class="section attachment-section">
-            <h4 class="section-title">첨부 파일</h4>
+            <h4 class="section-title">
+                <i class="fas fa-paperclip"></i>
+                <span>첨부 파일</span>
+            </h4>
             <div class="attachment-list">
                 <div class="attachment-item">
                     <i class="fas fa-file-pdf"></i>
-                    <span class="attachment-name">보안 진단 결과 요약.pdf</span>
+                    <span class="attachment-name">프로젝트 요구사항 명세서.pdf</span>
                     <button class="download-btn">다운로드</button>
                 </div>
                 <div class="attachment-item">
-                    <i class="fas fa-file-excel"></i>
-                    <span class="attachment-name">취약점 목록.xlsx</span>
+                    <i class="fas fa-file-powerpoint"></i>
+                    <span class="attachment-name">앱 기획 및 기능 목록.pptx</span>
+                    <button class="download-btn">다운로드</button>
+                </div>
+                <div class="attachment-item">
+                    <i class="fas fa-file-image"></i>
+                    <span class="attachment-name">참조 디자인 시안.png</span>
                     <button class="download-btn">다운로드</button>
                 </div>
             </div>
@@ -609,9 +836,77 @@
         <button class="chat-btn" id="chatBtn">
             <i class="fas fa-comment-dots"></i> 채팅 문의
         </button>
-        <button class="apply-btn" id="applyBtn">
-            <i class="fas fa-paper-plane"></i> 제안서 보내기
-        </button>
+    </div>
+
+    <!-- Role Detail Modal -->
+    <div class="modal-overlay role-detail-modal" id="roleDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="roleDetailTitle">역할 상세 정보</h3>
+                <button class="close-modal" onclick="closeRoleDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="role-detail-header">
+                    <div class="role-detail-title" id="roleDetailName">UI/UX 디자이너</div>
+                    <div class="role-detail-count" id="roleDetailCount">2명 모집</div>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>대분류/중분류</h4>
+                    <div class="role-detail-category">
+                        <span id="roleDetailMajor">디자인/크리에이티브</span>
+                        <i class="fas fa-angle-right"></i>
+                        <span id="roleDetailSub">UI/UX 디자인</span>
+                    </div>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>필요 역량/경험</h4>
+                    <div class="role-detail-skills" id="roleDetailSkills">
+                        <span class="skill-tag">Figma</span>
+                        <span class="skill-tag">프로토타이핑</span>
+                        <span class="skill-tag">사용자 경험 디자인</span>
+                        <span class="skill-tag">모바일 앱 디자인</span>
+                    </div>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>상세 업무 내용</h4>
+                    <p id="roleDetailDescription">핀테크 앱의 전체 UI/UX 설계를 담당합니다. 사용자 리서치 기반의 직관적인 인터페이스 디자인과 프로토타입 제작이 필요합니다.</p>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>지원 시 필수 조건</h4>
+                    <ul>
+                        <li>UI/UX 디자인 경력 3년 이상</li>
+                        <li>핀테크 앱 디자인 경험 우대</li>
+                        <li>Figma, Sketch 등 디자인 툴 숙련</li>
+                        <li>포트폴리오 필수 제출</li>
+                    </ul>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>담당 업무 데이터</h4>
+                    <div class="role-tasks">
+                        <ul id="roleDetailTasks">
+                            <li>사용자 리서치 및 페르소나 정의</li>
+                            <li>와이어프레임 및 정보 구조 설계</li>
+                            <li>고화면 UI 디자인 및 디자인 시스템 구축</li>
+                            <li>프로토타입 제작 및 사용성 테스트</li>
+                            <li>개발팀과의 협업 및 디자인 가이드 전달</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="role-detail-footer">
+                <div class="role-detail-price" id="roleDetailPrice">월 500만원 ~ 700만원</div>
+                <button class="submit-btn" onclick="openProposalFromDetail()">제안서 보내기</button>
+            </div>
+        </div>
     </div>
 
     <!-- Proposal Modal -->
@@ -619,28 +914,38 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>제안서 작성</h3>
-                <button class="close-modal" onclick="closeModal()">
+                <button class="close-modal" onclick="closeProposalModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
             <div class="modal-body">
                 <div class="form-group">
+                    <label for="proposal-role">지원 역할 선택</label>
+                    <select id="proposal-role">
+                        <option value="">지원할 역할을 선택하세요</option>
+                        <option value="ui-ux">UI/UX 디자이너</option>
+                        <option value="backend">백엔드 개발자</option>
+                        <option value="frontend">프론트엔드 개발자</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
                     <label for="proposal-price">제안 가격</label>
                     <div class="price-input-group">
                         <input type="number" id="proposal-price" placeholder="0">
-                        <span class="price-unit">원</span>
+                        <span class="price-unit">원/월</span>
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="available-time">제공 가능 시간</label>
-                    <input type="text" id="available-time" placeholder="예: 평일 오후 2시간, 주말 4시간">
+                    <input type="text" id="available-time" placeholder="예: 주 40시간 (월 160시간)">
                 </div>
                 
                 <div class="form-group">
                     <label for="proposal-approach">접근 방식</label>
-                    <textarea id="proposal-approach" rows="4" placeholder="보안 진단 결과를 분석하고 보고서를 작성할 방법을 설명해주세요."></textarea>
+                    <textarea id="proposal-approach" rows="4" placeholder="프로젝트 수행 계획과 접근 방식을 설명해주세요."></textarea>
                 </div>
                 
                 <div class="form-group">
@@ -655,96 +960,331 @@
             </div>
             
             <div class="modal-footer">
-                <button class="cancel-btn" onclick="closeModal()">취소</button>
+                <button class="cancel-btn" onclick="closeProposalModal()">취소</button>
                 <button class="submit-btn" onclick="submitProposal()">제안서 보내기</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- JavaScript Functionality ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const rolesContainer = document.getElementById('rolesContainer');
+            const addRoleBtn = document.getElementById('addRoleBtn');
+            // roleCount is no longer the single source of truth, but we still need it for initial creation.
+            let roleCount = 0; 
 
-        // 뒤로가기 기능
+            // Data for dropdowns
+            const categoryOptions = [
+                { code: 'IT', name: '기술/개발' },
+                { code: 'DS', name: '디자인/크리에이티브' },
+                { code: 'MK', name: '마케팅/홍보' },
+                { code: 'WR', name: '글쓰기/번역' },
+                { code: 'BZ', name: '비즈니스/경영' },
+                { code: 'HR', name: 'HR/인사' },
+                { code: 'ED', name: '교육/강의' },
+                { code: 'BD', name: '건축/설계' },
+                { code: 'IN', name: '인테리어/시공' },
+                { code: 'FC', name: '설비/수리' },
+                { code: 'SP', name: '스포츠/피트니스' },
+                { code: 'BT', name: '뷰티/패션' },
+                { code: 'EV', name: '행사/엔터테인먼트' },
+                { code: 'LF', name: '생활서비스' },
+                { code: 'PS', name: '전문서비스' }
+            ];
+            // Dummy subcategory and skills data for demonstration
+            const subCategoryOptions = {
+                'IT': [
+                    { code: 'IT01', name: '웹 개발' }, { code: 'IT02', name: '앱 개발' },
+                    { code: 'IT03', name: 'AI/머신러닝' }, { code: 'IT04', name: '데이터 분석' }
+                ],
+                'DS': [
+                    { code: 'DS01', name: '영상 편집' }, { code: 'DS02', name: '모션그래픽/3D' },
+                    { code: 'DS03', name: '그래픽 디자인' }, { code: 'DS05', name: 'UI/UX 디자인' }
+                ]
+            };
+            const allSkills = ['React', 'Vue.js', 'Figma', 'Node.js', 'Python', '데이터 분석', 'UI/UX 디자인', '프로젝트 관리', '애자일'];
+
+            function createRoleBlock(index = 0) {
+                const roleBlock = document.createElement('div');
+                roleBlock.className = 'role-block';
+                // Use a unique ID for the role block itself
+                roleBlock.id = `role-block-${Date.now()}-${index}`;
+                roleBlock.dataset.roleIndex = index;
+
+                roleBlock.innerHTML = `
+                    <div class="role-block-header">
+                        <div class="role-block-title">역할 ${index + 1}</div>
+                        ${index > 0 ? `<button type="button" class="remove-role-btn"><i class="fas fa-times"></i></button>` : ''}
+                    </div>
+                    <div class="role-form-grid">
+                        <div class="form-group">
+                            <label for="roleTitle_${index}">역할명 <span class="required">*</span></label>
+                            <input type="text" id="roleTitle_${index}" name="roleTitle_${index}" placeholder="예: UI/UX 디자이너" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="roleCount_${index}">모집 인원 <span class="required">*</span></label>
+                            <input type="number" id="roleCount_${index}" name="roleCount_${index}" min="1" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryMajor_${index}">대분류 <span class="required">*</span></label>
+                            <select id="categoryMajor_${index}" name="categoryMajor_${index}" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="categorySub_${index}">중분류 <span class="required">*</span></label>
+                            <select id="categorySub_${index}" name="categorySub_${index}" required></select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>필요 역량/경험</label>
+                            <div class="skill-input-container">
+                                <div class="skill-tag-display" onclick="focusSkillInput(${index})">
+                                    <input type="text" class="skill-input" id="skillInput_${index}" placeholder="역량을 검색하여 선택해주세요" autocomplete="off">
+                                </div>
+                                <ul class="skill-suggestions" id="skillSuggestions_${index}"></ul>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="roleDescription_${index}">상세 업무 내용</label>
+                            <textarea id="roleDescription_${index}" name="roleDescription_${index}" placeholder="이 역할이 담당할 구체적인 업무를 설명해주세요."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="roleWorkData_${index}">담당 업무 데이터 <span class="required">*</span></label>
+                            <textarea id="roleWorkData_${index}" name="roleWorkData_${index}" placeholder="예: 메인 페이지 UI/UX 설계, 와이어프레임 및 프로토타입 제작, 디자인 시스템 구축 등 구체적인 태스크를 나열해주세요." required></textarea>
+                            <div class="helper-text">해당 역할이 수행해야 할 구체적인 태스크, 기능, 산출물 등을 상세히 기입해주세요.</div>
+                        </div>
+                    </div>
+                `;
+                
+                rolesContainer.appendChild(roleBlock);
+                populateCategoryDropdowns(index);
+                setupSkillInput(index);
+                setupRemoveButton(index);
+            }
+
+            function populateCategoryDropdowns(index) {
+                const majorSelect = document.getElementById(`categoryMajor_${index}`);
+                const subSelect = document.getElementById(`categorySub_${index}`);
+                
+                majorSelect.innerHTML = `<option value="">대분류 선택</option>` + categoryOptions.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
+                subSelect.innerHTML = `<option value="">중분류 선택</option>`;
+
+                majorSelect.addEventListener('change', (e) => {
+                    const majorCode = e.target.value;
+                    let options = `<option value="">중분류 선택</option>`;
+                    if (majorCode && subCategoryOptions[majorCode]) {
+                        options += subCategoryOptions[majorCode].map(sc => `<option value="${sc.code}">${sc.name}</option>`).join('');
+                    }
+                    subSelect.innerHTML = options;
+                });
+            }
+            
+            function setupSkillInput(index) {
+                const skillInput = document.getElementById(`skillInput_${index}`);
+                const skillSuggestions = document.getElementById(`skillSuggestions_${index}`);
+                const skillTagDisplay = skillInput.parentElement;
+                let selectedSkills = [];
+                let currentFocus = -1;
+
+                function renderSelectedSkills() {
+                    skillTagDisplay.querySelectorAll('.tag').forEach(tag => tag.remove());
+                    selectedSkills.forEach((skill, i) => {
+                        const tagElement = document.createElement('div');
+                        tagElement.className = 'tag';
+                        tagElement.innerHTML = `${skill}<button type="button" onclick="removeSkill(${index}, ${i})"><i class="fas fa-times"></i></button>`;
+                        skillTagDisplay.insertBefore(tagElement, skillInput);
+                    });
+                }
+                
+                window.removeSkill = (rIdx, sIdx) => {
+                    selectedSkills.splice(sIdx, 1);
+                    renderSelectedSkills();
+                };
+                window.focusSkillInput = (rIdx) => {
+                    document.querySelector(`#role-block-${rIdx.replace(/.*-/, '')} .skill-input`).focus();
+                };
+
+                function addSkill(skillName) {
+                    if (!selectedSkills.includes(skillName)) {
+                        selectedSkills.push(skillName);
+                        renderSelectedSkills();
+                    }
+                    skillInput.value = '';
+                    hideSuggestions();
+                }
+
+                function showSuggestions(skills) {
+                    skillSuggestions.innerHTML = '';
+                    if (skills.length === 0) { hideSuggestions(); return; }
+                    skills.forEach((skill, i) => {
+                        const item = document.createElement('li');
+                        item.textContent = skill;
+                        item.className = 'skill-suggestion-item';
+                        item.addEventListener('click', () => addSkill(skill));
+                        skillSuggestions.appendChild(item);
+                    });
+                    skillSuggestions.classList.add('active');
+                }
+
+                function hideSuggestions() {
+                    skillSuggestions.classList.remove('active');
+                    currentFocus = -1;
+                }
+
+                function filterSkills(query) {
+                    if (!query) { showSuggestions(allSkills.slice(0, 10)); return; }
+                    const filtered = allSkills.filter(skill => skill.toLowerCase().includes(query.toLowerCase()));
+                    showSuggestions(filtered);
+                }
+                
+                skillInput.addEventListener('input', () => filterSkills(skillInput.value));
+                skillInput.addEventListener('focus', () => filterSkills(skillInput.value));
+                skillInput.addEventListener('keydown', (e) => {
+                    const items = skillSuggestions.getElementsByClassName('skill-suggestion-item');
+                    if (e.key === 'ArrowDown') { currentFocus++; addActive(items); }
+                    else if (e.key === 'ArrowUp') { currentFocus--; addActive(items); }
+                    else if (e.key === 'Enter') { e.preventDefault(); if (currentFocus > -1 && items[currentFocus]) addSkill(items[currentFocus].textContent); else if(skillInput.value) addSkill(skillInput.value); }
+                    else if (e.key === 'Escape') { hideSuggestions(); }
+                });
+                document.addEventListener('click', (e) => { if (!e.target.closest('.skill-input-container')) hideSuggestions(); });
+
+                function addActive(items) {
+                    if (!items) return;
+                    removeActive(items);
+                    if (currentFocus >= 0 && currentFocus < items.length) {
+                        items[currentFocus].classList.add('active');
+                    }
+                }
+
+                function removeActive(items) {
+                    if (!items) return;
+                    for (let i = 0; i < items.length; i++) {
+                        items[i].classList.remove('active');
+                    }
+                }
+            }
+
+            function setupRemoveButton(index) {
+                // This function is now simplified. The heavy lifting is done by updateRoleBlocks.
+                const roleBlock = document.querySelector(`[data-role-index="${index}"]`);
+                const removeBtn = roleBlock.querySelector('.remove-role-btn');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', () => {
+                        roleBlock.remove();
+                        // After removing, re-index all remaining roles
+                        updateRoleBlocks();
+                    });
+                }
+            }
+
+            /**
+             * Re-indexes all role blocks after a removal.
+             * Updates their data-role-index, title, and input IDs.
+             */
+            function updateRoleBlocks() {
+                const allBlocks = rolesContainer.querySelectorAll('.role-block');
+                allBlocks.forEach((block, i) => {
+                    const newIndex = i;
+                    // Update the data attribute for future reference
+                    block.dataset.roleIndex = newIndex;
+                    
+                    // Update the title
+                    block.querySelector('.role-block-title').textContent = `역할 ${newIndex + 1}`;
+                    
+                    // Update all input IDs and labels to match the new index
+                    const elementsToUpdate = [
+                        { type: 'input', name: 'roleTitle' },
+                        { type: 'input', name: 'roleCount' },
+                        { type: 'select', name: 'categoryMajor' },
+                        { type: 'select', name: 'categorySub' },
+                        { type: 'div', name: 'skillInput' }, // Skill input container
+                        { type: 'ul', name: 'skillSuggestions' }, // Suggestions list
+                        { type: 'textarea', name: 'roleDescription' },
+                        { type: 'textarea', name: 'roleWorkData' }
+                    ];
+
+                    elementsToUpdate.forEach(el => {
+                        const oldElement = block.querySelector(`#${el.name}_${oldIndex}`);
+                        const newElement = block.querySelector(`#${el.name}_${newIndex}`);
+                        if (oldElement) {
+                             oldElement.id = `${el.name}_${newIndex}`;
+                             oldElement.name = `${el.name}_${newIndex}`;
+                             // Update label's 'for' attribute if it exists
+                             const label = block.querySelector(`label[for="${el.name}_${oldIndex}"]`);
+                             if(label) label.setAttribute('for', `${el.name}_${newIndex}`);
+                        }
+                    });
+                    
+                    // Re-setup event listeners for the new index
+                    populateCategoryDropdowns(newIndex);
+                    setupSkillInput(newIndex);
+                    setupRemoveButton(newIndex);
+                });
+            }
+
+            addRoleBtn.addEventListener('click', () => {
+                createRoleBlock(roleCount++);
+            });
+
+            // Create the first role block on load
+            createRoleBlock(roleCount++);
+
+            // Form submission logic
+            document.getElementById('requestForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Robust data collection: iterate through all role blocks in the DOM
+                const allRoleBlocks = rolesContainer.querySelectorAll('.role-block');
+                const roles = [];
+                allRoleBlocks.forEach((block, i) => {
+                    const index = block.dataset.roleIndex; // Use the updated index
+                    const roleData = {
+                        title: block.querySelector(`#roleTitle_${index}`).value,
+                        count: block.querySelector(`#roleCount_${index}`).value,
+                        categoryMajor: block.querySelector(`#categoryMajor_${index}`).value,
+                        categorySub: block.querySelector(`#categorySub_${index}`).value,
+                        description: block.querySelector(`#roleDescription_${index}`).value,
+                        workData: block.querySelector(`#roleWorkData_${index}`).value
+                    };
+                    roles.push(roleData);
+                });
+
+                const formData = {
+                    projectTitle: document.getElementById('requestTitle').value,
+                    projectDescription: document.getElementById('projectDescription').value,
+                    urgent: document.getElementById('urgentRequest').checked,
+                    format: document.querySelector('input[name="format"]:checked').value,
+                    startDate: document.getElementById('startDate').value,
+                    endDate: document.getElementById('endDate').value,
+                    budgetMin: document.getElementById('budgetMin').value,
+                    budgetMax: document.getElementById('budgetMax').value,
+                    applicationStartDate: document.getElementById('applicationStartDate').value,
+                    applicationEndDate: document.getElementById('applicationEndDate').value,
+                    workType: Array.from(document.querySelectorAll('input[name="workType"]:checked')).map(cb => cb.value),
+                    preferredDays: Array.from(document.querySelectorAll('input[name="days"]:checked')).map(cb => cb.value),
+                    communication: Array.from(document.querySelectorAll('input[name="comm"]:checked')).map(cb => cb.value),
+                    roles: roles
+                };
+
+                console.log('제출된 데이터:', formData);
+
+                // The rest of the submission logic remains the same...
+                if (formData.urgent) {
+                    const amount = (parseInt(formData.budgetMax, 10) || parseInt(formData.budgetMin, 10) || 0;
+                    const payNow = confirm('긴급 의뢰입니다. 지금 결제하시겠습니까?\n확인: 바로 결제\n취소: 장바구니에 담기');
+                    if (payNow) {
+                        // ... payment logic
+                    } else {
+                        // ... cart logic
+                    }
+                    return;
+                }
+
+                alert('팀 프로젝트 의뢰가 성공적으로 등록되었습니다!');
+            });
+        });
+
         function goBack() {
             window.history.back();
         }
-
-        // 모달 열기/닫기
-        function openModal() {
-            document.getElementById('proposalModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('proposalModal').classList.remove('active');
-        }
-
-        // 제안서 제출
-        function submitProposal() {
-            const price = document.getElementById('proposal-price').value;
-            const time = document.getElementById('available-time').value;
-            const approach = document.getElementById('proposal-approach').value;
-            const portfolio = document.getElementById('proposal-portfolio').value;
-            const message = document.getElementById('proposal-message').value;
-            
-            // 유효성 검사
-            if (!price || !time || !approach || !message) {
-                alert('필수 항목을 모두 입력해주세요.');
-                return;
-            }
-            
-            // 제안서 제출 로직 (API 호출 등)
-            console.log('제안서 제출:', { price, time, approach, portfolio, message });
-            
-            // 성공 메시지 표시
-            alert('제안서가 성공적으로 제출되었습니다.');
-            
-            // 모달 닫기
-            closeModal();
-            
-            // 폼 초기화
-            document.getElementById('proposal-price').value = '';
-            document.getElementById('available-time').value = '';
-            document.getElementById('proposal-approach').value = '';
-            document.getElementById('proposal-portfolio').value = '';
-            document.getElementById('proposal-message').value = '';
-        }
-
-        // 페이지 로드 시 이벤트 리스너 설정
-        document.addEventListener('DOMContentLoaded', function() {
-            // 제안서 보내기 버튼 클릭 시 모달 열기
-            document.getElementById('applyBtn').addEventListener('click', openModal);
-            
-            // 북마크 토글
-            const bookmarkBtn = document.getElementById('bookmarkBtn');
-            bookmarkBtn.addEventListener('click', function() {
-                this.classList.toggle('bookmarked');
-                const icon = this.querySelector('i');
-                if (this.classList.contains('bookmarked')) {
-                    icon.classList.remove('far');
-                    icon.classList.add('fas');
-                    this.innerHTML = '<i class="fas fa-bookmark"></i> 북마크됨';
-                } else {
-                    icon.classList.remove('fas');
-                    icon.classList.add('far');
-                    this.innerHTML = '<i class="far fa-bookmark"></i> 북마크';
-                }
-            });
-            
-            // 채팅 문의 버튼 클릭 이벤트
-            document.getElementById('chatBtn').addEventListener('click', function() {
-                alert('채팅 화면으로 이동합니다.');
-                // 실제 채팅 화면으로 이동하는 로직 구현
-            });
-            
-            // 첨부 파일 다운로드 버튼 클릭 이벤트
-            document.querySelectorAll('.download-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const fileName = this.previousElementSibling.textContent;
-                    alert(`${fileName} 파일을 다운로드합니다.`);
-                    // 실제 다운로드 로직 구현
-                });
-            });
-        });
     </script>
 
 </body>

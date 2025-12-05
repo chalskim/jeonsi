@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>의뢰 상세 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Reset & Basic Setup --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- Detail Page Styles --- */
+        .detail-container {
+            padding-bottom: 80px; /* 하단 고정 버튼 공간 확보 */
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-button, .share-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .page-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        /* --- Section Styles --- */
+        .section {
+            background-color: var(--card-background);
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        /* Company Info Section */
+        .company-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            background-color: #e9ecef;
+        }
+
+        .company-basic-info {
+            flex-grow: 1;
+        }
+
+        .company-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .company-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .company-profile-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .company-description {
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .company-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .company-links a {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        /* Request Detail Section */
+        .request-header {
+            margin-bottom: 15px;
+        }
+
+        .request-badges {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge.urgent {
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .badge.remote {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .request-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .request-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .repetition-info {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 15px 0;
+        }
+
+        .classification-info {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 8px 0;
+        }
+
+        .classification-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        .repetition-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        .request-content h4 {
+            font-size: 1.1rem;
+            margin: 20px 0 10px;
+        }
+
+        .required-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .skill-tag {
+            padding: 5px 12px;
+            background-color: var(--light-color);
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .collaboration-conditions {
+            margin-bottom: 15px;
+        }
+
+        .condition-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .condition-item i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Team Composition Section */
+        .team-composition {
+            margin-bottom: 20px;
+        }
+
+        .role-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #fdfdfd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .role-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .role-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .role-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        .role-count {
+            background-color: var(--light-color);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .role-category {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .role-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .role-description {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .role-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .role-applicant-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: var(--light-color);
+            border-radius: 4px;
+        }
+
+        .applicant-count {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .applicant-count-number {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .applicant-status-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+        }
+
+        .status-dot.reviewing {
+            background-color: var(--warning-color);
+        }
+
+        .status-dot.passed {
+            background-color: var(--success-color);
+        }
+
+        .status-dot.rejected {
+            background-color: var(--danger-color);
+        }
+
+        .role-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .role-detail-btn, .role-apply-btn, .role-applicants-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .role-detail-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .role-apply-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .role-applicants-btn {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        /* Attachment Section */
+        .attachment-list {
+            margin-top: 10px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .attachment-item:last-child {
+            border-bottom: none;
+        }
+
+        .attachment-item i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .attachment-name {
+            flex-grow: 1;
+        }
+
+        .download-btn {
+            padding: 5px 10px;
+            background-color: var(--light-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* --- Bottom Action Buttons --- */
+        .action-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            background-color: var(--card-background);
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .bookmark-btn, .chat-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            margin-right: 5px;
+        }
+        
+        .bookmark-btn.bookmarked {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .close-modal {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .cancel-btn {
+            padding: 10px 20px;
+            background-color: var(--light-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Role Detail Modal */
+        .role-detail-modal .modal-body {
+            padding: 0;
+        }
+
+        .role-detail-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .role-detail-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .role-detail-count {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .role-detail-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .role-detail-section:last-child {
+            border-bottom: none;
+        }
+
+        .role-detail-section h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .role-detail-category {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .role-detail-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .role-tasks {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .role-tasks ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .role-tasks li {
+            margin-bottom: 8px;
+        }
+
+        .role-tasks li:last-child {
+            margin-bottom: 0;
+        }
+
+        .role-detail-footer {
+            padding: 20px;
+            background-color: var(--light-color);
+        }
+
+        .role-detail-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        /* Applicants List Modal */
+        .applicants-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .applicant-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s;
+        }
+
+        .applicant-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .applicant-item:last-child {
+            border-bottom: none;
+        }
+
+        .applicant-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            background-color: #e9ecef;
+        }
+
+        .applicant-info {
+            flex-grow: 1;
+        }
+
+        .applicant-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .applicant-role {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .applicant-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .applicant-status.reviewing {
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .applicant-status.passed {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .applicant-status.rejected {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .applicant-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .applicant-action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .view-profile-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .message-btn {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="detail-container">
+        <!-- Detail Header -->
+        <header class="detail-header">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="page-title">의뢰 상세</h1>
+            <button class="share-button">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </header>
+
+        <!-- Company Info Section -->
+        <section class="section company-info-section">
+            <div class="company-header">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><rect width='60' height='60' rx='8' fill='%234a6fdc'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif' font-size='24' fill='white'>TS</text></svg>" alt="기업 로고" class="company-logo">
+                <div class="company-basic-info">
+                    <h2 class="company-name">㈜테크솔루션</h2>
+                    <div class="company-meta">
+                        <span class="company-industry">IT/소프트웨어</span>
+                        <span class="company-size">50~100명 규모</span>
+                        <span class="company-location">서울 강남구</span>
+                    </div>
+                </div>
+                <button class="company-profile-btn">프로필 보기</button>
+            </div>
+            <div class="company-description">
+                <p>AI 기반 솔루션을 개발하는 스타트업으로, 보안 진단 및 컨설팅 서비스를 제공합니다.</p>
+            </div>
+            <div class="company-links">
+                <a href="#" class="company-website">
+                    <i class="fas fa-globe"></i> 웹사이트
+                </a>
+                <a href="#" class="company-linkedin">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+            </div>
+        </section>
+
+        <!-- Request Detail Section -->
+        <section class="section request-detail-section">
+            <div class="request-header">
+                <div class="request-badges">
+                    <span class="badge urgent">🔥 긴급</span>
+                    <span class="badge remote">원격 가능</span>
+                </div>
+                <h3 class="request-title">신규 앱 런칭 프로젝트</h3>
+                <div class="classification-info">
+                    <i class="fas fa-tags"></i>
+                    <span>분류: 기술/개발 > 앱 개발 (IT02)</span>
+                </div>
+                <div class="request-meta">
+                    <span class="request-date">등록일: 2025-03-15</span>
+                    <span class="request-deadline">마감일: 2025-03-25</span>
+                    <span class="request-applicants">총 지원자: 12명</span>
+                </div>
+            </div>
+            
+            <div class="repetition-info">
+                <i class="fas fa-clock"></i>
+                <span>주 단위 반복 (총 8주)</span>
+            </div>
+            
+            <div class="request-content">
+                <h4>프로젝트 소개</h4>
+                <p>새로운 핀테크 앱 런칭을 위한 개발 프로젝트입니다. 사용자 경험을 중심으로 한 UI/UX 설계부터 백엔드 시스템 구축까지 전체 과정이 필요합니다. 안정적인 서비스 운영을 위한 보안 강화와 데이터 분석 기능 포함합니다.</p>
+                
+                <h4>모집 역할 (Team Composition)</h4>
+                <div class="team-composition">
+                    <!-- Role 1 -->
+                    <div class="role-card" onclick="openRoleDetailModal('ui-ux')">
+                        <div class="role-header">
+                            <div class="role-title">UI/UX 디자이너</div>
+                            <div class="role-count">2명 모집</div>
+                        </div>
+                        <div class="role-category">
+                            <span><i class="fas fa-folder"></i> 디자인/크리에이티브</span>
+                            <span><i class="fas fa-angle-right"></i> UI/UX 디자인</span>
+                        </div>
+                        <div class="role-skills">
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">프로토타이핑</span>
+                            <span class="skill-tag">사용자 경험 디자인</span>
+                            <span class="skill-tag">모바일 앱 디자인</span>
+                        </div>
+                        <div class="role-description">
+                            <p>핀테크 앱의 전체 UI/UX 설계를 담당합니다. 사용자 리서치 기반의 직관적인 인터페이스 디자인과 프로토타입 제작이 필요합니다.</p>
+                        </div>
+                        <div class="role-price">월 500만원 ~ 700만원</div>
+                        
+                        <!-- 지원자 현황 -->
+                        <div class="role-applicant-status">
+                            <div class="applicant-count">
+                                <i class="fas fa-users"></i>
+                                <span>지원자:</span>
+                                <span class="applicant-count-number">4명</span>
+                            </div>
+                            <div class="applicant-status-dots">
+                                <span class="status-dot reviewing" title="검토중 2명"></span>
+                                <span class="status-dot reviewing" title="검토중 2명"></span>
+                                <span class="status-dot passed" title="1차 합격 1명"></span>
+                                <span class="status-dot rejected" title="탈락 1명"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="role-actions">
+                            <button class="role-detail-btn" onclick="event.stopPropagation(); openRoleDetailModal('ui-ux')">
+                                <i class="fas fa-info-circle"></i> 상세보기
+                            </button>
+                            <button class="role-applicants-btn" onclick="event.stopPropagation(); window.location.href='단기의뢰상세_지원자판단.html'">
+                                <i class="fas fa-user-check"></i> 지원자 보기
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Role 2 -->
+                    <div class="role-card" onclick="openRoleDetailModal('backend')">
+                        <div class="role-header">
+                            <div class="role-title">백엔드 개발자</div>
+                            <div class="role-count">3명 모집</div>
+                        </div>
+                        <div class="role-category">
+                            <span><i class="fas fa-folder"></i> 기술/개발</span>
+                            <span><i class="fas fa-angle-right"></i> 백엔드 개발</span>
+                        </div>
+                        <div class="role-skills">
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">Java</span>
+                            <span class="skill-tag">AWS</span>
+                            <span class="skill-tag">마이크로서비스</span>
+                            <span class="skill-tag">데이터베이스 설계</span>
+                        </div>
+                        <div class="role-description">
+                            <p>핀테크 앱의 백엔드 시스템을 구축합니다. 안정적인 데이터 처리와 보안 기능 구현이 필요합니다.</p>
+                        </div>
+                        <div class="role-price">월 600만원 ~ 800만원</div>
+                        
+                        <!-- 지원자 현황 -->
+                        <div class="role-applicant-status">
+                            <div class="applicant-count">
+                                <i class="fas fa-users"></i>
+                                <span>지원자:</span>
+                                <span class="applicant-count-number">5명</span>
+                            </div>
+                            <div class="applicant-status-dots">
+                                <span class="status-dot reviewing" title="검토중 3명"></span>
+                                <span class="status-dot reviewing" title="검토중 3명"></span>
+                                <span class="status-dot reviewing" title="검토중 3명"></span>
+                                <span class="status-dot passed" title="1차 합격 2명"></span>
+                                <span class="status-dot passed" title="1차 합격 2명"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="role-actions">
+                            <button class="role-detail-btn" onclick="event.stopPropagation(); openRoleDetailModal('backend')">
+                                <i class="fas fa-info-circle"></i> 상세보기
+                            </button>
+                            <button class="role-applicants-btn" onclick="event.stopPropagation(); window.location.href='단기의뢰상세_지원자판단.html'">
+                                <i class="fas fa-user-check"></i> 지원자 보기
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Role 3 -->
+                    <div class="role-card" onclick="openRoleDetailModal('frontend')">
+                        <div class="role-header">
+                            <div class="role-title">프론트엔드 개발자</div>
+                            <div class="role-count">2명 모집</div>
+                        </div>
+                        <div class="role-category">
+                            <span><i class="fas fa-folder"></i> 기술/개발</span>
+                            <span><i class="fas fa-angle-right"></i> 프론트엔드 개발</span>
+                        </div>
+                        <div class="role-skills">
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">TypeScript</span>
+                            <span class="skill-tag">Redux</span>
+                            <span class="skill-tag">웹 성능 최적화</span>
+                        </div>
+                        <div class="role-description">
+                            <p>디자인 시안을 기반으로 앱의 프론트엔드를 개발합니다. 반응형 디자인과 부드러운 사용자 경험 구현이 필요합니다.</p>
+                        </div>
+                        <div class="role-price">월 550만원 ~ 750만원</div>
+                        
+                        <!-- 지원자 현황 -->
+                        <div class="role-applicant-status">
+                            <div class="applicant-count">
+                                <i class="fas fa-users"></i>
+                                <span>지원자:</span>
+                                <span class="applicant-count-number">3명</span>
+                            </div>
+                            <div class="applicant-status-dots">
+                                <span class="status-dot reviewing" title="검토중 2명"></span>
+                                <span class="status-dot reviewing" title="검토중 2명"></span>
+                                <span class="status-dot rejected" title="탈락 1명"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="role-actions">
+                            <button class="role-detail-btn" onclick="event.stopPropagation(); openRoleDetailModal('frontend')">
+                                <i class="fas fa-info-circle"></i> 상세보기
+                            </button>
+                            <button class="role-applicants-btn" onclick="event.stopPropagation(); window.location.href='단기의뢰상세_지원자판단.html'">
+                                <i class="fas fa-user-check"></i> 지원자 보기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <h4>협업 조건</h4>
+                <div class="collaboration-conditions">
+                    <div class="condition-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>기간: 8주 (2025-04-01 ~ 2025-05-26)</span>
+                    </div>
+                    <div class="condition-item">
+                        <i class="fas fa-clock"></i>
+                        <span>시간: 주 40시간 (월 160시간)</span>
+                    </div>
+                    <div class="condition-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>근무 형태: 원격/오프라인 혼합 (주 2회 오프라인 미팅)</span>
+                    </div>
+                    <div class="condition-item">
+                        <i class="fas fa-comments"></i>
+                        <span>커뮤니케이션: 슬랙, 화상회의, Jira</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Attachment Section -->
+        <section class="section attachment-section">
+            <h4 class="section-title">
+                <i class="fas fa-paperclip"></i>
+                <span>첨부 파일</span>
+            </h4>
+            <div class="attachment-list">
+                <div class="attachment-item">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="attachment-name">프로젝트 요구사항 명세서.pdf</span>
+                    <button class="download-btn">다운로드</button>
+                </div>
+                <div class="attachment-item">
+                    <i class="fas fa-file-powerpoint"></i>
+                    <span class="attachment-name">앱 기획 및 기능 목록.pptx</span>
+                    <button class="download-btn">다운로드</button>
+                </div>
+                <div class="attachment-item">
+                    <i class="fas fa-file-image"></i>
+                    <span class="attachment-name">참조 디자인 시안.png</span>
+                    <button class="download-btn">다운로드</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bottom Action Buttons -->
+    <div class="action-buttons">
+        <button class="bookmark-btn" id="bookmarkBtn">
+            <i class="far fa-bookmark"></i> 북마크
+        </button>
+        <button class="chat-btn" id="chatBtn">
+            <i class="fas fa-comment-dots"></i> 채팅 문의
+        </button>
+    </div>
+
+    <!-- Role Detail Modal -->
+    <div class="modal-overlay role-detail-modal" id="roleDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="roleDetailTitle">역할 상세 정보</h3>
+                <button class="close-modal" onclick="closeRoleDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="role-detail-header">
+                    <div class="role-detail-title" id="roleDetailName">UI/UX 디자이너</div>
+                    <div class="role-detail-count" id="roleDetailCount">2명 모집</div>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>대분류/중분류</h4>
+                    <div class="role-detail-category">
+                        <span id="roleDetailMajor">디자인/크리에이티브</span>
+                        <i class="fas fa-angle-right"></i>
+                        <span id="roleDetailSub">UI/UX 디자인</span>
+                    </div>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>필요 역량/경험</h4>
+                    <div class="role-detail-skills" id="roleDetailSkills">
+                        <span class="skill-tag">Figma</span>
+                        <span class="skill-tag">프로토타이핑</span>
+                        <span class="skill-tag">사용자 경험 디자인</span>
+                        <span class="skill-tag">모바일 앱 디자인</span>
+                    </div>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>상세 업무 내용</h4>
+                    <p id="roleDetailDescription">핀테크 앱의 전체 UI/UX 설계를 담당합니다. 사용자 리서치 기반의 직관적인 인터페이스 디자인과 프로토타입 제작이 필요합니다.</p>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>지원 시 필수 조건</h4>
+                    <ul>
+                        <li>UI/UX 디자인 경력 3년 이상</li>
+                        <li>핀테크 앱 디자인 경험 우대</li>
+                        <li>Figma, Sketch 등 디자인 툴 숙련</li>
+                        <li>포트폴리오 필수 제출</li>
+                    </ul>
+                </div>
+                
+                <div class="role-detail-section">
+                    <h4>담당 업무 데이터</h4>
+                    <div class="role-tasks">
+                        <ul id="roleDetailTasks">
+                            <li>사용자 리서치 및 페르소나 정의</li>
+                            <li>와이어프레임 및 정보 구조 설계</li>
+                            <li>고화면 UI 디자인 및 디자인 시스템 구축</li>
+                            <li>프로토타입 제작 및 사용성 테스트</li>
+                            <li>개발팀과의 협업 및 디자인 가이드 전달</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="role-detail-footer">
+                <div class="role-detail-price" id="roleDetailPrice">월 500만원 ~ 700만원</div>
+                <button class="submit-btn" onclick="openProposalFromDetail()">제안서 보내기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applicants List Modal -->
+    <div class="modal-overlay" id="applicantsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="applicantsModalTitle">지원자 목록</h3>
+                <button class="close-modal" onclick="closeApplicantsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="applicants-list" id="applicantsList">
+                    <!-- Applicants will be dynamically added here -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeApplicantsModal()">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proposal Modal -->
+    <div class="modal-overlay" id="proposalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>제안서 작성</h3>
+                <button class="close-modal" onclick="closeProposalModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="proposal-role">지원 역할 선택</label>
+                    <select id="proposal-role">
+                        <option value="">지원할 역할을 선택하세요</option>
+                        <option value="ui-ux">UI/UX 디자이너</option>
+                        <option value="backend">백엔드 개발자</option>
+                        <option value="frontend">프론트엔드 개발자</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="proposal-price">제안 가격</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="number" id="proposal-price" placeholder="0" style="flex-grow: 1; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px 0 0 4px; border-right: none;">
+                        <span style="padding: 10px; background-color: var(--light-color); border: 1px solid var(--border-color); border-radius: 0 4px 4px 0; border-left: none;">원/월</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="available-time">제공 가능 시간</label>
+                    <input type="text" id="available-time" placeholder="예: 주 40시간 (월 160시간)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="proposal-approach">접근 방식</label>
+                    <textarea id="proposal-approach" rows="4" placeholder="프로젝트 수행 계획과 접근 방식을 설명해주세요."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="proposal-portfolio">포트폴리오 링크</label>
+                    <input type="text" id="proposal-portfolio" placeholder="관련 경험을 보여줄 수 있는 포트폴리오 링크">
+                </div>
+                
+                <div class="form-group">
+                    <label for="proposal-message">자기소개 메시지</label>
+                    <textarea id="proposal-message" rows="5" placeholder="이 프로젝트에 왜 적합한지 간단히 소개해주세요."></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeProposalModal()">취소</button>
+                <button class="submit-btn" onclick="submitProposal()">제안서 보내기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- JavaScript Functionality ---
+
+        // Role data
+        const roleData = {
+            'ui-ux': {
+                title: 'UI/UX 디자이너',
+                count: '2명 모집',
+                major: '디자인/크리에이티브',
+                sub: 'UI/UX 디자인',
+                skills: ['Figma', '프로토타이핑', '사용자 경험 디자인', '모바일 앱 디자인'],
+                description: '핀테크 앱의 전체 UI/UX 설계를 담당합니다. 사용자 리서치 기반의 직관적인 인터페이스 디자인과 프로토타입 제작이 필요합니다.',
+                tasks: [
+                    '사용자 리서치 및 페르소나 정의',
+                    '와이어프레임 및 정보 구조 설계',
+                    '고화면 UI 디자인 및 디자인 시스템 구축',
+                    '프로토타입 제작 및 사용성 테스트',
+                    '개발팀과의 협업 및 디자인 가이드 전달'
+                ],
+                price: '월 500만원 ~ 700만원',
+                applicants: [
+                    { id: 1, name: '김민준', role: 'UI/UX 디자이너', status: 'reviewing' },
+                    { id: 2, name: '이서연', role: '시니어 UI 디자이너', status: 'reviewing' },
+                    { id: 3, name: '박현우', role: 'UX 리서처', status: 'passed' },
+                    { id: 4, name: '최지아', role: '프로덕트 디자이너', status: 'rejected' }
+                ]
+            },
+            'backend': {
+                title: '백엔드 개발자',
+                count: '3명 모집',
+                major: '기술/개발',
+                sub: '백엔드 개발',
+                skills: ['Node.js', 'Java', 'AWS', '마이크로서비스', '데이터베이스 설계'],
+                description: '핀테크 앱의 백엔드 시스템을 구축합니다. 안정적인 데이터 처리와 보안 기능 구현이 필요합니다.',
+                tasks: [
+                    '핀테크 앱 API 설계 및 개발',
+                    '데이터베이스 모델링 및 최적화',
+                    '인증/인가 및 보안 시스템 구현',
+                    '결제 시스템 연동 및 트랜잭션 관리',
+                    '성능 모니터링 및 시스템 안정성 확보'
+                ],
+                price: '월 600만원 ~ 800만원',
+                applicants: [
+                    { id: 5, name: '정대호', role: '백엔드 개발자', status: 'reviewing' },
+                    { id: 6, name: '강민수', role: '시니어 백엔드 개발자', status: 'reviewing' },
+                    { id: 7, name: '이지영', role: 'Node.js 개발자', status: 'reviewing' },
+                    { id: 8, name: '박선우', role: 'Java 개발자', status: 'passed' },
+                    { id: 9, name: '유진', role: '백엔드 아키텍트', status: 'passed' }
+                ]
+            },
+            'frontend': {
+                title: '프론트엔드 개발자',
+                count: '2명 모집',
+                major: '기술/개발',
+                sub: '프론트엔드 개발',
+                skills: ['React', 'TypeScript', 'Redux', '웹 성능 최적화'],
+                description: '디자인 시안을 기반으로 앱의 프론트엔드를 개발합니다. 반응형 디자인과 부드러운 사용자 경험 구현이 필요합니다.',
+                tasks: [
+                    'React 기반 앱 프론트엔드 개발',
+                    '디자인 시안 구현 및 컴포넌트 개발',
+                    '상태 관리 및 데이터 흐름 설계',
+                    'API 연동 및 비동기 데이터 처리',
+                    '크로스 브라우징 및 성능 최적화'
+                ],
+                price: '월 550만원 ~ 750만원',
+                applicants: [
+                    { id: 10, name: '송민기', role: '프론트엔드 개발자', status: 'reviewing' },
+                    { id: 11, name: '한유진', role: 'React 개발자', status: 'reviewing' },
+                    { id: 12, name: '임준혁', role: '시니어 프론트엔드 개발자', status: 'rejected' }
+                ]
+            }
+        };
+
+        let currentRole = null;
+
+        // 뒤로가기 기능
+        function goBack() {
+            window.history.back();
+        }
+
+        // 역할 상세 모달 열기
+        function openRoleDetailModal(roleId) {
+            currentRole = roleId;
+            const role = roleData[roleId];
+            
+            if (role) {
+                document.getElementById('roleDetailName').textContent = role.title;
+                document.getElementById('roleDetailCount').textContent = role.count;
+                document.getElementById('roleDetailMajor').textContent = role.major;
+                document.getElementById('roleDetailSub').textContent = role.sub;
+                document.getElementById('roleDetailDescription').textContent = role.description;
+                document.getElementById('roleDetailPrice').textContent = role.price;
+                
+                // Update skills
+                const skillsContainer = document.getElementById('roleDetailSkills');
+                skillsContainer.innerHTML = '';
+                role.skills.forEach(skill => {
+                    const skillTag = document.createElement('span');
+                    skillTag.className = 'skill-tag';
+                    skillTag.textContent = skill;
+                    skillsContainer.appendChild(skillTag);
+                });
+                
+                // Update tasks
+                const tasksContainer = document.getElementById('roleDetailTasks');
+                tasksContainer.innerHTML = '';
+                role.tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.textContent = task;
+                    tasksContainer.appendChild(li);
+                });
+                
+                document.getElementById('roleDetailModal').classList.add('active');
+            }
+        }
+
+        // 역할 상세 모달 닫기
+        function closeRoleDetailModal() {
+            document.getElementById('roleDetailModal').classList.remove('active');
+        }
+
+        // 지원자 목록 모달 열기
+        function openApplicantsModal(roleId) {
+            currentRole = roleId;
+            const role = roleData[roleId];
+            
+            if (role) {
+                document.getElementById('applicantsModalTitle').textContent = `${role.title} 지원자 목록`;
+                
+                const applicantsList = document.getElementById('applicantsList');
+                applicantsList.innerHTML = '';
+                
+                role.applicants.forEach(applicant => {
+                    const applicantItem = document.createElement('div');
+                    applicantItem.className = 'applicant-item';
+                    
+                    const statusClass = applicant.status;
+                    const statusText = applicant.status === 'reviewing' ? '검토중' : 
+                                     applicant.status === 'passed' ? '1차 합격' : '탈락';
+                    
+                    applicantItem.innerHTML = `
+                        <img src="https://via.placeholder.com/50x50.png?text=${applicant.name.charAt(0)}" alt="${applicant.name}" class="applicant-avatar">
+                        <div class="applicant-info">
+                            <div class="applicant-name">${applicant.name}</div>
+                            <div class="applicant-role">${applicant.role}</div>
+                            <span class="applicant-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="applicant-actions">
+                            <button class="applicant-action-btn view-profile-btn" onclick="viewApplicantProfile(${applicant.id})">
+                                <i class="fas fa-user"></i> 프로필
+                            </button>
+                            <button class="applicant-action-btn message-btn" onclick="messageApplicant(${applicant.id})">
+                                <i class="fas fa-comment"></i> 메시지
+                            </button>
+                        </div>
+                    `;
+                    
+                    applicantsList.appendChild(applicantItem);
+                });
+                
+                document.getElementById('applicantsModal').classList.add('active');
+            }
+        }
+
+        // 지원자 목록 모달 닫기
+        function closeApplicantsModal() {
+            document.getElementById('applicantsModal').classList.remove('active');
+        }
+
+        // 제안서 모달 열기
+        function openProposalModal(roleId) {
+            currentRole = roleId;
+            document.getElementById('proposal-role').value = roleId || '';
+            document.getElementById('proposalModal').classList.add('active');
+        }
+
+        // 역할 상세에서 제안서 모달 열기
+        function openProposalFromDetail() {
+            closeRoleDetailModal();
+            openProposalModal(currentRole);
+        }
+
+        // 제안서 모달 닫기
+        function closeProposalModal() {
+            document.getElementById('proposalModal').classList.remove('active');
+        }
+
+        // 제안서 제출
+        function submitProposal() {
+            const role = document.getElementById('proposal-role').value;
+            const price = document.getElementById('proposal-price').value;
+            const time = document.getElementById('available-time').value;
+            const approach = document.getElementById('proposal-approach').value;
+            const portfolio = document.getElementById('proposal-portfolio').value;
+            const message = document.getElementById('proposal-message').value;
+            
+            // 유효성 검사
+            if (!role || !price || !time || !approach || !message) {
+                alert('필수 항목을 모두 입력해주세요.');
+                return;
+            }
+            
+            // 제안서 제출 로직 (API 호출 등)
+            console.log('제안서 제출:', { role, price, time, approach, portfolio, message });
+            
+            // 성공 메시지 표시
+            alert('제안서가 성공적으로 제출되었습니다.');
+            
+            // 모달 닫기
+            closeProposalModal();
+            
+            // 폼 초기화
+            document.getElementById('proposal-role').value = '';
+            document.getElementById('proposal-price').value = '';
+            document.getElementById('available-time').value = '';
+            document.getElementById('proposal-approach').value = '';
+            document.getElementById('proposal-portfolio').value = '';
+            document.getElementById('proposal-message').value = '';
+        }
+
+        // 지원자 프로필 보기
+        function viewApplicantProfile(applicantId) {
+            alert(`지원자 ID ${applicantId}의 프로필을 봅니다.`);
+            // 실제 프로필 페이지로 이동하는 로직 구현
+        }
+
+        // 지원자에게 메시지 보내기
+        function messageApplicant(applicantId) {
+            alert(`지원자 ID ${applicantId}와의 1:1 채팅방으로 이동합니다.`);
+            // 실제 채팅 화면으로 이동하는 로직 구현
+        }
+
+        // 페이지 로드 시 이벤트 리스너 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            // 북마크 토글
+            const bookmarkBtn = document.getElementById('bookmarkBtn');
+            bookmarkBtn.addEventListener('click', function() {
+                this.classList.toggle('bookmarked');
+                const icon = this.querySelector('i');
+                if (this.classList.contains('bookmarked')) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    this.innerHTML = '<i class="fas fa-bookmark"></i> 북마크됨';
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    this.innerHTML = '<i class="far fa-bookmark"></i> 북마크';
+                }
+            });
+            
+            // 채팅 문의 버튼 클릭 이벤트
+            document.getElementById('chatBtn').addEventListener('click', function() {
+                alert('채팅 화면으로 이동합니다.');
+                // 실제 채팅 화면으로 이동하는 로직 구현
+            });
+            
+            // 첨부 파일 다운로드 버튼 클릭 이벤트
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const fileName = this.previousElementSibling.textContent;
+                    alert(`${fileName} 파일을 다운로드합니다.`);
+                    // 실제 다운로드 로직 구현
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

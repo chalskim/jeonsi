@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>교육 신청 - 실무 중심의 클라우드 보안 전문가 과정</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reusing styles from the original document */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* App Layout */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .back-button {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .header-icon {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .app-content {
+            margin-top: var(--header-height);
+            padding-bottom: 20px;
+        }
+
+        /* Form Styles */
+        .section {
+            background-color: var(--card-background);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .required {
+            color: var(--danger-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .form-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Textbook Selection Styles */
+        .textbook-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .textbook-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .textbook-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .textbook-checkbox {
+            width: 20px;
+            height: 20px;
+        }
+
+        .textbook-info {
+            flex: 1;
+        }
+
+        .textbook-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .textbook-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .textbook-price {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .textbook-qty {
+            width: 60px;
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        /* Payment Summary */
+        .payment-summary {
+            background-color: var(--light-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-row.total {
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+            margin-right: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Agreement Section */
+        .agreement-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+        }
+
+        .agreement-checkbox {
+            margin-top: 3px;
+        }
+
+        .agreement-content {
+            flex: 1;
+        }
+
+        .agreement-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .agreement-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .view-terms {
+            color: var(--primary-color);
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--border-color);
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            width: 33.33%;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--card-background);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .step.active .step-circle {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background-color: rgba(23, 162, 184, 0.1);
+            border-left: 4px solid var(--info-color);
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--warning-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="back-button" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="app-title">교육 신청</div>
+        <div class="header-icon">
+            <i class="fas fa-question-circle"></i>
+        </div>
+    </header>
+    
+    <!-- App Content -->
+    <div class="app-content">
+        <!-- Progress Steps -->
+        <div class="section">
+            <div class="progress-steps">
+                <div class="step active">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">신청 정보</div>
+                </div>
+                <div class="step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">교재 선택</div>
+                </div>
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">결제</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Course Information -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-graduation-cap"></i>
+                신청 과정 정보
+            </div>
+            <div class="form-group">
+                <div class="education-title">실무 중심의 클라우드 보안 전문가 과정</div>
+                <div class="education-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span>김보안 강사</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>2024.03.01 ~ 2024.04.26</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users"></i>
+                        <span>정원 20명 (신청 12명)</span>
+                    </div>
+                </div>
+                <div class="education-price">₩1,200,000</div>
+            </div>
+        </div>
+        
+        <!-- Personal Information -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-user"></i>
+                개인 정보
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">이름 <span class="required">*</span></label>
+                <input type="text" class="form-control" placeholder="이름을 입력하세요">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">연락처 <span class="required">*</span></label>
+                <div class="form-row">
+                    <div class="form-col">
+                        <input type="text" class="form-control" placeholder="010">
+                    </div>
+                    <div class="form-col">
+                        <input type="text" class="form-control" placeholder="1234">
+                    </div>
+                    <div class="form-col">
+                        <input type="text" class="form-control" placeholder="5678">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">이메일 <span class="required">*</span></label>
+                <input type="email" class="form-control" placeholder="example@email.com">
+                <div class="form-text">수강 확인 및 교육 자료 발송에 사용됩니다.</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">생년월일</label>
+                <input type="date" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">소속/직책</label>
+                <input type="text" class="form-control" placeholder="회사명 / 직책">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">경력 및 관련 분야</label>
+                <textarea class="form-control" rows="3" placeholder="관련 경력이나 현재 관심 분야를 간략히 입력해주세요."></textarea>
+            </div>
+        </div>
+        
+        <!-- Textbook Selection -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-book"></i>
+                교재 선택
+            </div>
+            
+            <div class="textbook-list">
+                <div class="textbook-item">
+                    <input type="checkbox" class="textbook-checkbox" id="textbook1" checked>
+                    <div class="textbook-info">
+                        <div class="textbook-name">실전 클라우드 보안 (2024 개정판)</div>
+                        <div class="textbook-desc">본 교육의 필수 교재입니다. 실습 예제와 해설이 포함되어 있습니다.</div>
+                    </div>
+                    <input type="number" class="textbook-qty" min="1" value="1">
+                    <div class="textbook-price">₩35,000</div>
+                </div>
+                
+                <div class="textbook-item">
+                    <input type="checkbox" class="textbook-checkbox" id="textbook2">
+                    <div class="textbook-info">
+                        <div class="textbook-name">DevSecOps 구축 가이드 (제2판)</div>
+                        <div class="textbook-desc">추천 교재입니다. DevSecOps 실무에 대한 심화 내용을 다룹니다.</div>
+                    </div>
+                    <input type="number" class="textbook-qty" min="1" value="1" disabled>
+                    <div class="textbook-price">₩28,000</div>
+                </div>
+            </div>
+            
+            <div class="payment-summary">
+                <div class="summary-row">
+                    <span>교육비</span>
+                    <span>₩1,200,000</span>
+                </div>
+                <div class="summary-row" id="textbookTotalRow">
+                    <span>교재비</span>
+                    <span id="textbookTotal">₩35,000</span>
+                </div>
+                <div class="summary-row total">
+                    <span>총 결제 금액</span>
+                    <span id="totalAmount">₩1,235,000</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Agreement Section -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-file-contract"></i>
+                약관 동의
+            </div>
+            
+            <div class="agreement-item">
+                <input type="checkbox" class="agreement-checkbox" id="agreeAll">
+                <div class="agreement-content">
+                    <div class="agreement-title">전체 동의</div>
+                    <div class="agreement-desc">아래 모든 약관에 동의합니다.</div>
+                </div>
+            </div>
+            
+            <div class="agreement-item">
+                <input type="checkbox" class="agreement-checkbox" id="agreeTerms" required>
+                <div class="agreement-content">
+                    <div class="agreement-title">이용약관 동의 <span class="required">*</span></div>
+                    <div class="agreement-desc">교육 이용약관에 동의합니다.</div>
+                    <div class="view-terms">약관 보기</div>
+                </div>
+            </div>
+            
+            <div class="agreement-item">
+                <input type="checkbox" class="agreement-checkbox" id="agreePrivacy" required>
+                <div class="agreement-content">
+                    <div class="agreement-title">개인정보 수집 및 이용 동의 <span class="required">*</span></div>
+                    <div class="agreement-desc">개인정보 수집 및 이용에 동의합니다.</div>
+                    <div class="view-terms">내용 보기</div>
+                </div>
+            </div>
+            
+            <div class="agreement-item">
+                <input type="checkbox" class="agreement-checkbox" id="agreeMarketing">
+                <div class="agreement-content">
+                    <div class="agreement-title">마케팅 정보 수신 동의 (선택)</div>
+                    <div class="agreement-desc">할인, 이벤트 등 교육 관련 정보를 수신하는 것에 동의합니다.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alert -->
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> 신청 완료 후 3일 이내에 결제해야 예약이 확정됩니다.
+        </div>
+        
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> 정원이 마감될 경우 조기 마감될 수 있으니 빠른 신청을 권장합니다.
+        </div>
+        
+        <!-- Submit Buttons -->
+        <div class="section">
+            <div class="btn-group">
+                <button class="btn btn-secondary">취소</button>
+                <button class="btn btn-primary">신청하기</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Handle textbook selection and quantity changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const textbookCheckboxes = document.querySelectorAll('.textbook-checkbox');
+            const textbookQtys = document.querySelectorAll('.textbook-qty');
+            const textbookPrices = [35000, 28000];
+            const courseFee = 1200000;
+            
+            // Update total when checkbox or quantity changes
+            function updateTotal() {
+                let textbookTotal = 0;
+                
+                textbookCheckboxes.forEach((checkbox, index) => {
+                    if (checkbox.checked) {
+                        const qty = parseInt(textbookQtys[index].value) || 0;
+                        textbookTotal += textbookPrices[index] * qty;
+                    }
+                });
+                
+                document.getElementById('textbookTotal').textContent = `₩${textbookTotal.toLocaleString()}`;
+                document.getElementById('totalAmount').textContent = `₩${(courseFee + textbookTotal).toLocaleString()}`;
+            }
+            
+            // Enable/disable quantity input based on checkbox
+            textbookCheckboxes.forEach((checkbox, index) => {
+                checkbox.addEventListener('change', function() {
+                    textbookQtys[index].disabled = !this.checked;
+                    updateTotal();
+                });
+                
+                textbookQtys[index].addEventListener('change', updateTotal);
+            });
+            
+            // Handle "select all" checkbox
+            const agreeAllCheckbox = document.getElementById('agreeAll');
+            const agreementCheckboxes = document.querySelectorAll('.agreement-checkbox:not(#agreeAll)');
+            
+            agreeAllCheckbox.addEventListener('change', function() {
+                agreementCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+            });
+            
+            // Update "select all" when individual checkboxes change
+            agreementCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const allChecked = Array.from(agreementCheckboxes).every(cb => cb.checked);
+                    agreeAllCheckbox.checked = allChecked;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

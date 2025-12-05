@@ -1,567 +1,641 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>전문가 프로필 - 전시</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>김민준 전문가 프로필 | 전시(專時)</title>
+    
+    <!-- 기본 스타일 -->
     <style>
-        /* --- Reset & Basic Setup --- */
-        :root {
-            --primary-color: #007bff;
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --background-color: #f4f7f6;
-            --card-background: #ffffff;
-            --text-color: #333333;
-            --text-muted: #6c757d;
-            --border-color: #dee2e6;
-        }
-
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
             line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
         }
-
-        /* --- Profile Page Styles --- */
-        .profile-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding-bottom: 80px; /* 하단 고정 버튼 공간 확보 */
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: var(--card-background);
-            border-bottom: 1px solid var(--border-color);
+        
+        /* 헤더 스타일 */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px 0;
             position: sticky;
             top: 0;
             z-index: 100;
         }
-
-        .back-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--light-color);
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #3498db;
+        }
+        
+        /* 프로필 컨테이너 */
+        .profile-container {
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* 프로필 헤더 */
+        .profile-header {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 40px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            border: none;
-            cursor: pointer;
-            color: var(--dark-color);
+            gap: 30px;
         }
-
-        .page-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        /* --- Section Styles --- */
-        .section {
-            background-color: var(--card-background);
-            padding: 20px;
-            margin-bottom: 10px;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: var(--dark-color);
-        }
-
-        /* Profile Header Section */
-        .profile-header-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 25px 20px;
-        }
-
-        .profile-avatar {
-            width: 90px;
-            height: 90px;
+        
+        .profile-photo {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.3);
             object-fit: cover;
-            background-color: #e9ecef;
-            flex-shrink: 0;
         }
-
-        .profile-summary {
-            flex-grow: 1;
-        }
-
-        .profile-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .profile-role {
-            font-size: 1rem;
-            color: var(--text-muted);
+        
+        .profile-info h1 {
+            font-size: 32px;
             margin-bottom: 10px;
         }
-
-        .profile-stats {
-            display: flex;
-            gap: 20px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
+        
+        .profile-title {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 15px;
         }
-
-        .profile-stats span {
+        
+        .profile-intro {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+        
+        .contact-button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .contact-button:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        /* 프로필 콘텐츠 */
+        .profile-content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
         }
-
-        .profile-stats i {
-            color: var(--primary-color);
+        
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 24px;
+            background-color: #3498db;
+            border-radius: 3px;
         }
-
-        .profile-rating {
-            font-weight: bold;
-            color: var(--warning-color);
-        }
-
-        /* --- MODIFIED: Expertise Section Styles --- */
-        .expertise-info {
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .expertise-info strong {
-            color: var(--dark-color);
-        }
-
-        .skills-list {
+        
+        /* 전문성 정보 */
+        .expertise-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 20px;
         }
-
-        .skill-tag {
-            padding: 5px 15px;
-            background-color: var(--light-color);
-            border-radius: 15px;
-            font-size: 0.9rem;
+        
+        .expertise-card {
+            flex: 1;
+            min-width: 250px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
         }
-
-        /* Experience Section */
-        .experience-item {
-            margin-bottom: 20px;
+        
+        .expertise-card h3 {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
         }
-
-        .experience-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .experience-header {
+        
+        .tag-container {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
         }
-
-        .experience-company {
-            font-weight: bold;
+        
+        .expertise-tag {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
         }
-
-        .experience-duration {
-            color: var(--text-muted);
-            font-size: 0.9rem;
+        
+        .expertise-level {
+            margin-top: 10px;
         }
-
-        .experience-role {
-            margin-bottom: 8px;
+        
+        .level-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 10px 0;
+            position: relative;
         }
-
-        .experience-description {
-            font-size: 0.95rem;
-            color: var(--text-color);
+        
+        .level-fill {
+            height: 100%;
+            background-color: #3498db;
+            border-radius: 5px;
+            width: 80%;
         }
-
-        /* Portfolio Section */
-        .portfolio-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .portfolio-link {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background-color: var(--light-color);
-            border-radius: 4px;
-            text-decoration: none;
-            color: var(--text-color);
-            transition: background-color 0.2s;
-        }
-
-        .portfolio-link:hover {
-            background-color: #e9ecef;
-        }
-
-        .portfolio-link .file-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .portfolio-link i.fa-download {
-            color: var(--primary-color);
-        }
-
-        /* Time Package Section */
+        
+        /* 시간 패키지 */
         .package-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-
+        
         .package-card {
-            border: 1px solid var(--border-color);
+            border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 15px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .package-card:hover {
-            border-color: var(--primary-color);
-            box-shadow: 0 2px 8px rgba(0,123,255,0.1);
-        }
-
-        .package-header {
+            padding: 20px;
+            transition: all 0.3s;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .package-title {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .package-price {
-            font-weight: bold;
-            color: var(--primary-color);
-            font-size: 1.1rem;
-        }
-
-        .package-description {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-        }
-
-        .package-select-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .package-select-btn:hover {
-            background-color: #0056b3;
-        }
-
-        /* Reviews Section */
-        .review-item {
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 0;
-        }
-
-        .review-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .review-company {
-            font-weight: bold;
-        }
-
-        .review-rating {
-            color: var(--warning-color);
-        }
-
-        .review-project {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .review-comment {
-            font-size: 0.95rem;
-        }
-
-        /* --- Bottom Action Bar --- */
-        .action-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            background-color: var(--card-background);
-            padding: 15px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 100;
-        }
-
-        .action-bar button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .bookmark-btn {
-            background-color: var(--light-color);
-            color: var(--dark-color);
-            margin-right: 5px;
-        }
-
-        .message-btn {
-            background-color: var(--primary-color);
-            color: white;
         }
         
-        .bookmark-btn.bookmarked {
-            background-color: var(--primary-color);
-            color: white;
+        .package-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
         }
-
+        
+        .package-info h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .package-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+        
+        .package-description {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .package-action {
+            text-align: right;
+        }
+        
+        .inquire-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .inquire-button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* 가용 시간 */
+        .availability-info {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .availability-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .availability-label {
+            font-weight: bold;
+            min-width: 100px;
+            color: #555;
+        }
+        
+        .availability-value {
+            color: #333;
+        }
+        
+        .availability-days, .availability-times {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        
+        .day-tag, .time-tag {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+        }
+        
+        /* 포트폴리오 */
+        .portfolio-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .portfolio-link:hover {
+            text-decoration: underline;
+        }
+        
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .project-item {
+            border-left: 3px solid #3498db;
+            padding-left: 20px;
+        }
+        
+        .project-item h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .project-period {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .project-description {
+            font-size: 15px;
+            color: #555;
+        }
+        
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+            }
+            
+            .profile-info h1 {
+                font-size: 28px;
+            }
+            
+            .profile-content {
+                padding: 20px;
+            }
+            
+            .package-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .package-action {
+                text-align: center;
+            }
+            
+            .expertise-container {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
-
+    <!-- 헤더 -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">전시(專時)</a>
+            <nav>
+                <ul>
+                    <li><a href="#">전문가 찾기</a></li>
+                    <li><a href="#">서비스 소개</a></li>
+                    <li><a href="#">로그인</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- 프로필 컨테이너 -->
     <div class="profile-container">
-        <!-- Profile Header -->
-        <header class="profile-header">
-            <button class="back-button" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <h1 class="page-title">전문가 프로필</h1>
-            <div style="width: 40px;"></div> <!-- Spacer for centering title -->
-        </header>
-
-        <!-- Profile Summary Section -->
-        <section class="section profile-header-section">
-            <img src="https://via.placeholder.com/90x90.png?text=Expert" alt="전문가 프로필" class="profile-avatar">
-            <div class="profile-summary">
-                <h2 class="profile-name">김민준</h2>
-                <div class="profile-role">보안 컨설턴트</div>
-                <div class="profile-stats">
-                    <span class="profile-rating">★ 4.9</span>
-                    <span><i class="fas fa-comment-dots"></i> 23개 리뷰</span>
-                    <span><i class="fas fa-clock"></i> 평균 2시간 내 응답</span>
+        <!-- 프로필 헤더 -->
+        <div class="profile-header">
+            <img src="https://picsum.photos/seed/expert-profile/120/120.jpg" alt="전문가 프로필 사진" class="profile-photo">
+            <div class="profile-info">
+                <h1>김민준</h1>
+                <div class="profile-title">10년 경력 마케팅 & 브랜딩 전문가</div>
+                <div class="profile-intro">
+                    스타트업의 성장을 돕는 마케팅 전문가입니다. 데이터 기반의 전략 수립부터 실행까지, 브랜드의 가치를 극대화하는 경험을 제공합니다. 주 10시간의 파트타임으로 여러분의 비즈니스 동반자가 되어드리겠습니다.
                 </div>
+                <button class="contact-button" onclick="handleContact()">문의하기</button>
             </div>
-        </section>
-
-        <!-- MODIFIED: Expertise Section -->
-        <section class="section">
-            <h3 class="section-title">전문 분야</h3>
-            <div class="expertise-info">
-                <div><strong>대분류:</strong> 기술/개발</div>
-                <div><strong>중분류:</strong> 보안/인증 (SC02)</div>
-            </div>
-            <div class="skills-list">
-                <span class="skill-tag">웹 해킹</span>
-                <span class="skill-tag">보고서 작성</span>
-                <span class="skill-tag">ISMS-P</span>
-                <span class="skill-tag">코드 리뷰</span>
-                <span class="skill-tag">네트워크 보안</span>
-                <span class="skill-tag">침투 테스트</span>
-            </div>
-        </section>
-
-        <!-- Experience Section -->
-        <section class="section">
-            <h3 class="section-title">경력</h3>
-            <div class="experience-item">
-                <div class="experience-header">
-                    <span class="experience-company">㈜사이버보안솔루션</span>
-                    <span class="experience-duration">2018.03 - 현재</span>
-                </div>
-                <div class="experience-role">수석 컨설턴트</div>
-                <p class="experience-description">금융 및 공공기관 대상 보안 컨설팅 및 ISMS-P 인증 지원. 주요 고객사의 보안 수준을 30% 이상 향상시킨 성과.</p>
-            </div>
-            <div class="experience-item">
-                <div class="experience-header">
-                    <span class="experience-company">㈜테크윈</span>
-                    <span class="experience-duration">2015.01 - 2018.02</span>
-                </div>
-                <div class="experience-role">보안 엔지니어</div>
-                <p class="experience-description">웹 및 모바일 애플리케이션 취약점 분석 및 보안 패치 개발. 주요 프로젝트 5건 성공적으로 완수.</p>
-            </div>
-        </section>
-
-        <!-- Portfolio Section -->
-        <section class="section">
-            <h3 class="section-title">포트폴리오 (파일 다운로드)</h3>
-            <div class="portfolio-list">
-                <a href="#" class="portfolio-link" onclick="downloadFile('김민준_이력서.pdf')">
-                    <div class="file-info">
-                        <i class="fas fa-file-pdf" style="color: var(--danger-color);"></i>
-                        <span>김민준_이력서.pdf</span>
+        </div>
+        
+        <!-- 프로필 콘텐츠 -->
+        <div class="profile-content">
+            <!-- 전문성 정보 -->
+            <section class="section">
+                <h2 class="section-title">전문성 정보</h2>
+                <div class="expertise-container">
+                    <div class="expertise-card">
+                        <h3>전문 분야</h3>
+                        <div class="tag-container" id="expertise-tags">
+                            <!-- JavaScript로 동적으로 생성 -->
+                        </div>
                     </div>
-                    <i class="fas fa-download"></i>
-                </a>
-                <a href="#" class="portfolio-link" onclick="downloadFile('보안컨설팅_성과사례.zip')">
-                    <div class="file-info">
-                        <i class="fas fa-file-archive" style="color: var(--warning-color);"></i>
-                        <span>보안컨설팅_성과사례.zip</span>
+                    <div class="expertise-card">
+                        <h3>경력 정보</h3>
+                        <div>경력 연차: <strong>10년</strong></div>
+                        <div class="expertise-level">
+                            <div>경력 수준:</div>
+                            <div class="level-bar">
+                                <div class="level-fill"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px;">주요 산업: <strong>IT/소프트웨어, 유통/커머스</strong></div>
                     </div>
-                    <i class="fas fa-download"></i>
-                </a>
-                <a href="#" class="portfolio-link" onclick="downloadFile('웹취약점분석_샘플.pptx')">
-                    <div class="file-info">
-                        <i class="fas fa-file-powerpoint" style="color: var(--info-color);"></i>
-                        <span>웹취약점분석_샘플.pptx</span>
-                    </div>
-                    <i class="fas fa-download"></i>
-                </a>
-            </div>
-        </section>
-
-        <!-- Time Package Section -->
-        <section class="section">
-            <h3 class="section-title">시간 패키지</h3>
-            <div class="package-list">
-                <div class="package-card">
-                    <div class="package-header">
-                        <span class="package-title">보안 진단 컨설팅 (주 10시간)</span>
-                        <span class="package-price">200만원/월</span>
-                    </div>
-                    <p class="package-description">정기적인 시스템 진단 및 보안 가이드라인 수립, 월 1회 보고서 제공</p>
-                    <button class="package-select-btn" onclick="selectPackage('보안 진단 컨설팅 (주 10시간)')">선택하기</button>
                 </div>
-                <div class="package-card">
-                    <div class="package-header">
-                        <span class="package-title">단기 보안 점검 (총 24시간)</span>
-                        <span class="package-price">150만원</span>
-                    </div>
-                    <p class="package-description">3일 내 집중적인 보안 점검 및 취약점 분석 보고서 작성</p>
-                    <button class="package-select-btn" onclick="selectPackage('단기 보안 점검 (총 24시간)')">선택하기</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Reviews Section -->
-        <section class="section">
-            <h3 class="section-title">리뷰 (23)</h3>
-            <div class="review-item">
-                <div class="review-header">
-                    <span class="review-company">㈜핀테크코리아</span>
-                    <span class="review-rating">★★★★★</span>
-                </div>
-                <div class="review-project">프로젝트: 보안 진단 보고서 작성 (3일)</div>
-                <p class="review-comment">전문성이 매우 뛰어나고, 소통도 원활했습니다. 복잡한 보안 이슈를 쉽게 설명해주어 큰 도움이 되었습니다.</p>
-            </div>
-            <div class="review-item">
-                <div class="review-header">
-                    <span class="review-company">㈜테크솔루션</span>
-                    <span class="review-rating">★★★★★</span>
-                </div>
-                <div class="review-project">프로젝트: ISMS-P 인증 컨설팅</div>
-                <p class="review-comment">경험이 풍부하여 예상치 못한 문제에도 신속하게 대처해주셨습니다. 덕분에 무사히 인증을 받을 수 있었습니다.</p>
-            </div>
-        </section>
-    </div>
-
-    <!-- Bottom Action Bar -->
-    <div class="action-bar">
-        <button class="bookmark-btn" id="bookmarkBtn" onclick="toggleBookmark()">
-            <i class="far fa-bookmark"></i> 북마크
-        </button>
-        <button class="message-btn" onclick="sendMessage()">
-            <i class="fas fa-comment-dots"></i> 메시지 보내기
-        </button>
-    </div>
-
-    <script>
-        // --- JavaScript Functionality ---
-
-        // 뒤로가기 기능
-        function goBack() {
-            window.history.back();
-        }
-
-        // 북마크 토글
-        function toggleBookmark() {
-            const bookmarkBtn = document.getElementById('bookmarkBtn');
-            const icon = bookmarkBtn.querySelector('i');
+            </section>
             
-            if (bookmarkBtn.classList.contains('bookmarked')) {
-                bookmarkBtn.classList.remove('bookmarked');
-                icon.classList.remove('fas');
-                icon.classList.add('far');
-                bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i> 북마크';
-                alert('북마크가 해제되었습니다.');
+            <!-- 시간 패키지 -->
+            <section class="section">
+                <h2 class="section-title">시간 패키지</h2>
+                <div class="package-list" id="package-list">
+                    <!-- JavaScript로 동적으로 생성 -->
+                </div>
+            </section>
+            
+            <!-- 가용 시간 -->
+            <section class="section">
+                <h2 class="section-title">가용 시간</h2>
+                <div class="availability-info">
+                    <div class="availability-row">
+                        <div class="availability-label">가능 기간:</div>
+                        <div class="availability-value" id="availability-period">
+                            <!-- JavaScript로 동적으로 생성 -->
+                        </div>
+                    </div>
+                    <div class="availability-row">
+                        <div class="availability-label">가능 요일:</div>
+                        <div class="availability-value">
+                            <div class="availability-days" id="availability-days">
+                                <!-- JavaScript로 동적으로 생성 -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="availability-row">
+                        <div class="availability-label">가능 시간대:</div>
+                        <div class="availability-value">
+                            <div class="availability-times" id="availability-times">
+                                <!-- JavaScript로 동적으로 생성 -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="availability-row">
+                        <div class="availability-label">주간 가용 시간:</div>
+                        <div class="availability-value"><strong>10시간</strong></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 포트폴리오 -->
+            <section class="section">
+                <h2 class="section-title">포트폴리오</h2>
+                <a href="https://example.com/portfolio" target="_blank" class="portfolio-link">포트폴리오 웹사이트 보기 →</a>
+                <div class="project-list" id="project-list">
+                    <!-- JavaScript로 동적으로 생성 -->
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        // 샘플 프로필 데이터 (실제로는 서버에서 가져옴)
+        const profileData = {
+            name: "김민준",
+            title: "10년 경력 마케팅 & 브랜딩 전문가",
+            intro: "스타트업의 성장을 돕는 마케팅 전문가입니다. 데이터 기반의 전략 수립부터 실행까지, 브랜드의 가치를 극대화하는 경험을 제공합니다. 주 10시간의 파트타임으로 여러분의 비즈니스 동반자가 되어드리겠습니다.",
+            expertise: ["마케팅", "전략 기획", "브랜드 관리", "데이터 분석"],
+            experienceYears: 10,
+            experienceLevel: 80,
+            industry: ["IT/소프트웨어", "유통/커머스"],
+            packages: [
+                {
+                    title: "주 10시간 자문 패키지",
+                    price: "월 80만원",
+                    description: "주 2회, 1회 5시간씩 온라인/오프라인 자문 제공"
+                },
+                {
+                    title: "월 20시간 프로젝트 파트너",
+                    price: "월 150만원",
+                    description: "주 1회, 1회 5시간씩 프로젝트 기반 파트너십"
+                }
+            ],
+            availability: {
+                from: "2024-01-01",
+                to: "2024-12-31",
+                days: ["월", "화", "수", "목", "금"],
+                times: ["오전", "오후"]
+            },
+            weeklyHours: 10,
+            portfolioLink: "https://example.com/portfolio",
+            projects: [
+                {
+                    title: "스타트업 브랜딩 컨설팅",
+                    period: "2023.03 - 2023.06",
+                    description: "신규 스타트업의 브랜드 아이덴티티 구축 및 마케팅 전략 수립"
+                },
+                {
+                    title: "온라인 커머스 성장 전략",
+                    period: "2022.09 - 2023.02",
+                    description: "데이터 기반 고객 세분화 및 맞춤형 마케팅 캠페인 설계, 6개월 만에 매출 150% 성장 달성"
+                }
+            ]
+        };
+        
+        // 페이지 로드 시 프로필 데이터 렌더링
+        window.addEventListener('DOMContentLoaded', function() {
+            renderProfile();
+        });
+        
+        function renderProfile() {
+            // 프로필 헤더 정보 업데이트
+            document.querySelector('.profile-info h1').textContent = profileData.name;
+            document.querySelector('.profile-title').textContent = profileData.title;
+            document.querySelector('.profile-intro').textContent = profileData.intro;
+            
+            // 전문 분야 태그 렌더링
+            const expertiseTagsContainer = document.getElementById('expertise-tags');
+            profileData.expertise.forEach(tag => {
+                const tagElement = document.createElement('div');
+                tagElement.className = 'expertise-tag';
+                tagElement.textContent = tag;
+                expertiseTagsContainer.appendChild(tagElement);
+            });
+            
+            // 경력 정보 업데이트
+            document.querySelector('.expertise-card strong').textContent = profileData.experienceYears + '년';
+            document.querySelector('.level-fill').style.width = profileData.experienceLevel + '%';
+            document.querySelectorAll('.expertise-card strong')[1].textContent = profileData.industry.join(', ');
+            
+            // 시간 패키지 렌더링
+            const packageListContainer = document.getElementById('package-list');
+            profileData.packes = profileData.packages; // 오타 수정
+            profileData.packages.forEach(pkg => {
+                const packageCard = document.createElement('div');
+                packageCard.className = 'package-card';
+                packageCard.innerHTML = `
+                    <div class="package-info">
+                        <h3>${pkg.title}</h3>
+                        <div class="package-price">${pkg.price}</div>
+                        <div class="package-description">${pkg.description}</div>
+                    </div>
+                    <div class="package-action">
+                        <button class="inquire-button" onclick="handlePackageInquiry('${pkg.title}')">문의하기</button>
+                    </div>
+                `;
+                packageListContainer.appendChild(packageCard);
+            });
+            
+            // 가용 시간 정보 업데이트
+            const periodElement = document.getElementById('availability-period');
+            if (profileData.availability.from && profileData.availability.to) {
+                const fromDate = new Date(profileData.availability.from).toLocaleDateString('ko-KR');
+                const toDate = new Date(profileData.availability.to).toLocaleDateString('ko-KR');
+                periodElement.textContent = `${fromDate} ~ ${toDate}`;
             } else {
-                bookmarkBtn.classList.add('bookmarked');
-                icon.classList.remove('far');
-                icon.classList.add('fas');
-                bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i> 북마크됨';
-                alert('북마크되었습니다.');
+                periodElement.textContent = "협의 가능";
             }
+            
+            const daysContainer = document.getElementById('availability-days');
+            profileData.availability.days.forEach(day => {
+                const dayTag = document.createElement('div');
+                dayTag.className = 'day-tag';
+                dayTag.textContent = day;
+                daysContainer.appendChild(dayTag);
+            });
+            
+            const timesContainer = document.getElementById('availability-times');
+            profileData.availability.times.forEach(time => {
+                const timeTag = document.createElement('div');
+                timeTag.className = 'time-tag';
+                timeTag.textContent = time;
+                timesContainer.appendChild(timeTag);
+            });
+            
+            // 주간 가용 시간 업데이트
+            document.querySelectorAll('.availability-value strong')[0].textContent = profileData.weeklyHours + '시간';
+            
+            // 포트폴리오 링크 업데이트
+            document.querySelector('.portfolio-link').href = profileData.portfolioLink;
+            
+            // 프로젝트 목록 렌더링
+            const projectListContainer = document.getElementById('project-list');
+            profileData.projects.forEach(project => {
+                const projectItem = document.createElement('div');
+                projectItem.className = 'project-item';
+                projectItem.innerHTML = `
+                    <h3>${project.title}</h3>
+                    <div class="project-period">${project.period}</div>
+                    <div class="project-description">${project.description}</div>
+                `;
+                projectListContainer.appendChild(projectItem);
+            });
         }
-
-        // 메시지 보내기
-        function sendMessage() {
-            alert('채팅 화면으로 이동합니다.');
+        
+        // 문의하기 버튼 클릭 시
+        function handleContact() {
+            // 실제로는 문의 모달 창이나 페이지로 이동
+            alert('문의하기 기능은 준비 중입니다. 실제로는 전문가에게 연락할 수 있는 폼이 나타납니다.');
         }
-
-        // 패키지 선택
-        function selectPackage(packageName) {
-            alert(`'${packageName}' 패키지를 선택했습니다. 계약 페이지로 이동합니다.`);
-        }
-
-        // --- File Download Function ---
-        function downloadFile(fileName) {
-            alert(`${fileName} 파일을 다운로드합니다.`);
+        
+        // 특정 패키지 문의하기 버튼 클릭 시
+        function handlePackageInquiry(packageTitle) {
+            // 실제로는 해당 패키지 정보가 포함된 문의 폼으로 이동
+            alert(`"${packageTitle}" 패키지에 대한 문의 기능은 준비 중입니다.`);
         }
     </script>
-
 </body>
 </html>

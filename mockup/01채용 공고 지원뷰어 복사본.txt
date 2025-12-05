@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지원자 정보 - 전시(專時)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066CC;
+            --success-green: #28a745;
+            --danger-red: #dc3545;
+            --warning-orange: #ffc107;
+            --neutral-gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --white: #FFFFFF;
+            --border-color: #dee2e6;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.12);
+            --font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            --card-spacing: 20px; /* 카드 섹션 간의 일관된 간격 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--light-gray);
+            color: #212529;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--white);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--card-spacing);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Applicant Summary Card */
+        .applicant-summary-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            padding: 30px;
+            margin-bottom: var(--card-spacing);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        .applicant-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--light-gray);
+        }
+        .applicant-summary-info {
+            flex-grow: 1;
+        }
+        .applicant-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .applicant-job-title {
+            font-size: 18px;
+            color: var(--neutral-gray);
+            margin-bottom: 15px;
+        }
+        .applicant-meta-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            list-style: none;
+        }
+        .applicant-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .applicant-meta-item i {
+            color: var(--primary-blue);
+            width: 16px;
+        }
+
+        /* Sticky Action Bar */
+        .action-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: var(--card-spacing);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+        .action-bar-title {
+            font-weight: 600;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary { background-color: var(--primary-blue); color: var(--white); }
+        .btn-primary:hover { background-color: #0056b3; }
+        .btn-secondary { background-color: var(--white); color: var(--neutral-gray); border-color: var(--border-color); }
+        .btn-secondary:hover { background-color: var(--light-gray); }
+        .btn-danger { background-color: var(--danger-red); color: var(--white); }
+        .btn-danger:hover { background-color: #c82333; }
+        .btn-success { background-color: var(--success-green); color: var(--white); }
+        .btn-success:hover { background-color: #218838; }
+
+        /* Main Content Sections */
+        .content-section {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            padding: 30px;
+            margin-bottom: var(--card-spacing);
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title i {
+            color: var(--primary-blue);
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .info-item dt {
+            font-weight: 600;
+            color: var(--neutral-gray);
+            margin-bottom: 5px;
+        }
+        .info-item dd {
+            margin-left: 0;
+            font-size: 15px;
+        }
+
+        /* Skills */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .skill-tag {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        /* Experience */
+        .experience-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .experience-card:last-child {
+            margin-bottom: 0;
+        }
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .experience-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .experience-period {
+            color: var(--neutral-gray);
+            font-size: 14px;
+        }
+        .experience-company {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .experience-description {
+            color: #495057;
+            line-height: 1.7;
+        }
+
+        /* Attachments */
+        .file-list {
+            list-style: none;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+        }
+        .file-item:hover {
+            background-color: var(--light-gray);
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .file-icon {
+            font-size: 24px;
+            color: var(--primary-blue);
+        }
+        .file-name {
+            font-weight: 500;
+        }
+        .file-size {
+            font-size: 13px;
+            color: var(--neutral-gray);
+        }
+        .btn-download {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+            animation: fadeIn 0.3s;
+        }
+        .modal-content {
+            background-color: var(--white);
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 30px;
+            border: none;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-md);
+            animation: slideIn 0.3s;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .modal-body textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            resize: vertical;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .applicant-summary-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .action-bar {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            .action-buttons {
+                justify-content: center;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo"><i class="fas fa-check-circle"></i> 전시(專時)</a>
+                <div class="user-info">
+                    <span>담당자: 김팀장</span>
+                    <img src="https://picsum.photos/seed/manager/36/36.jpg" alt="Manager Avatar" class="user-avatar">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 지원자 요약 카드 -->
+        <div class="applicant-summary-card">
+            <img src="https://picsum.photos/seed/applicant_profile/120/120.jpg" alt="Applicant Avatar" class="applicant-avatar">
+            <div class="applicant-summary-info">
+                <h1 class="applicant-name">김민수</h1>
+                <p class="applicant-job-title">"시니어 프로덕트 매니저" 포지션 지원</p>
+                <ul class="applicant-meta-list">
+                    <li class="applicant-meta-item"><i class="fas fa-briefcase"></i> 시니어 (4~8년)</li>
+                    <li class="applicant-meta-item"><i class="fas fa-won-sign"></i> 희망 연봉: 6,000~7,000만원</li>
+                    <li class="applicant-meta-item"><i class="fas fa-calendar-alt"></i> 입사 가능일: 2024년 2월 1일</li>
+                    <li class="applicant-meta-item"><i class="fas fa-map-marker-alt"></i> 서울</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 고정 액션 바 -->
+        <div class="action-bar">
+            <div class="action-bar-title">최종 합격 여부를 선택해주세요.</div>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="alert('다음 단계(면접)로 이동 처리되었습니다.')">
+                    <i class="fas fa-arrow-right"></i> 다음 단계로 이동
+                </button>
+                <button class="btn btn-secondary" onclick="alert('메시지 보내기 기능으로 이동합니다.')">
+                    <i class="fas fa-envelope"></i> 메시지 보내기
+                </button>
+                <button class="btn btn-danger" onclick="openModal()">
+                    <i class="fas fa-times"></i> 지원자 거절
+                </button>
+            </div>
+        </div>
+
+        <!-- 기본 정보 -->
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-user"></i> 기본 정보</h2>
+            <dl class="info-grid">
+                <div class="info-item">
+                    <dt>이름</dt>
+                    <dd>김민수</dd>
+                </div>
+                <div class="info-item">
+                    <dt>이메일</dt>
+                    <dd>minsu.kim@email.com</dd>
+                </div>
+                <div class="info-item">
+                    <dt>연락처</dt>
+                    <dd>010-1234-5678</dd>
+                </div>
+                <div class="info-item">
+                    <dt>자기소개</dt>
+                    <dd>지원 동기와 본인을 잘 나타낼 수 있는 내용을 작성해주세요. 데이터 기반의 제품 기획과 성공적인 런칭 경험을 바탕으로 귀사의 성장에 기여하고 싶습니다.</dd>
+                </div>
+            </dl>
+        </section>
+
+        <!-- 지원 분야 및 경력 -->
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-briefcase"></i> 지원 분야 및 경력</h2>
+            <dl class="info-grid">
+                <div class="info-item">
+                    <dt>경력</dt>
+                    <dd>시니어 (4~8년)</dd>
+                </div>
+                <div class="info-item">
+                    <dt>보유 기술/도구</dt>
+                    <dd>
+                        <div class="skills-container">
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">TypeScript</span>
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">Jira</span>
+                            <span class="skill-tag">Agile/Scrum</span>
+                            <span class="skill-tag">GA4</span>
+                        </div>
+                    </dd>
+                </div>
+            </dl>
+            
+            <h3 style="margin-top: 30px; font-size: 18px;">경력 상세</h3>
+            <div class="experience-card">
+                <div class="experience-header">
+                    <div>
+                        <div class="experience-title">프로덕트 매니저</div>
+                        <div class="experience-period">2020.01 - 현재</div>
+                    </div>
+                </div>
+                <div class="experience-company">(주)앱스타트업</div>
+                <p class="experience-description">B2B SaaS 프로덕트 기획 및 라이프사이클 관리, 데이터 기반 제품 개선 주도, 크로스펑셔널 팀과의 협업을 통한 제품 성장 달성.</p>
+            </div>
+        </section>
+
+        <!-- 포트폴리오 및 자기소개서 -->
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-file-alt"></i> 포트폴리오 및 자기소개서</h2>
+            <dl class="info-grid">
+                <div class="info-item">
+                    <dt>포트폴리오 링크</dt>
+                    <dd><a href="#">github.com/minukim</a>, <a href="#">notion.so/minukim</a></dd>
+                </div>
+                <div class="info-item" style="grid-column: 1 / -1;">
+                    <dt>자기소개서 / 경력기술서</dt>
+                    <dd style="white-space: pre-wrap;">본인의 경험과 역량을 바탕으로 이 직무에 적합한 인재임을 어필해주세요.
+저는 지난 4년간 프로덕트 매니저로서 사용자의 문제를 해결하고 비즈니스 목표를 달성하는 데 집중해왔습니다. 특히 데이터 분석을 통해 사용자 행동을 깊이 이해하고, 이를 제품 개선에 적용하여 MAU를 150% 성장시킨 경험이 있습니다. ...</dd>
+                </div>
+            </dl>
+        </section>
+
+        <!-- 첨부 서류 -->
+        <section class="content-section">
+            <h2 class="section-title"><i class="fas fa-paperclip"></i> 첨부 서류</h2>
+            <ul class="file-list">
+                <li class="file-item">
+                    <div class="file-info">
+                        <i class="fas fa-file-pdf file-icon"></i>
+                        <div>
+                            <div class="file-name">김민수_이력서.pdf</div>
+                            <div class="file-size">245 KB</div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary btn-download" download><i class="fas fa-download"></i> 다운로드</a>
+                </li>
+                <li class="file-item">
+                    <div class="file-info">
+                        <i class="fas fa-file-word file-icon"></i>
+                        <div>
+                            <div class="file-name">김민수_자기소개서.docx</div>
+                            <div class="file-size">520 KB</div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary btn-download" download><i class="fas fa-download"></i> 다운로드</a>
+                </li>
+                <li class="file-item">
+                    <div class="file-info">
+                        <i class="fas fa-file-archive file-icon"></i>
+                        <div>
+                            <div class="file-name">김민수_포트폴리오.zip</div>
+                            <div class="file-size">3.2 MB</div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary btn-download" download><i class="fas fa-download"></i> 다운로드</a>
+                </li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- 지원자 거절 Modal -->
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">지원자 거절</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label for="rejectReason">거절 사유를 선택해주세요. (선택 사항)</label>
+                <select id="rejectReason" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid var(--border-color);">
+                    <option>경력 부족</option>
+                    <option>기술 스택 불일치</option>
+                    <option>문화적 부적합</option>
+                    <option>기타</option>
+                </select>
+                <textarea placeholder="구체적인 거절 사유를 지원자에게 전달할 수 있습니다. (선택 사항)"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">취소</button>
+                <button class="btn btn-danger" onclick="confirmReject()">거절 확정</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal() {
+            document.getElementById('rejectModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('rejectModal').style.display = 'none';
+        }
+
+        function confirmReject() {
+            // Here you would typically send the reason to the server
+            alert('지원자가 거절 처리되었습니다.');
+            closeModal();
+        }
+
+        // Close the modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('rejectModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+</body>
+</html>

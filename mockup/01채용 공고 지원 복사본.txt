@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채용 공고 지원하기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066CC;
+            --success-green: #2EBD59;
+            --neutral-gray: #333333;
+            --light-gray: #F5F5F5;
+            --warm-orange: #FF8C42;
+            --alert-red: #E74C3C;
+            --calm-purple: #7B68EE;
+            --border-color: #E0E0E0;
+            --text-light: #666666;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--neutral-gray);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Form Container */
+        .form-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .form-subtitle {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-blue);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--neutral-gray);
+        }
+
+        .required {
+            color: var(--alert-red);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Avatar Upload */
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .avatar-upload {
+            position: relative;
+        }
+
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 3px solid white;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-upload-btn:hover {
+            background-color: #0052A3;
+        }
+
+        .avatar-info {
+            flex: 1;
+        }
+
+        .avatar-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .avatar-description {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Skills Tags */
+        .skills-group {
+            margin-bottom: 25px;
+        }
+
+        .skills-label {
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            cursor: text;
+        }
+
+        .skill-tag {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skill-tag .remove-skill {
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .skill-tag .remove-skill:hover {
+            opacity: 1;
+        }
+
+        .skill-input {
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            min-width: 150px;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+
+        /* Experience Cards */
+        .experience-cards {
+            display: grid;
+            gap: 20px;
+        }
+
+        .experience-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .experience-card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .experience-title-input {
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            background: transparent;
+            padding: 0;
+            margin-bottom: 5px;
+        }
+
+        .experience-period-input {
+            color: var(--text-light);
+            font-size: 14px;
+            border: none;
+            background: transparent;
+            padding: 0;
+        }
+
+        .experience-company-input {
+            color: var(--text-light);
+            font-size: 14px;
+            border: none;
+            background: transparent;
+            padding: 0;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .experience-description-input {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--alert-red);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* File Upload */
+        .file-upload-section {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .file-upload-section:hover {
+            border-color: var(--primary-blue);
+            background-color: rgba(0, 102, 204, 0.02);
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-button {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-icon {
+            font-size: 20px;
+            color: var(--primary-blue);
+        }
+
+        .file-name {
+            font-weight: 500;
+        }
+
+        .file-size {
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .file-remove {
+            color: var(--alert-red);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Add Button */
+        .add-button {
+            width: 100%;
+            padding: 15px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .add-button:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            background-color: rgba(0, 102, 204, 0.02);
+        }
+
+        /* Help Text */
+        .help-text {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .error-text {
+            font-size: 13px;
+            color: var(--alert-red);
+            margin-top: 5px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background-color: rgba(0, 102, 204, 0.05);
+            border-left: 4px solid var(--primary-blue);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box-content {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0052A3;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-gray);
+            color: var(--neutral-gray);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #EEEEEE;
+        }
+
+        .btn-success {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #249A46;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .avatar-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .btn-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-container">
+                <div class="logo">
+                    <i class="fas fa-check-circle"></i>
+                    전시(專時)
+                </div>
+                <div class="user-menu">
+                    <div class="user-profile">
+                        <img src="https://picsum.photos/seed/applicant/40/40.jpg" alt="User Avatar" class="user-avatar">
+                        <span>지원자</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Form Container -->
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2 class="form-title">채용 공고 지원하기</h2>
+                <p class="form-subtitle">[테크솔루션스]의 "시니어 프로덕트 매니저" 포지션에 지원합니다.</p>
+            </div>
+
+            <form id="jobApplicationForm">
+                <!-- 기본 정보 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user"></i>
+                        기본 정보
+                    </h3>
+                    
+                    <div class="avatar-section">
+                        <div class="avatar-upload">
+                            <img src="https://picsum.photos/seed/defaultavatar/120/120.jpg" alt="Profile" class="avatar-preview" id="avatarPreview">
+                            <div class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="updateAvatar(event)">
+                        </div>
+                        <div class="avatar-info">
+                            <div class="avatar-title">프로필 사진</div>
+                            <div class="avatar-description">전문적인 모습의 사진을 업로드해주세요. (JPG, PNG, 최대 5MB)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">이름 <span class="required">*</span></label>
+                            <input type="text" id="name" name="name" required placeholder="홍길동">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">이메일 <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="example@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">연락처 <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required placeholder="010-0000-0000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="desiredSalary">희망 연봉 (만원) <span class="required">*</span></label>
+                            <input type="text" id="desiredSalary" name="desiredSalary" required placeholder="예: 6,000 ~ 7,000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="availableDate">입사 가능일 <span class="required">*</span></label>
+                            <input type="date" id="availableDate" name="availableDate" required>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="bio">자기소개 <span class="required">*</span></label>
+                            <textarea id="bio" name="bio" required placeholder="지원 동기와 본인을 잘 나타낼 수 있는 내용을 작성해주세요."></textarea>
+                            <div class="help-text">최소 100자 이상 작성해주세요.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 지원 분야 및 경력 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-briefcase"></i>
+                        지원 분야 및 경력
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="careerLevel">경력 <span class="required">*</span></label>
+                            <select id="careerLevel" name="careerLevel" required>
+                                <option value="">경력을 선택해주세요</option>
+                                <option value="new">신입</option>
+                                <option value="junior">주니어 (1~3년)</option>
+                                <option value="senior">시니어 (4~8년)</option>
+                                <option value="expert">전문가 (9년 이상)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="skills-group">
+                        <div class="skills-label">
+                            <i class="fas fa-tools"></i>
+                            보유 기술/도구 <span class="required">*</span>
+                        </div>
+                        <div class="skills-container" id="skillsContainer">
+                            <input type="text" class="skill-input" id="skillInput" placeholder="보유 기술을 입력하고 Enter 키를 누르세요">
+                        </div>
+                    </div>
+                    
+                    <div class="experience-cards" id="experienceCards">
+                        <div class="experience-card">
+                            <button type="button" class="remove-btn" onclick="removeExperience(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="experience-header">
+                                <div>
+                                    <input type="text" class="experience-title-input" placeholder="직책" value="프로덕트 매니저">
+                                    <input type="text" class="experience-period-input" placeholder="근무기간" value="2020.01 - 현재">
+                                </div>
+                            </div>
+                            <input type="text" class="experience-company-input" placeholder="회사명" value="(주)앱스타트업">
+                            <textarea class="experience-description-input" placeholder="주요 업무 및 성과">B2B SaaS 프로덕트 기획 및 라이프사이클 관리, 데이터 기반 제품 개선 주도</textarea>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="add-button" onclick="addExperience()">
+                        <i class="fas fa-plus"></i>
+                        경력 추가
+                    </button>
+                </div>
+
+                <!-- 포트폴리오 및 자기소개서 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-file-alt"></i>
+                        포트폴리오 및 자기소개서
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="portfolioLinks">포트폴리오 링크</label>
+                        <input type="text" id="portfolioLinks" name="portfolioLinks" placeholder="GitHub, Behance, 개인 블로그 등 링크를 입력해주세요.">
+                        <div class="help-text">여러 링크는 쉼표(,)로 구분하여 입력해주세요.</div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="coverLetter">자기소개서 / 경력기술서</label>
+                        <textarea id="coverLetter" name="coverLetter" placeholder="본인의 경험과 역량을 바탕으로 이 직무에 적합한 인재임을 어필해주세요."></textarea>
+                        <div class="help-text">텍스트로 직접 작성하거나 아래에서 파일로 첨부해주세요.</div>
+                    </div>
+                </div>
+
+                <!-- 서류 제출 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-file-upload"></i>
+                        첨부 서류
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>이력서 <span class="required">*</span></label>
+                            <div class="file-upload-section" onclick="document.getElementById('resumeFile').click()">
+                                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                <div class="file-upload-text">파일을 드래그하거나 클릭하여 업로드하세요</div>
+                                <button type="button" class="file-upload-button">파일 선택</button>
+                                <input type="file" id="resumeFile" name="resumeFile" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleFileUpload(this, 'resumeFile')">
+                            </div>
+                            <div id="resumeFileList" class="file-list"></div>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>자기소개서</label>
+                            <div class="file-upload-section" onclick="document.getElementById('coverLetterFile').click()">
+                                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                <div class="file-upload-text">파일을 드래그하거나 클릭하여 업로드하세요</div>
+                                <button type="button" class="file-upload-button">파일 선택</button>
+                                <input type="file" id="coverLetterFile" name="coverLetterFile" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleFileUpload(this, 'coverLetterFile')">
+                            </div>
+                            <div id="coverLetterFileList" class="file-list"></div>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>포트폴리오/경력증명서</label>
+                            <div class="file-upload-section" onclick="document.getElementById('portfolioFiles').click()">
+                                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                <div class="file-upload-text">포트폴리오 파일이나 경력 증명 서류를 업로드하세요 (최대 3개)</div>
+                                <button type="button" class="file-upload-button">파일 선택</button>
+                                <input type="file" id="portfolioFiles" name="portfolioFiles" accept=".pdf,.jpg,.png,.zip" multiple style="display: none;" onchange="handleFileUpload(this, 'portfolioFiles')">
+                            </div>
+                            <div id="portfolioFilesList" class="file-list"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 약관 동의 섹션 -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-check-square"></i>
+                        약관 동의
+                    </h3>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="terms1" name="terms1" required>
+                            <label for="terms1">개인정보 수집 및 이용에 동의 <span class="required">*</span></label>
+                        </div>
+                        <div class="help-text">수집된 개인정보는 채용 전형 진행 및 결과 통보 목적으로만 사용됩니다.</div>
+                        
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="terms2" name="terms2" required>
+                            <label for="terms2">채용 프로세스 규정에 동의 <span class="required">*</span></label>
+                        </div>
+                        
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="terms3" name="terms3" required>
+                            <label for="terms3">제출 서류의 진실성 확인 <span class="required">*</span></label>
+                        </div>
+                        <div class="help-text">허위 서류 제출 시 지원이 취소될 수 있습니다.</div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                        <i class="fas fa-save"></i>
+                        임시 저장
+                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left"></i>
+                            이전
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-paper-plane"></i>
+                            지원 완료
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const skillsContainer = document.getElementById('skillsContainer');
+            const skillInput = document.getElementById('skillInput');
+
+            // Focus input when container is clicked
+            skillsContainer.addEventListener('click', function() {
+                skillInput.focus();
+            });
+
+            // Handle keydown event on input
+            skillInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent form submission
+                    const skill = skillInput.value.trim();
+                    if (skill) {
+                        addSkillTag(skill);
+                        skillInput.value = '';
+                    }
+                }
+            });
+
+            // Function to add a skill tag
+            function addSkillTag(skill) {
+                const tag = document.createElement('span');
+                tag.className = 'skill-tag';
+                tag.innerHTML = `${skill} <i class="fas fa-times remove-skill"></i>`;
+                
+                // Insert tag before input field
+                skillsContainer.insertBefore(tag, skillInput);
+
+                // Add click event listener to remove icon
+                tag.querySelector('.remove-skill').addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent container click
+                    tag.remove();
+                });
+            }
+        });
+
+        // Avatar upload
+        function updateAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Add experience
+        function addExperience() {
+            const container = document.getElementById('experienceCards');
+            const experienceCard = document.createElement('div');
+            experienceCard.className = 'experience-card';
+            experienceCard.innerHTML = `
+                <button type="button" class="remove-btn" onclick="removeExperience(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="experience-header">
+                    <div>
+                        <input type="text" class="experience-title-input" placeholder="직책">
+                        <input type="text" class="experience-period-input" placeholder="근무기간 (예: 2020.01 - 2022.12)">
+                    </div>
+                </div>
+                <input type="text" class="experience-company-input" placeholder="회사명">
+                <textarea class="experience-description-input" placeholder="주요 업무 및 성과"></textarea>
+            `;
+            container.appendChild(experienceCard);
+        }
+
+        // Remove experience
+        function removeExperience(button) {
+            button.parentElement.remove();
+        }
+        
+        // File upload handler (simplified)
+        function handleFileUpload(input, listId) {
+            const files = input.files;
+            const listElement = document.getElementById(input.id + 'List');
+            
+            for (const file of files) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <i class="fas fa-file-pdf file-icon"></i>
+                        <div>
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${fileSize} MB</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-times file-remove" onclick="this.parentElement.remove()"></i>
+                `;
+                listElement.appendChild(fileItem);
+            }
+        }
+
+        // Form submission
+        document.getElementById('jobApplicationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('지원이 완료되었습니다.');
+            // 실제 지원 로직 처리
+        });
+
+        // Save draft
+        function saveDraft() {
+            alert('임시 저장되었습니다.');
+            // 실제 임시 저장 로직 처리
+        }
+    </script>
+</body>
+</html>

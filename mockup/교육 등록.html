@@ -2,9 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>교육 등록 - 전시</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교육 상세 정보 등록</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -22,7 +21,6 @@
             --text-color: #333333;
             --text-muted: #6c757d;
             --border-color: #dee2e6;
-            --header-height: 60px;
         }
 
         * {
@@ -30,61 +28,66 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
-            overflow-x: hidden;
         }
 
-        /* --- App Layout --- */
-        .app-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background-color: var(--card-background);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            z-index: 1000;
-        }
-
-        .back-button {
-            font-size: 1.2rem;
-            color: var(--text-color);
-            cursor: pointer;
-        }
-
-        .app-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .header-icon {
-            font-size: 1.2rem;
-            color: var(--secondary-color);
-            cursor: pointer;
-        }
-
-        .app-content {
-            margin-top: var(--header-height);
-            padding-bottom: 80px;
-        }
-
-        /* --- Form Container --- */
-        .form-container {
-            max-width: 800px;
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* --- Form Section --- */
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
         .form-section {
             background-color: var(--card-background);
             border-radius: 8px;
@@ -94,1228 +97,507 @@
         }
 
         .section-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: bold;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
-            color: var(--primary-color);
         }
 
         .section-title i {
-            font-size: 1.1rem;
+            color: var(--primary-color);
         }
 
-        /* --- Form Elements --- */
         .form-group {
             margin-bottom: 20px;
         }
 
-        .form-label {
+        .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--text-color);
+            font-weight: 500;
         }
 
-        .required {
-            color: var(--danger-color);
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
+        .form-control {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            border-radius: 4px;
+            font-family: inherit;
         }
 
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
+        .form-control:focus {
+            border-color: var(--primary-color);
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
         }
 
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-help {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
-
-        /* --- Classification Selector --- */
-        .classification-selector {
+        .form-row {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
-        .classification-level {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .classification-level-title {
-            font-weight: bold;
-            color: var(--text-color);
-            margin-bottom: 5px;
-        }
-
-        .classification-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-        }
-
-        .classification-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background-color: var(--light-color);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .classification-option:hover {
-            border-color: var(--primary-color);
-            background-color: rgba(0, 123, 255, 0.05);
-        }
-
-        .classification-option.selected {
-            border-color: var(--primary-color);
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .classification-option input[type="radio"] {
-            display: none;
-        }
-
-        .classification-code {
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .classification-name {
-            font-size: 0.9rem;
-        }
-
-        /* --- Badges Selection --- */
-        .badges-container {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .badge-option {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 12px;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            background-color: var(--light-color);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .badge-option.selected {
-            background-color: var(--info-color);
-            color: white;
-            border-color: var(--info-color);
-        }
-
-        .badge-option input[type="checkbox"] {
-            display: none;
-        }
-
-        /* --- Date and Time Inputs --- */
-        .date-time-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .time-inputs {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .time-input {
+        .form-col {
             flex: 1;
         }
-
-        /* --- File Upload --- */
-        .file-upload {
-            border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.2s, background-color 0.2s;
+        
+        .dynamic-list {
+            display: grid;
+            gap: 15px;
         }
 
-        .file-upload:hover {
-            border-color: var(--primary-color);
-            background-color: rgba(0, 123, 255, 0.05);
-        }
-
-        .file-upload i {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .file-upload-text {
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
-
-        .file-upload-button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .uploaded-files {
-            margin-top: 15px;
-        }
-
-        .uploaded-file {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px;
-            background-color: var(--light-color);
-            border-radius: 6px;
-            margin-bottom: 8px;
-        }
-
-        .file-info {
+        .dynamic-item {
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .file-remove {
-            color: var(--danger-color);
-            cursor: pointer;
-        }
-
-        /* --- Curriculum Items --- */
-        .curriculum-items {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .curriculum-item {
-            display: flex;
-            gap: 15px;
             padding: 15px;
             background-color: var(--light-color);
             border-radius: 8px;
-            position: relative;
+        }
+        
+        .dynamic-item input {
+            flex: 1;
         }
 
-        .curriculum-number {
-            width: 30px;
-            height: 30px;
-            background-color: var(--primary-color);
+        .btn-remove {
+            background-color: var(--danger-color);
             color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
             flex-shrink: 0;
         }
 
-        .curriculum-content {
-            flex: 1;
-        }
-
-        .curriculum-remove {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: var(--danger-color);
+        .btn-add {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
             cursor: pointer;
+            margin-top: 10px;
         }
-
-        .add-curriculum-button {
+        
+        .instructor-item {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px;
-            border: 2px dashed var(--border-color);
+            gap: 20px;
+            padding: 20px;
+            background-color: var(--light-color);
             border-radius: 8px;
-            background-color: transparent;
-            color: var(--primary-color);
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
+            margin-bottom: 15px;
         }
 
-        .add-curriculum-button:hover {
-            border-color: var(--primary-color);
-            background-color: rgba(0, 123, 255, 0.05);
-        }
-
-        /* --- Form Actions --- */
-        .form-actions {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--card-background);
-            padding: 15px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-
-        .actions-container {
-            max-width: 800px;
-            margin: 0 auto;
+        .instructor-photo-container {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 10px;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            flex: 1;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-secondary {
-            background-color: var(--light-color);
-            color: var(--text-color);
+        .instructor-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
             border: 1px solid var(--border-color);
         }
 
-        .btn-secondary:hover {
-            background-color: var(--border-color);
-        }
-
-        /* --- Preview Modal --- */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 2000;
-            overflow-y: auto;
-        }
-
-        .modal.active {
+        .instructor-info {
+            flex: 1;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        .modal-content {
-            background-color: var(--card-background);
-            border-radius: 8px;
-            max-width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
+        .file-upload {
             position: relative;
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-
-        .modal-close {
-            font-size: 1.5rem;
-            color: var(--text-muted);
+            display: inline-block;
             cursor: pointer;
+            width: 100%;
         }
 
-        .modal-body {
-            padding: 20px;
+        .file-upload input[type=file] {
+            position: absolute;
+            left: -9999px;
         }
 
-        .modal-footer {
-            padding: 15px 20px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
+        .file-upload-label {
+            display: block;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            background-color: var(--card-background);
+            font-size: 0.9rem;
         }
 
-        /* --- Responsive --- */
-        @media (max-width: 768px) {
-            .date-time-group {
-                grid-template-columns: 1fr;
-            }
-
-            .time-inputs {
-                flex-direction: column;
-            }
-
-            .actions-container {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .classification-options {
-                grid-template-columns: 1fr;
-            }
+        .file-upload-label:hover {
+            background-color: #e9ecef;
         }
+
     </style>
 </head>
 <body>
-    <!-- App Header -->
-    <header class="app-header">
-        <div class="back-button" onclick="history.back()">
-            <i class="fas fa-arrow-left"></i>
+    <div class="container">
+        <div class="form-header">
+            <h1 class="form-title">교육 상세 정보 등록</h1>
+            <div class="form-actions">
+                <button class="btn btn-secondary">취소</button>
+                <button class="btn btn-primary">저장</button>
+            </div>
         </div>
-        <div class="app-title">교육 등록</div>
-        <div class="header-icon" onclick="showPreview()">
-            <i class="fas fa-eye"></i>
-        </div>
-    </header>
-    
-    <!-- App Content -->
-    <div class="app-content">
-        <div class="form-container">
+
+        <form id="educationForm">
             <!-- 기본 정보 -->
             <div class="form-section">
-                <h2 class="section-title">
-                    <i class="fas fa-info-circle"></i>
-                    기본 정보
-                </h2>
+                <h2 class="section-title"><i class="fas fa-info-circle"></i>기본 정보</h2>
                 
                 <div class="form-group">
-                    <label class="form-label">교육명 <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="courseName" placeholder="예: 실무 중심의 클라우드 보안 전문가 과정">
-                    <div class="form-help">교육 과정의 제목을 입력해주세요.</div>
+                    <label for="courseTitle">교육명</label>
+                    <input type="text" class="form-control" id="courseTitle" placeholder="교육명을 입력하세요">
                 </div>
                 
-                <div class="form-group">
-                    <label class="form-label">분류 <span class="required">*</span></label>
-                    <div class="classification-selector">
-                        <!-- 대분류 -->
-                        <div class="classification-level">
-                            <div class="classification-level-title">대분류</div>
-                            <div class="classification-options" id="majorCategoryOptions">
-                                <!-- 동적으로 생성됨 -->
-                            </div>
-                        </div>
-                        
-                        <!-- 중분류 -->
-                        <div class="classification-level">
-                            <div class="classification-level-title">중분류</div>
-                            <div class="classification-options" id="minorCategoryOptions">
-                                <!-- 동적으로 생성됨 -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">교육 소개 <span class="required">*</span></label>
-                    <textarea class="form-textarea" id="courseDescription" placeholder="교육 과정에 대한 상세 설명을 입력해주세요."></textarea>
-                    <div class="form-help">교육의 목표, 특징, 학습 효과 등을 포함하여 작성해주세요.</div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">교육 형태</label>
-                    <div class="badges-container">
-                        <label class="badge-option selected">
-                            <input type="checkbox" name="format" value="online" checked>
-                            <span>온라인</span>
-                        </label>
-                        <label class="badge-option">
-                            <input type="checkbox" name="format" value="offline">
-                            <span>오프라인</span>
-                        </label>
-                        <label class="badge-option">
-                            <input type="checkbox" name="format" value="hybrid">
-                            <span>하이브리드</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">특징 태그</label>
-                    <div class="badges-container">
-                        <label class="badge-option">
-                            <input type="checkbox" name="features" value="new">
-                            <span>신규</span>
-                        </label>
-                        <label class="badge-option">
-                            <input type="checkbox" name="features" value="popular">
-                            <span>인기</span>
-                        </label>
-                        <label class="badge-option">
-                            <input type="checkbox" name="features" value="certification">
-                            <span>자격증</span>
-                        </label>
-                        <label class="badge-option">
-                            <input type="checkbox" name="features" value="practical">
-                            <span>실무중심</span>
-                        </label>
-                        <label class="badge-option">
-                            <input type="checkbox" name="features" value="beginner">
-                            <span>입문자</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 강사 정보 -->
-            <div class="form-section">
-                <h2 class="section-title">
-                    <i class="fas fa-user-tie"></i>
-                    강사 정보
-                </h2>
-                
-                <div class="form-group">
-                    <label class="form-label">강사명 <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="instructorName" placeholder="강사 이름을 입력해주세요">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">강사 소개</label>
-                    <textarea class="form-textarea" id="instructorBio" placeholder="강사의 경력, 전문 분야, 자격증 등을 입력해주세요."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">강사 사진</label>
-                    <div class="file-upload" onclick="document.getElementById('instructorPhoto').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <div class="file-upload-text">강사 사진을 업로드하세요</div>
-                        <button type="button" class="file-upload-button">파일 선택</button>
-                        <input type="file" id="instructorPhoto" accept="image/*" style="display: none;">
-                    </div>
-                    <div class="uploaded-files" id="instructorPhotoFiles"></div>
-                </div>
-            </div>
-            
-            <!-- 교육 일정 -->
-            <div class="form-section">
-                <h2 class="section-title">
-                    <i class="fas fa-calendar-alt"></i>
-                    교육 일정
-                </h2>
-                
-                <div class="form-group">
-                    <label class="form-label">교육 기간 <span class="required">*</span></label>
-                    <div class="date-time-group">
-                        <div>
-                            <label class="form-label">시작일</label>
-                            <input type="date" class="form-input" id="startDate">
-                        </div>
-                        <div>
-                            <label class="form-label">종료일</label>
-                            <input type="date" class="form-input" id="endDate">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">요일 및 시간</label>
-                    <div class="date-time-group">
-                        <div>
-                            <label class="form-label">요일</label>
-                            <select class="form-select" id="weekDay">
-                                <option value="mon">월요일</option>
-                                <option value="tue">화요일</option>
-                                <option value="wed">수요일</option>
-                                <option value="thu">목요일</option>
-                                <option value="fri">금요일</option>
-                                <option value="sat">토요일</option>
-                                <option value="sun">일요일</option>
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="classification">분류</label>
+                            <select class="form-control" id="classification">
+                                <option value="ED" selected>교육/강의 (ED)</option>
+                                <option value="IT">IT/개발 (IT)</option>
+                                <option value="DS">디자인 (DS)</option>
+                                <option value="MK">마케팅 (MK)</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="form-label">시간</label>
-                            <div class="time-inputs">
-                                <input type="time" class="form-input time-input" id="startTime">
-                                <span>~</span>
-                                <input type="time" class="form-input time-input" id="endTime">
-                            </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="subClassification">세부 분류</label>
+                            <select class="form-control" id="subClassification">
+                                <option value="ED04" selected>자격증/실무 (ED04)</option>
+                                <option value="ED01">국어/문학 (ED01)</option>
+                                <option value="IT01">프로그래밍 (IT01)</option>
+                                <option value="DS01">UI/UX (DS01)</option>
+                                <option value="MK01">디지털 마케팅 (MK01)</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="form-help">정기적으로 진행되는 교육의 요일과 시간을 선택해주세요.</div>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">총 교육 시간</label>
-                    <input type="text" class="form-input" id="totalHours" placeholder="예: 24시간 (8주, 주 3시간)">
+                    <label>교육 특징</label>
+                    <ul class="dynamic-list" id="featureList">
+                        <li class="dynamic-item">
+                            <i class="fas fa-tag"></i>
+                            <input type="text" class="form-control" placeholder="예: 신규 과정, 실무 중심" value="신규">
+                            <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+                        </li>
+                        <li class="dynamic-item">
+                            <i class="fas fa-tag"></i>
+                            <input type="text" class="form-control" placeholder="예: 신규 과정, 실무 중심" value="온라인">
+                            <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+                        </li>
+                    </ul>
+                    <button type="button" class="btn-add" id="addFeature">특징 추가</button>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="location">교육 장소</label>
+                            <input type="text" class="form-control" id="location" placeholder="온라인 또는 오프라인 장소를 입력하세요">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="capacity">정원</label>
+                            <input type="number" class="form-control" id="capacity" placeholder="정원을 입력하세요">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="startDate">시작일</label>
+                            <input type="date" class="form-control" id="startDate">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="endDate">종료일</label>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">교육비</label>
+                    <input type="number" class="form-control" id="price" placeholder="교육비를 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">교육 소개</label>
+                    <textarea class="form-control" id="description" rows="5" placeholder="교육에 대한 소개를 입력하세요"></textarea>
                 </div>
             </div>
-            
+
+            <!-- 강사 정보 -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-user-tie"></i>강사 정보</h2>
+                
+                <div id="instructorList">
+                    <!-- 기존 강사 정보 -->
+                    <div class="instructor-item">
+                        <div class="instructor-photo-container">
+                            <div class="file-upload">
+                                <input type="file" class="instructor-photo-input" accept="image/*">
+                                <label class="file-upload-label">
+                                    <i class="fas fa-camera"></i> 사진 변경
+                                </label>
+                            </div>
+                            <img src="https://picsum.photos/seed/instructor123/120/120.jpg" alt="강사 사진" class="instructor-photo preview-image">
+                        </div>
+                        <div class="instructor-info">
+                            <input type="text" class="form-control" placeholder="강사명" value="김보안">
+                            <input type="text" class="form-control" placeholder="소속/직책" value="클라우드 보안 컨설턴트 (15년 경력)">
+                            <textarea class="form-control" rows="3" placeholder="강사 소개">현직 클라우드 보안 컨설턴트로 AWS/Azure/GCP 전문 자격증 보유. 다수 금융기관 및 대기업의 클라우드 보안 아키텍처 설계 및 컨설팅 경험 보유.</textarea>
+                        </div>
+                        <button type="button" class="btn-remove" style="align-self: flex-start;"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn-add" id="addInstructor">강사 추가</button>
+            </div>
+
+            <!-- 교재 정보 -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-book"></i>교재 정보</h2>
+                
+                <div class="dynamic-list" id="textbookList">
+                    <div class="dynamic-item">
+                        <input type="checkbox" checked>
+                        <input type="text" class="form-control" placeholder="교재명" value="실전 클라우드 보안 (2024 개정판)">
+                        <input type="number" class="form-control" placeholder="가격" value="35000" style="width: 120px;">
+                        <select class="form-control" style="width: 120px;">
+                            <option value="required" selected>필수</option>
+                            <option value="optional">선택</option>
+                        </select>
+                        <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <div class="dynamic-item">
+                        <input type="checkbox">
+                        <input type="text" class="form-control" placeholder="교재명" value="DevSecOps 구축 가이드 (제2판)">
+                        <input type="number" class="form-control" placeholder="가격" value="28000" style="width: 120px;">
+                        <select class="form-control" style="width: 120px;">
+                            <option value="required">필수</option>
+                            <option value="optional" selected>선택</option>
+                        </select>
+                        <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn-add" id="addTextbook">교재 추가</button>
+            </div>
+
             <!-- 커리큘럼 -->
             <div class="form-section">
-                <h2 class="section-title">
-                    <i class="fas fa-book"></i>
-                    커리큘럼
-                </h2>
+                <h2 class="section-title"><i class="fas fa-book"></i>커리큘럼</h2>
                 
-                <div class="curriculum-items" id="curriculumItems">
-                    <div class="curriculum-item">
-                        <div class="curriculum-number">1</div>
-                        <div class="curriculum-content">
-                            <input type="text" class="form-input" placeholder="커리큘럼 제목" style="margin-bottom: 10px;">
-                            <textarea class="form-textarea" placeholder="커리큘럼 상세 설명" style="min-height: 80px;"></textarea>
+                <div class="dynamic-list" id="curriculumList">
+                    <div class="dynamic-item">
+                        <div class="curriculum-number" style="width: 40px; height: 40px; background-color: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">1</div>
+                        <div style="display: flex; flex-direction: column; gap: 10px; flex:1;">
+                            <input type="text" class="form-control" placeholder="주제" value="클라우드 보안 기초">
+                            <input type="text" class="form-control" placeholder="상세 내용" value="클라우드 컴퓨팅의 개념, 클라우드 보안의 특징, 공유 책임 모델">
                         </div>
-                        <i class="fas fa-times curriculum-remove" onclick="removeCurriculum(this)"></i>
+                        <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
                 
-                <button type="button" class="add-curriculum-button" onclick="addCurriculum()">
-                    <i class="fas fa-plus"></i>
-                    커리큘럼 추가
-                </button>
+                <button type="button" class="btn-add" id="addCurriculum">커리큘럼 추가</button>
             </div>
-            
-            <!-- 수강 정보 -->
+
+            <!-- 수강 대상 -->
             <div class="form-section">
-                <h2 class="section-title">
-                    <i class="fas fa-users"></i>
-                    수강 정보
-                </h2>
+                <h2 class="section-title"><i class="fas fa-bullseye"></i>수강 대상</h2>
                 
-                <div class="form-group">
-                    <label class="form-label">수강료 <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="tuition" placeholder="예: 1,200,000원">
-                </div>
+                <ul class="dynamic-list" id="targetList">
+                    <li class="dynamic-item">
+                        <i class="fas fa-check-circle"></i>
+                        <input type="text" class="form-control" value="클라우드 보안 전문가로 커리어 전환을 희망하는 분">
+                        <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+                    </li>
+                </ul>
                 
-                <div class="form-group">
-                    <label class="form-label">정원 <span class="required">*</span></label>
-                    <input type="number" class="form-input" id="capacity" placeholder="최대 수강 인원 수">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">수강 대상</label>
-                    <textarea class="form-textarea" id="targetAudience" placeholder="이 교육에 적합한 수강 대상을 설명해주세요."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">학습 목표</label>
-                    <textarea class="form-textarea" id="learningObjectives" placeholder="이 교육을 통해 달성할 수 있는 학습 목표를 입력해주세요."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">준비물</label>
-                    <textarea class="form-textarea" id="preparation" placeholder="수강에 필요한 준비물이나 사전 지식 등을 입력해주세요."></textarea>
-                </div>
+                <button type="button" class="btn-add" id="addTarget">수강 대상 추가</button>
             </div>
-            
-            <!-- 첨부 파일 -->
+
+            <!-- 학습 목표 -->
             <div class="form-section">
-                <h2 class="section-title">
-                    <i class="fas fa-paperclip"></i>
-                    첨부 파일
-                </h2>
+                <h2 class="section-title"><i class="fas fa-trophy"></i>학습 목표</h2>
                 
-                <div class="form-group">
-                    <label class="form-label">교육 자료</label>
-                    <div class="file-upload" onclick="document.getElementById('courseMaterials').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <div class="file-upload-text">교육 자료를 업로드하세요 (PDF, PPT, 이미지 등)</div>
-                        <button type="button" class="file-upload-button">파일 선택</button>
-                        <input type="file" id="courseMaterials" multiple accept=".pdf,.ppt,.pptx,.doc,.docx,.jpg,.jpeg,.png" style="display: none;">
-                    </div>
-                    <div class="uploaded-files" id="courseMaterialFiles"></div>
-                </div>
+                <ul class="dynamic-list" id="objectiveList">
+                    <li class="dynamic-item">
+                        <i class="fas fa-check-circle"></i>
+                        <input type="text" class="form-control" value="클라우드 보안의 기본 개념과 원리 이해">
+                        <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+                    </li>
+                </ul>
                 
-                <div class="form-group">
-                    <label class="form-label">커버 이미지</label>
-                    <div class="file-upload" onclick="document.getElementById('coverImage').click()">
-                        <i class="fas fa-image"></i>
-                        <div class="file-upload-text">교육 커버 이미지를 업로드하세요</div>
-                        <button type="button" class="file-upload-button">파일 선택</button>
-                        <input type="file" id="coverImage" accept="image/*" style="display: none;">
-                    </div>
-                    <div class="uploaded-files" id="coverImageFiles"></div>
-                </div>
+                <button type="button" class="btn-add" id="addObjective">학습 목표 추가</button>
             </div>
-        </div>
+        </form>
     </div>
-    
-    <!-- Form Actions -->
-    <div class="form-actions">
-        <div class="actions-container">
-            <button type="button" class="btn btn-secondary" onclick="saveDraft()">임시 저장</button>
-            <button type="button" class="btn btn-secondary" onclick="showPreview()">미리보기</button>
-            <button type="button" class="btn btn-primary" onclick="submitCourse()">교육 등록</button>
-        </div>
-    </div>
-    
-    <!-- Preview Modal -->
-    <div class="modal" id="previewModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">교육 미리보기</h3>
-                <i class="fas fa-times modal-close" onclick="closePreview()"></i>
-            </div>
-            <div class="modal-body" id="previewContent">
-                <!-- Preview content will be dynamically generated -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closePreview()">닫기</button>
-                <button type="button" class="btn btn-primary" onclick="submitCourse()">교육 등록</button>
-            </div>
-        </div>
-    </div>
-    
+
     <script>
-        // 분류 데이터 (코드표 기반)
-        const classificationData = {
-            IT: {
-                name: "기술/개발",
-                subcategories: {
-                    IT01: "웹 개발",
-                    IT02: "앱 개발",
-                    IT03: "AI/머신러닝",
-                    IT04: "데이터 분석",
-                    IT05: "보안/인증",
-                    IT06: "클라우드/인프라",
-                    IT07: "게임 개발",
-                    IT08: "블록체인/Web3"
-                }
-            },
-            DS: {
-                name: "디자인/크리에이티브",
-                subcategories: {
-                    DS01: "영상 편집",
-                    DS02: "모션그래픽/3D",
-                    DS03: "그래픽 디자인",
-                    DS04: "일러스트/캐릭터",
-                    DS05: "UI/UX 디자인",
-                    DS06: "제품/산업 디자인",
-                    DS07: "사진/촬영",
-                    DS08: "음악/사운드"
-                }
-            },
-            MK: {
-                name: "마케팅/홍보",
-                subcategories: {
-                    MK01: "퍼포먼스 마케팅",
-                    MK02: "SNS 마케팅",
-                    MK03: "콘텐츠 마케팅",
-                    MK04: "브랜딩/CI",
-                    MK05: "PR/언론홍보",
-                    MK06: "영업/세일즈"
-                }
-            },
-            WR: {
-                name: "글쓰기/번역",
-                subcategories: {
-                    WR01: "카피라이팅",
-                    WR02: "콘텐츠 글쓰기",
-                    WR03: "번역/통역",
-                    WR04: "출판/교정"
-                }
-            },
-            BZ: {
-                name: "비즈니스/경영",
-                subcategories: {
-                    BZ01: "경영/전략 컨설팅",
-                    BZ02: "창업/스타트업",
-                    BZ03: "재무/회계",
-                    BZ04: "세무/기장",
-                    BZ05: "법률/계약",
-                    BZ06: "특허/지식재산"
-                }
-            },
-            HR: {
-                name: "HR/인사",
-                subcategories: {
-                    HR01: "채용/헤드헌팅",
-                    HR02: "인사제도/조직",
-                    HR03: "노무/급여",
-                    HR04: "커리어 코칭"
-                }
-            },
-            ED: {
-                name: "교육/강의",
-                subcategories: {
-                    ED01: "기업교육/강의",
-                    ED02: "외국어 교육",
-                    ED03: "입시/학원",
-                    ED04: "자격증/실무"
-                }
-            },
-            BD: {
-                name: "건축/설계",
-                subcategories: {
-                    BD01: "건축 설계",
-                    BD02: "토목/조경",
-                    BD03: "도시/부동산"
-                }
-            },
-            IN: {
-                name: "인테리어/시공",
-                subcategories: {
-                    IN01: "인테리어 디자인",
-                    IN02: "도배/바닥",
-                    IN03: "주방/욕실",
-                    IN04: "목공/가구"
-                }
-            },
-            FC: {
-                name: "설비/수리",
-                subcategories: {
-                    FC01: "전기/조명",
-                    FC02: "설비/배관",
-                    FC03: "방수/단열",
-                    FC04: "철거/청소"
-                }
-            },
-            SP: {
-                name: "스포츠/피트니스",
-                subcategories: {
-                    SP01: "골프/라켓",
-                    SP02: "피트니스/PT",
-                    SP03: "요가/필라테스",
-                    SP04: "수영/아웃도어",
-                    SP05: "댄스/무술"
-                }
-            },
-            BT: {
-                name: "뷰티/패션",
-                subcategories: {
-                    BT01: "메이크업/헤어",
-                    BT02: "네일/속눈썹",
-                    BT03: "패션/스타일링"
-                }
-            },
-            EV: {
-                name: "행사/엔터테인먼트",
-                subcategories: {
-                    EV01: "웨딩/돌잔치",
-                    EV02: "행사/컨퍼런스",
-                    EV03: "MC/공연"
-                }
-            },
-            LF: {
-                name: "생활서비스",
-                subcategories: {
-                    LF01: "반려동물",
-                    LF02: "청소/정리",
-                    LF03: "이사/운송",
-                    LF04: "수리/설치"
-                }
-            },
-            PS: {
-                name: "전문서비스",
-                subcategories: {
-                    PS01: "의료/헬스케어",
-                    PS02: "공학/제조",
-                    PS03: "물류/무역",
-                    PS04: "농업/식품"
-                }
-            }
-        };
-        
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            initializeClassification();
-            initializeForm();
-        });
-        
-        // Initialize classification
-        function initializeClassification() {
-            const majorContainer = document.getElementById('majorCategoryOptions');
-            const minorContainer = document.getElementById('minorCategoryOptions');
-            
-            // Create major category options
-            Object.keys(classificationData).forEach(code => {
-                const option = document.createElement('label');
-                option.className = 'classification-option';
-                option.innerHTML = `
-                    <input type="radio" name="majorCategory" value="${code}">
-                    <span class="classification-code">${code}</span>
-                    <span class="classification-name">${classificationData[code].name}</span>
-                `;
-                
-                option.addEventListener('click', function() {
-                    selectMajorCategory(code);
+            // --- 동적 아이템 추가/삭제를 위한 헬퍼 함수 ---
+            function addDynamicItem(buttonId, listId, itemHtmlGenerator) {
+                const button = document.getElementById(buttonId);
+                const list = document.getElementById(listId);
+
+                button.addEventListener('click', function() {
+                    const newItem = document.createElement('li');
+                    newItem.className = 'dynamic-item';
+                    newItem.innerHTML = itemHtmlGenerator();
+                    list.appendChild(newItem);
+                    attachRemoveListener(newItem);
                 });
-                
-                majorContainer.appendChild(option);
+            }
+
+            function attachRemoveListener(item) {
+                const removeButton = item.querySelector('.btn-remove');
+                if (removeButton) {
+                    removeButton.addEventListener('click', function() {
+                        item.remove();
+                    });
+                }
+            }
+
+            // --- 초기화: 기존 아이템에 삭제 리스너 추가 ---
+            document.querySelectorAll('.dynamic-item').forEach(attachRemoveListener);
+            document.querySelectorAll('.instructor-item').forEach(item => {
+                const removeButton = item.querySelector('.btn-remove');
+                if(removeButton) {
+                    removeButton.addEventListener('click', function() {
+                        item.remove();
+                    });
+                }
             });
-            
-            // Select ED as default
-            selectMajorCategory('ED');
-        }
-        
-        // Select major category
-        function selectMajorCategory(code) {
-            // Update major category selection
-            document.querySelectorAll('#majorCategoryOptions .classification-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            document.querySelector(`#majorCategoryOptions input[value="${code}"]`).parentElement.classList.add('selected');
-            document.querySelector(`#majorCategoryOptions input[value="${code}"]`).checked = true;
-            
-            // Update minor category options
-            const minorContainer = document.getElementById('minorCategoryOptions');
-            minorContainer.innerHTML = '';
-            
-            const subcategories = classificationData[code].subcategories;
-            Object.keys(subcategories).forEach(subCode => {
-                const option = document.createElement('label');
-                option.className = 'classification-option';
-                option.innerHTML = `
-                    <input type="radio" name="minorCategory" value="${subCode}">
-                    <span class="classification-code">${subCode}</span>
-                    <span class="classification-name">${subcategories[subCode]}</span>
+
+            // --- 교육 특징 ---
+            addDynamicItem('addFeature', 'featureList', () => `
+                <i class="fas fa-tag"></i>
+                <input type="text" class="form-control" placeholder="예: 신규 과정, 실무 중심">
+                <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+            `);
+
+            // --- 강사 정보 ---
+            document.getElementById('addInstructor').addEventListener('click', function() {
+                const instructorList = document.getElementById('instructorList');
+                const uniqueId = Date.now();
+                const newInstructor = document.createElement('div');
+                newInstructor.className = 'instructor-item';
+                newInstructor.innerHTML = `
+                    <div class="instructor-photo-container">
+                        <div class="file-upload">
+                            <input type="file" class="instructor-photo-input" id="instructorPhoto_${uniqueId}" accept="image/*">
+                            <label for="instructorPhoto_${uniqueId}" class="file-upload-label">
+                                <i class="fas fa-camera"></i> 사진 업로드
+                            </label>
+                        </div>
+                        <img src="https://picsum.photos/seed/instructor${uniqueId}/120/120.jpg" alt="강사 사진" class="instructor-photo preview-image">
+                    </div>
+                    <div class="instructor-info">
+                        <input type="text" class="form-control" placeholder="강사명">
+                        <input type="text" class="form-control" placeholder="소속/직책">
+                        <textarea class="form-control" rows="3" placeholder="강사 소개"></textarea>
+                    </div>
+                    <button type="button" class="btn-remove" style="align-self: flex-start;"><i class="fas fa-trash"></i></button>
                 `;
+                instructorList.appendChild(newInstructor);
                 
-                option.addEventListener('click', function() {
-                    selectMinorCategory(subCode);
+                // 새로 추가된 강사 항목에 이벤트 리스너 연결
+                const photoInput = newInstructor.querySelector('.instructor-photo-input');
+                const photoPreview = newInstructor.querySelector('.preview-image');
+                photoInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            photoPreview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
                 });
-                
-                minorContainer.appendChild(option);
+
+                const removeButton = newInstructor.querySelector('.btn-remove');
+                removeButton.addEventListener('click', function() {
+                    newInstructor.remove();
+                });
             });
             
-            // Select first minor category by default
-            const firstSubCode = Object.keys(subcategories)[0];
-            selectMinorCategory(firstSubCode);
-        }
-        
-        // Select minor category
-        function selectMinorCategory(code) {
-            document.querySelectorAll('#minorCategoryOptions .classification-option').forEach(opt => {
-                opt.classList.remove('selected');
+            // 기존 강사 사진 업로드 이벤트 리스너
+            document.querySelectorAll('.instructor-photo-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            // preview-image는 input의 형제 요소
+                            input.closest('.instructor-photo-container').querySelector('.preview-image').src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
             });
-            document.querySelector(`#minorCategoryOptions input[value="${code}"]`).parentElement.classList.add('selected');
-            document.querySelector(`#minorCategoryOptions input[value="${code}"]`).checked = true;
-        }
-        
-        // Initialize form
-        function initializeForm() {
-            // Set default dates
-            const today = new Date();
-            const startDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 1 week later
-            const endDate = new Date(startDate.getTime() + 56 * 24 * 60 * 60 * 1000); // 8 weeks later
-            
-            document.getElementById('startDate').value = formatDate(startDate);
-            document.getElementById('endDate').value = formatDate(endDate);
-            
-            // Add event listeners
-            document.getElementById('instructorPhoto').addEventListener('change', handleFileUpload);
-            document.getElementById('courseMaterials').addEventListener('change', handleFileUpload);
-            document.getElementById('coverImage').addEventListener('change', handleFileUpload);
-        }
-        
-        // Format date for input
-        function formatDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-        
-        // Handle file upload
-        function handleFileUpload(event) {
-            const files = event.target.files;
-            const containerId = event.target.id.replace(/([A-Z])/g, '$1Files').toLowerCase();
-            const container = document.getElementById(containerId);
-            
-            for (let file of files) {
-                const fileItem = document.createElement('div');
-                fileItem.className = 'uploaded-file';
-                fileItem.innerHTML = `
-                    <div class="file-info">
-                        <i class="fas fa-file"></i>
-                        <span>${file.name}</span>
-                        <span style="color: var(--text-muted); margin-left: 10px;">${formatFileSize(file.size)}</span>
+
+
+            // --- 교재 정보 ---
+            addDynamicItem('addTextbook', 'textbookList', () => `
+                <input type="checkbox">
+                <input type="text" class="form-control" placeholder="교재명">
+                <input type="number" class="form-control" placeholder="가격" style="width: 120px;">
+                <select class="form-control" style="width: 120px;">
+                    <option value="required">필수</option>
+                    <option value="optional" selected>선택</option>
+                </select>
+                <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+            `);
+
+            // --- 커리큘럼 ---
+            document.getElementById('addCurriculum').addEventListener('click', function() {
+                const curriculumList = document.getElementById('curriculumList');
+                const curriculumCount = curriculumList.children.length + 1;
+                const newCurriculum = document.createElement('div');
+                newCurriculum.className = 'dynamic-item';
+                newCurriculum.innerHTML = `
+                    <div class="curriculum-number" style="width: 40px; height: 40px; background-color: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">${curriculumCount}</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px; flex:1;">
+                        <input type="text" class="form-control" placeholder="주제">
+                        <input type="text" class="form-control" placeholder="상세 내용">
                     </div>
-                    <i class="fas fa-times file-remove" onclick="removeFile(this)"></i>
+                    <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
                 `;
-                container.appendChild(fileItem);
-            }
-        }
-        
-        // Format file size
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        // Remove file
-        function removeFile(element) {
-            element.parentElement.remove();
-        }
-        
-        // Add curriculum item
-        function addCurriculum() {
-            const container = document.getElementById('curriculumItems');
-            const itemCount = container.children.length + 1;
-            
-            const curriculumItem = document.createElement('div');
-            curriculumItem.className = 'curriculum-item';
-            curriculumItem.innerHTML = `
-                <div class="curriculum-number">${itemCount}</div>
-                <div class="curriculum-content">
-                    <input type="text" class="form-input" placeholder="커리큘럼 제목" style="margin-bottom: 10px;">
-                    <textarea class="form-textarea" placeholder="커리큘럼 상세 설명" style="min-height: 80px;"></textarea>
-                </div>
-                <i class="fas fa-times curriculum-remove" onclick="removeCurriculum(this)"></i>
-            `;
-            
-            container.appendChild(curriculumItem);
-            updateCurriculumNumbers();
-        }
-        
-        // Remove curriculum item
-        function removeCurriculum(element) {
-            element.parentElement.remove();
-            updateCurriculumNumbers();
-        }
-        
-        // Update curriculum numbers
-        function updateCurriculumNumbers() {
-            const items = document.querySelectorAll('.curriculum-item');
-            items.forEach((item, index) => {
-                const numberElement = item.querySelector('.curriculum-number');
-                if (numberElement) {
-                    numberElement.textContent = index + 1;
-                }
+                curriculumList.appendChild(newCurriculum);
+                attachRemoveListener(newCurriculum);
             });
-        }
-        
-        // Toggle badge selection
-        document.querySelectorAll('.badge-option').forEach(option => {
-            option.addEventListener('click', function() {
-                const checkbox = this.querySelector('input[type="checkbox"]');
-                checkbox.checked = !checkbox.checked;
-                this.classList.toggle('selected');
-            });
-        });
-        
-        // Save draft
-        function saveDraft() {
-            const formData = collectFormData();
-            localStorage.setItem('courseDraft', JSON.stringify(formData));
-            alert('임시 저장되었습니다.');
-        }
-        
-        // Show preview
-        function showPreview() {
-            const formData = collectFormData();
-            const previewContent = generatePreview(formData);
-            document.getElementById('previewContent').innerHTML = previewContent;
-            document.getElementById('previewModal').classList.add('active');
-        }
-        
-        // Close preview
-        function closePreview() {
-            document.getElementById('previewModal').classList.remove('active');
-        }
-        
-        // Collect form data
-        function collectFormData() {
-            const formData = {
-                courseName: document.getElementById('courseName').value,
-                majorCategory: document.querySelector('input[name="majorCategory"]:checked').value,
-                minorCategory: document.querySelector('input[name="minorCategory"]:checked').value,
-                courseDescription: document.getElementById('courseDescription').value,
-                instructorName: document.getElementById('instructorName').value,
-                instructorBio: document.getElementById('instructorBio').value,
-                startDate: document.getElementById('startDate').value,
-                endDate: document.getElementById('endDate').value,
-                weekDay: document.getElementById('weekDay').value,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
-                totalHours: document.getElementById('totalHours').value,
-                tuition: document.getElementById('tuition').value,
-                capacity: document.getElementById('capacity').value,
-                targetAudience: document.getElementById('targetAudience').value,
-                learningObjectives: document.getElementById('learningObjectives').value,
-                preparation: document.getElementById('preparation').value
-            };
-            
-            // Collect format badges
-            formData.format = [];
-            document.querySelectorAll('input[name="format"]:checked').forEach(checkbox => {
-                formData.format.push(checkbox.value);
-            });
-            
-            // Collect feature badges
-            formData.features = [];
-            document.querySelectorAll('input[name="features"]:checked').forEach(checkbox => {
-                formData.features.push(checkbox.value);
-            });
-            
-            // Collect curriculum items
-            formData.curriculum = [];
-            document.querySelectorAll('.curriculum-item').forEach(item => {
-                const title = item.querySelector('input[type="text"]').value;
-                const description = item.querySelector('textarea').value;
-                if (title || description) {
-                    formData.curriculum.push({ title, description });
-                }
-            });
-            
-            return formData;
-        }
-        
-        // Generate preview HTML
-        function generatePreview(formData) {
-            const weekDayText = {
-                'mon': '월요일', 'tue': '화요일', 'wed': '수요일',
-                'thu': '목요일', 'fri': '금요일', 'sat': '토요일', 'sun': '일요일'
-            };
-            
-            const formatText = {
-                'online': '온라인', 'offline': '오프라인', 'hybrid': '하이브리드'
-            };
-            
-            const featureText = {
-                'new': '신규', 'popular': '인기', 'certification': '자격증',
-                'practical': '실무중심', 'beginner': '입문자'
-            };
-            
-            // Get category names
-            const majorCategoryName = classificationData[formData.majorCategory]?.name || formData.majorCategory;
-            const minorCategoryName = classificationData[formData.majorCategory]?.subcategories[formData.minorCategory] || formData.minorCategory;
-            
-            let html = `
-                <div style="max-width: 600px; margin: 0 auto;">
-                    <h2>${formData.courseName || '교육명'}</h2>
-                    <div style="margin: 15px 0;">
-                        <span style="background: #007bff; color: white; padding: 5px 10px; border-radius: 15px; margin-right: 10px;">
-                            ${formData.majorCategory} ${formData.minorCategory}
-                        </span>
-                        <span style="background: #f8f9fa; color: #333; padding: 5px 10px; border-radius: 15px; margin-right: 10px;">
-                            ${majorCategoryName} > ${minorCategoryName}
-                        </span>
-                        ${formData.format.map(f => `<span style="background: #17a2b8; color: white; padding: 5px 10px; border-radius: 15px; margin-right: 10px;">${formatText[f] || f}</span>`).join('')}
-                        ${formData.features.map(f => `<span style="background: #28a745; color: white; padding: 5px 10px; border-radius: 15px; margin-right: 10px;">${featureText[f] || f}</span>`).join('')}
-                    </div>
-                    <p>${formData.courseDescription || '교육 소개'}</p>
-                    
-                    <h3>강사 정보</h3>
-                    <p><strong>${formData.instructorName || '강사명'}</strong></p>
-                    <p>${formData.instructorBio || '강사 소개'}</p>
-                    
-                    <h3>교육 일정</h3>
-                    <p>${formData.startDate} ~ ${formData.endDate}</p>
-                    <p>${weekDayText[formData.weekDay]} ${formData.startTime} ~ ${formData.endTime}</p>
-                    <p>총 ${formData.totalHours || '시간'}</p>
-                    
-                    <h3>수강 정보</h3>
-                    <p>수강료: ${formData.tuition || '금액'}</p>
-                    <p>정원: ${formData.capacity || '인원'}명</p>
-                    <p>${formData.targetAudience || '수강 대상'}</p>
-                    
-                    <h3>커리큘럼</h3>
-                    <ol>
-                        ${formData.curriculum.map(item => `<li><strong>${item.title || '제목'}</strong><br>${item.description || '설명'}</li>`).join('')}
-                    </ol>
-                    
-                    <h3>학습 목표</h3>
-                    <p>${formData.learningObjectives || '학습 목표'}</p>
-                    
-                    <h3>준비물</h3>
-                    <p>${formData.preparation || '준비물'}</p>
-                </div>
-            `;
-            
-            return html;
-        }
-        
-        // Submit course
-        function submitCourse() {
-            const formData = collectFormData();
-            
-            // Validate required fields
-            if (!formData.courseName || !formData.courseDescription || !formData.instructorName || 
-                !formData.startDate || !formData.endDate || !formData.tuition || !formData.capacity) {
-                alert('필수 항목을 모두 입력해주세요.');
-                return;
-            }
-            
-            // In a real application, this would send data to the server
-            console.log('Submitting course:', formData);
-            alert('교육 과정이 성공적으로 등록되었습니다.');
-            
-            // Clear draft
-            localStorage.removeItem('courseDraft');
-            
-            // Redirect to course list or detail page
-            // window.location.href = '/education-list.html';
-        }
-        
-        // Load draft on page load
-        window.addEventListener('load', function() {
-            const draft = localStorage.getItem('courseDraft');
-            if (draft) {
-                const formData = JSON.parse(draft);
-                // Populate form fields with draft data
-                if (formData.courseName) document.getElementById('courseName').value = formData.courseName;
-                if (formData.instructorName) document.getElementById('instructorName').value = formData.instructorName;
-                // ... populate other fields
-                
-                // Restore classification selection
-                if (formData.majorCategory) {
-                    selectMajorCategory(formData.majorCategory);
-                }
-                if (formData.minorCategory) {
-                    selectMinorCategory(formData.minorCategory);
-                }
-            }
+
+            // --- 수강 대상 ---
+            addDynamicItem('addTarget', 'targetList', () => `
+                <i class="fas fa-check-circle"></i>
+                <input type="text" class="form-control" placeholder="수강 대상">
+                <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+            `);
+
+            // --- 학습 목표 ---
+            addDynamicItem('addObjective', 'objectiveList', () => `
+                <i class="fas fa-check-circle"></i>
+                <input type="text" class="form-control" placeholder="학습 목표">
+                <button type="button" class="btn-remove"><i class="fas fa-trash"></i></button>
+            `);
         });
     </script>
 </body>
